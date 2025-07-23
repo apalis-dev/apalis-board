@@ -1,17 +1,13 @@
+use bytes::Bytes;
+use futures::{
+    channel::mpsc::{channel, Receiver, Sender, TryRecvError},
+    Stream, StreamExt,
+};
 use std::{
     pin::Pin,
+    sync::Arc,
     sync::Mutex,
     task::{Context, Poll},
-    time::Duration,
-};
-
-use actix_web::{
-    rt::time,
-    web::{Bytes, Data},
-};
-use futures::{
-    channel::mpsc::{channel, Receiver, Sender},
-    Stream, StreamExt,
 };
 
 #[derive(Debug)]
@@ -26,13 +22,8 @@ impl Default for Broadcaster {
 }
 
 impl Broadcaster {
-    pub fn create() -> Data<Mutex<Self>> {
-        // Data ≃ Arc
-        let me = Data::new(Mutex::new(Broadcaster::new()));
-
-        // ping clients every 10 seconds to see if they are alive
-        Broadcaster::spawn_ping(me.clone());
-
+    pub fn create() -> Arc<Mutex<Self>> {
+        let me = Arc::new(Mutex::new(Broadcaster::new()));
         me
     }
 
@@ -42,18 +33,7 @@ impl Broadcaster {
         }
     }
 
-    fn spawn_ping(me: Data<Mutex<Self>>) {
-        let mut interval = time::interval(Duration::from_millis(500));
-        let task = async move {
-            loop {
-                interval.tick().await;
-                let _ = me.lock().map(|mut res| res.remove_stale_clients());
-            }
-        };
-        tokio::spawn(task);
-    }
-
-    fn remove_stale_clients(&mut self) {
+    pub fn remove_stale_clients(&mut self) {
         let mut ok_clients = Vec::new();
         for client in self.clients.iter() {
             let result = client.clone().try_send(Bytes::from("data: ping\n\n"));
@@ -66,7 +46,7 @@ impl Broadcaster {
     }
 
     pub fn new_client(&mut self) -> Client {
-        let (tx, rx) = channel(100);
+        let (tx, rx) = channel(5);
 
         tx.clone()
             .try_send(Bytes::from("data: connected\n\n"))
@@ -77,7 +57,6 @@ impl Broadcaster {
     }
 
     pub fn send(&self, msg: &str) {
-        let msg = unescape::unescape(msg).unwrap();
         let msg = Bytes::from(["data: ", &msg, "\n\n"].concat());
 
         for client in self.clients.iter().filter(|client| !client.is_closed()) {
@@ -90,7 +69,7 @@ impl Broadcaster {
 pub struct Client(Receiver<Bytes>);
 
 impl Stream for Client {
-    type Item = Result<Bytes, actix_web::Error>;
+    type Item = Result<Bytes, TryRecvError>;
 
     fn poll_next(mut self: Pin<&mut Client>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
         self.0.poll_next_unpin(cx).map(|c| Ok(c).transpose())
