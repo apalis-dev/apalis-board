@@ -1,5 +1,5 @@
 [package]
-name = "apalis-board-frontend"
+name = "apalis-board"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,11 +7,10 @@ edition = "2021"
 
 [dependencies]
 hirola = { version = "0.4", features = ["dom"] }
+apalis-core = { version = "0.6", default-features = false }
 web-sys = { version = "0.3", features = ["EventSource"] }
 gloo-net = { version = "0.5" }
-shared = { path = "../shared", package = "apalis-board-shared", default-features = false }
 serde_json = "1"
 console_log = { version = "1", features = ["color"] }
 log = "0.4"
-strum = "0.26"
 serde = "1"

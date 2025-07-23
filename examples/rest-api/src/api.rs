@@ -1,9 +1,9 @@
 use std::{collections::HashSet, fmt::Display};
 
 use actix_web::{web, HttpResponse, Scope};
-use apalis_core::{storage::Storage, task::task_id::TaskId};
+use apalis_board_utils::{Filter, GetJobsResult};
+use apalis_core::{backend::BackendExpose, storage::Storage, task::task_id::TaskId};
 use serde::{de::DeserializeOwned, Serialize};
-use shared::{BackendExt, Filter, GetJobsResult};
 use tokio::sync::RwLock;
 
 pub struct ApiBuilder {
@@ -15,7 +15,7 @@ impl ApiBuilder {
     pub fn add_storage<J, S>(mut self, storage: &S, namespace: &str) -> Self
     where
         J: Serialize + DeserializeOwned + 'static,
-        S: BackendExt<J> + Clone,
+        S: BackendExpose<J> + Clone,
         S: Storage<Job = J>,
         S: 'static + Send,
         S::Context: Serialize,
@@ -49,7 +49,7 @@ impl ApiBuilder {
 
     pub fn new() -> Self {
         Self {
-            scope: Scope::new("backend"),
+            scope: Scope::new("v1"),
             list: HashSet::new(),
         }
     }
@@ -79,11 +79,9 @@ where
 async fn get_jobs<J, S>(storage: web::Data<RwLock<S>>, filter: web::Query<Filter>) -> HttpResponse
 where
     J: Serialize + DeserializeOwned + 'static,
-    S: Storage<Job = J> + BackendExt<J> + Send,
+    S: Storage<Job = J> + BackendExpose<J> + Send,
     S::Request: Serialize,
 {
-    dbg!(&filter);
-    // TODO: fix unwrap
     let stats = storage.read().await.stats().await.unwrap_or_default();
     let res = storage
         .read()
@@ -99,7 +97,7 @@ where
 async fn get_workers<J, S>(storage: web::Data<RwLock<S>>) -> HttpResponse
 where
     J: Serialize + DeserializeOwned + 'static,
-    S: Storage<Job = J> + BackendExt<J> + Clone,
+    S: Storage<Job = J> + BackendExpose<J> + Clone,
 {
     let workers = storage.read().await.list_workers().await;
     match workers {
