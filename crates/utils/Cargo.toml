@@ -1,0 +1,13 @@
+[package]
+name = "apalis-board-utils"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+uuid = { version = "1.8", features = ["v4", "serde"] }
+apalis-core = { version = "0.6" }
+serde = { version = "1", features = ["derive"] }
+futures = "0.3"
+bytes = "1.9.0"
