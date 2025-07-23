@@ -1,5 +1,8 @@
 use std::str::FromStr;
 
+use apalis_core::backend::{Stat, WorkerState};
+use apalis_core::request::State as JobState;
+use apalis_core::worker::WorkerId;
 use gloo_net::http::Request;
 use hirola::dom::app::router::Router;
 use hirola::dom::app::App;
@@ -8,10 +11,26 @@ use hirola::dom::Dom;
 use hirola::prelude::{Suspend, *};
 use home::{queue_card, resolve_json};
 use log::Level;
-use shared::{Filter, GetJobsResult, JobState, Worker};
-use strum::IntoEnumIterator;
-use web_sys::EventSource;
+// use shared::{Filter, GetJobsResult, JobState, Worker};
+
+use serde::{Deserialize, Serialize};
+use web_sys::js_sys::Function;
+use web_sys::wasm_bindgen::prelude::Closure;
+use web_sys::wasm_bindgen::JsCast;
+use web_sys::{EventSource, MessageEvent};
 mod home;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Worker {
+    id: WorkerId,
+    state: WorkerState,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetJobsResult<T> {
+    pub stats: Stat,
+    pub jobs: Vec<T>,
+}
 
 #[derive(Debug, Clone)]
 pub struct State {
@@ -27,13 +46,11 @@ impl State {
 
     async fn list_jobs(
         namespace: String,
-        filter: Filter,
+        page: usize,
+        status: JobState,
     ) -> Result<GetJobsResult<serde_json::Value>, gloo_net::Error> {
         let res = Request::get(&format!("{API_PATH}/{namespace}"))
-            .query([
-                ("page", filter.page.to_string()),
-                ("status", filter.status.to_string()),
-            ])
+            .query([("page", page.to_string()), ("status", status.to_string())])
             .send()
             .await?;
         res.json().await
@@ -47,7 +64,7 @@ impl State {
     }
 }
 
-const API_PATH: &str = "/api/v1/backend";
+const API_PATH: &str = "/api/v1";
 
 fn namespace_page(app: &App<State>) -> Dom {
     html! {
@@ -154,7 +171,7 @@ fn NamespaceContent(router: Router<State>) -> Dom {
                                 {for worker in workers {
                                     html! {
                                         <>
-                                            <Card title={worker.worker_id.to_string()} status="●" />
+                                            <Card title={worker.id.to_string()} status="●" />
                                         </>
                                     }
                                 }}
@@ -175,6 +192,15 @@ fn QueueNav(router: Router<State>) -> Dom {
     let namespace = params.get("namespace").unwrap().clone();
     // let status = params.get("status").cloned();
 
+    let statuses = [
+        JobState::Pending,
+        JobState::Scheduled,
+        JobState::Running,
+        JobState::Done,
+        JobState::Failed,
+        JobState::Killed,
+    ];
+
     html! {
         <div class="flex flex-col items-left mb-4 pt-2">
         <h2 class="text-xl font-bold">{format!("Queue: {namespace}")}</h2>
@@ -193,7 +219,7 @@ fn QueueNav(router: Router<State>) -> Dom {
 
 
 
-                                                        {for status in JobState::iter() {
+                                                        {for status in statuses.iter() {
                                 html! {
                                     <>
                                         <NavItem router={router.clone()} label={status.to_string()} />
@@ -217,7 +243,7 @@ fn NamespaceStatusContent(router: Router<State>) -> Dom {
                 <div class="flex-1 px-4">
                     <QueueNav router={router} />
                     <div class="space-y-1">
-                    {match State::list_jobs(namespace, Filter { page: 1, status:status.unwrap()}).suspend().await {
+                    {match State::list_jobs(namespace, 1 , status.unwrap()).suspend().await {
                         Loading => html! { <div>"Loading..."</div> },
                         Ready(Ok(res)) => {
                             html! {
@@ -305,11 +331,15 @@ fn Card<T: AsRef<str>, S: AsRef<str>>(title: T, status: S) -> Dom {
 fn main() {
     console_log::init_with_level(Level::Debug).unwrap();
     let es = EventSource::new(&format!("{API_PATH}/events")).unwrap();
+    let cb = Closure::wrap(Box::new(move |event: MessageEvent| {
+        log::info!("{:?}", event);
+    }) as Box<dyn FnMut(MessageEvent)>);
+    es.set_onmessage(Some(cb.as_ref().unchecked_ref()));
+    cb.forget();
     let api = State {
         event_source: es,
         namespaces: Default::default(),
     };
-    dbg!(&api.event_source);
     let mut app = App::new(api);
     app.route("/", home::page);
     app.route("/queue/:namespace", namespace_page);
