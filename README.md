@@ -1,6 +1,6 @@
 # <img alt="apalis-board" src="screenshots/logo.svg" width="24px" /> apalis-board
 
-Apalis board contains a nummber of creates useful for building UIs for [apalis](https://github.com/geofmureithi/apalis).
+Apalis board contains a number of crates useful for building UIs for [apalis](https://github.com/geofmureithi/apalis).
 
 It helps you visualize your queues and their jobs.
 You get a beautiful UI for visualizing what's happening with each job in your queues, their status and some actions that will enable you to get the job done.
