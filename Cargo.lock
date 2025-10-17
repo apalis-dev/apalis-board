@@ -457,10 +457,11 @@ checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
 
 [[package]]
 name = "apalis"
-version = "1.0.0-alpha.3"
-source = "git+https://github.com/geofmureithi/apalis.git?branch=chore%2Ftraits-expansion#d9c4b2319f010dda9003ae07b36d724228e8ac3c"
+version = "1.0.0-alpha.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "37f9798c00cd210796b6be718ea9c522e1e8ca1d1fe7c42822047b166f21e69e"
 dependencies = [
- "apalis-core 1.0.0-alpha.3",
+ "apalis-core",
  "futures",
  "pin-project",
  "serde",
@@ -475,7 +476,7 @@ name = "apalis-board"
 version = "1.0.0-alpha.1"
 dependencies = [
  "apalis-board-types",
- "apalis-core 1.0.0-alpha.3",
+ "apalis-core",
  "chrono",
  "console_error_panic_hook",
  "futures",
@@ -498,7 +499,7 @@ dependencies = [
  "actix-web",
  "actix-web-lab",
  "apalis-board-types",
- "apalis-core 1.0.0-alpha.3",
+ "apalis-core",
  "axum",
  "futures",
  "serde",
@@ -512,22 +513,6 @@ name = "apalis-board-types"
 version = "0.1.0"
 dependencies = [
  "serde",
-]
-
-[[package]]
-name = "apalis-core"
-version = "1.0.0-alpha.3"
-source = "git+https://github.com/geofmureithi/apalis.git?branch=chore%2Ftraits-expansion#d9c4b2319f010dda9003ae07b36d724228e8ac3c"
-dependencies = [
- "futures-channel",
- "futures-core",
- "futures-sink",
- "futures-util",
- "pin-project",
- "serde",
- "thiserror 2.0.16",
- "tower-layer",
- "tower-service",
 ]
 
 [[package]]
@@ -553,7 +538,7 @@ dependencies = [
 name = "apalis-sqlite"
 version = "1.0.0-alpha.1"
 dependencies = [
- "apalis-core 1.0.0-alpha.4",
+ "apalis-core",
  "bytes",
  "chrono",
  "futures",
@@ -714,7 +699,7 @@ dependencies = [
  "apalis",
  "apalis-board-api",
  "apalis-board-types",
- "apalis-core 1.0.0-alpha.3",
+ "apalis-core",
  "apalis-sqlite",
  "axum",
  "clap",
@@ -3210,7 +3195,7 @@ dependencies = [
  "apalis",
  "apalis-board-api",
  "apalis-board-types",
- "apalis-core 1.0.0-alpha.3",
+ "apalis-core",
  "apalis-sqlite",
  "clap",
  "env_logger",

@@ -6,13 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-apalis-core = { version = "1.0.0-alpha.3", features = [
-    "serde",
-], git = "https://github.com/geofmureithi/apalis.git", branch = "chore/traits-expansion" }
-apalis = { version = "1.0.0-alpha.3", features = [
-    "limit",
-    "retry",
-], git = "https://github.com/geofmureithi/apalis.git", branch = "chore/traits-expansion" }
+apalis-core = { version = "1.0.0-alpha.4", features = ["serde"] }
+apalis = { version = "1.0.0-alpha.4", features = ["limit", "retry"] }
 apalis-sqlite = { path = "../../../apalis-sqlite", features = [
     "migrate",
     "tokio-comp",
