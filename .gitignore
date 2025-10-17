@@ -1,13 +1,4 @@
-node_modules/
-.DS_Store
-dist
-yarn-error.log
-*.rdb
-website/build
-docker-compose.dockest-generated.yml
-dockest-error.json
-
-
-# Added by cargo
-
 /target
+/node_modules
+/crates/board/dist
+/examples/*/test.db*

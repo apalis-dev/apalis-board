@@ -1,50 +1,50 @@
 # <img alt="apalis-board" src="screenshots/logo.svg" width="24px" /> apalis-board
 
-Apalis board contains a number of crates useful for building UIs for [apalis](https://github.com/geofmureithi/apalis).
+Apalis board contains a number of crates useful for building UIs and apis for [apalis](https://github.com/geofmureithi/apalis) backends.
 
-It helps you visualize your queues and their jobs.
-You get a beautiful UI for visualizing what's happening with each job in your queues, their status and some actions that will enable you to get the job done.
+
+**Key features:**
+- Visualize your queues and jobs in real time
+- Beautiful UI to track job status and progress
+- Perform actions on jobs directly from the dashboard
+- Gain insights into queue health and worker activity
+- Easily integrate with existing apalis-based services
+- Streamline job management and debugging
+
+Get a clear overview of what's happening in your queues and manage jobs efficiently.
 
 ## Screenshots
 
+### Tasks
+
+![Tasks](screenshots/tasks.png)
+
+### Single Task
+
+![Tasks](screenshots/task.png)
+
 ### Workers
+
 ![Workers](screenshots/workers.png)
 
 ### Queues
+
 ![Queues](screenshots/queues.png)
 
-### Jobs
-![Jobs](screenshots/shot.png)
+## Building the frontend
 
-## Crates
-
-### Backend
-
-An extensible `actix` service It handles job scheduling, storage, and task execution.
-
-### Chirp
-
-The chirp crate is the main entry point for the `apalis-chirp` command runner. It configures the application, sets up the necessary components, and starts the server.
-
-### Frontend
-
-Contains a reusable frontend build with `hirola`
-
-### Shared
-
-The shared crate contains common code and utilities that are used across the other crates. This includes data models, configuration handling, and utility functions.
+```sh
+cd crates/board
+trunk build
+```
 
 ## Examples
 
-### Rest API
+- axum-email-service : Basic example that shows how to send emails via smtp using `lettre` and `axum`
+- actix-ntfy-service : Basic example that shows how to publish notifications using `ntfy.sh` and `actix`
 
-The `rest-api` example demonstrates how to use `apalis` and `actix` to create an application to run jobs via HTTP requests.
+## Backlog
 
-
-### Building the Workspace
-
-To build the entire workspace, run the following command:
-
-```sh
-cargo build --release
-```
+- [ ] Complete the TaskPage
+- [ ] Improve the Logs Page
+- [ ] Some more cleanup?
