@@ -1,3 +1,9 @@
 [workspace]
-members = ["crates/board", "crates/utils", "examples/rest-api"]
+members = [
+    "crates/api",
+    "crates/board",
+    "crates/types",
+    "examples/axum-email-service",
+    "examples/actix-ntfy-service",
+]
 resolver = "2"

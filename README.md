@@ -16,23 +16,6 @@ You get a beautiful UI for visualizing what's happening with each job in your qu
 ### Jobs
 ![Jobs](screenshots/shot.png)
 
-## Crates
-
-### Backend
-
-An extensible `actix` service It handles job scheduling, storage, and task execution.
-
-### Chirp
-
-The chirp crate is the main entry point for the `apalis-chirp` command runner. It configures the application, sets up the necessary components, and starts the server.
-
-### Frontend
-
-Contains a reusable frontend build with `hirola`
-
-### Shared
-
-The shared crate contains common code and utilities that are used across the other crates. This includes data models, configuration handling, and utility functions.
 
 ## Examples
 
