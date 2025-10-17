@@ -10,6 +10,7 @@ pub trait RegisterRoute<B, T> {
 
 pub struct ApiBuilder<R> {
     router: R,
+    #[allow(dead_code)]
     root: bool,
 }
 

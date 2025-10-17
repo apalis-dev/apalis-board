@@ -4,13 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-apalis-core = { version = "1.0.0-alpha.3", features = [
-    "serde",
-], git = "https://github.com/geofmureithi/apalis.git", branch = "chore/traits-expansion" }
-apalis = { version = "1.0.0-alpha.3", features = [
-    "limit",
-    "retry",
-], git = "https://github.com/geofmureithi/apalis.git", branch = "chore/traits-expansion" }
+apalis-core = { version = "1.0.0-alpha.4", features = ["serde"] }
+apalis = { version = "1.0.0-alpha.4", features = ["limit", "retry"] }
 apalis-sqlite = { path = "../../../apalis-sqlite", default-features = false, features = [
     "migrate",
     "tokio-comp",
