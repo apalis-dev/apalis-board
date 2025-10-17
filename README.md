@@ -1,6 +1,7 @@
 # <img alt="apalis-board" src="screenshots/logo.svg" width="24px" /> apalis-board
 
-Apalis board provides several crates for building UIs for [apalis](https://github.com/geofmureithi/apalis).
+Apalis board contains a number of crates useful for building UIs and apis for [apalis](https://github.com/geofmureithi/apalis) backends.
+
 
 **Key features:**
 - Visualize your queues and jobs in real time
