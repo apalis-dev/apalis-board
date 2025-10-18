@@ -1,5 +1,11 @@
 # <img alt="apalis-board" src="screenshots/logo.svg" width="24px" /> apalis-board
 
+[![CI](https://github.com/apalis-dev/apalis-board/workflows/All%20Checks/badge.svg)](https://github.com/apalis-dev/apalis-board/actions/workflows/ci.yml)
+[![Rust CI](https://github.com/apalis-dev/apalis-board/workflows/Rust%20CI/badge.svg)](https://github.com/apalis-dev/apalis-board/actions/workflows/rust-ci.yml)
+[![Frontend Build](https://github.com/apalis-dev/apalis-board/workflows/Frontend%20Build/badge.svg)](https://github.com/apalis-dev/apalis-board/actions/workflows/frontend-build.yml)
+[![Security Audit](https://github.com/apalis-dev/apalis-board/workflows/Security%20Audit/badge.svg)](https://github.com/apalis-dev/apalis-board/actions/workflows/security.yml)
+[![codecov](https://codecov.io/gh/apalis-dev/apalis-board/branch/master/graph/badge.svg)](https://codecov.io/gh/apalis-dev/apalis-board)
+
 Apalis board contains a number of crates useful for building UIs and apis for [apalis](https://github.com/geofmureithi/apalis) backends.
 
 
