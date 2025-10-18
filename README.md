@@ -49,6 +49,5 @@ trunk build
 - [ ] Improve the Logs Page
 - [ ] Some more cleanup?
 
-
 ## Acknowledgments
 - https://github.com/felixmosh/bull-board
