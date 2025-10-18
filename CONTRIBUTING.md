@@ -2,6 +2,8 @@
 
 Thank you for your interest in contributing to apalis-board! This document provides guidelines and information about our development process.
 
+For detailed information about our CI/CD infrastructure, see [CI/CD Infrastructure](.github/CI_CD_INFRASTRUCTURE.md).
+
 ## Development Setup
 
 ### Prerequisites
