@@ -48,3 +48,6 @@ trunk build
 - [ ] Complete the TaskPage
 - [ ] Improve the Logs Page
 - [ ] Some more cleanup?
+
+## Acknowledgments
+- https://github.com/felixmosh/bull-board
