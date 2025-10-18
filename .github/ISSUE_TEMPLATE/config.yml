@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: GitHub Discussions
+    url: https://github.com/apalis-dev/apalis-board/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: Apalis Core Repository
+    url: https://github.com/geofmureithi/apalis
+    about: For issues related to the apalis core library

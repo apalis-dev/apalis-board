@@ -1,0 +1,52 @@
+name: Cache Warmup
+
+on:
+  schedule:
+    # Run every Sunday at 00:00 UTC to refresh caches
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+jobs:
+  warmup-rust-cache:
+    name: Warmup Rust Cache
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+          components: rustfmt, clippy
+
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "rust-cache"
+
+      - name: Build all crates
+        run: |
+          cargo check --workspace --all-features
+          cargo build --workspace --all-features
+
+      - name: Build frontend
+        run: |
+          cd crates/board
+          cargo check --all-features
+
+  warmup-npm-cache:
+    name: Warmup NPM Cache
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci

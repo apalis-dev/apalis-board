@@ -44,7 +44,6 @@ pub enum KnownStatistic {
 }
 
 impl KnownStatistic {
-
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::RunningJobs => "RUNNING_JOBS",
@@ -223,12 +222,18 @@ mod tests {
 
     #[test]
     fn test_stat_type() {
-        assert_eq!(KnownStatistic::FailureRate.stat_type(), StatType::Percentage);
+        assert_eq!(
+            KnownStatistic::FailureRate.stat_type(),
+            StatType::Percentage
+        );
         assert_eq!(
             KnownStatistic::AvgJobDurationMins.stat_type(),
             StatType::Decimal
         );
-        assert_eq!(KnownStatistic::MostRecentJob.stat_type(), StatType::Timestamp);
+        assert_eq!(
+            KnownStatistic::MostRecentJob.stat_type(),
+            StatType::Timestamp
+        );
         assert_eq!(KnownStatistic::RunningJobs.stat_type(), StatType::Number);
     }
 }

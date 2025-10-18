@@ -1,0 +1,116 @@
+name: Rust CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "rust-cache"
+
+      - name: Check core crates
+        run: |
+          cargo check -p apalis-board-types
+          cargo check -p apalis-board-api --all-features
+          cargo check -p apalis-board --all-features
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "rust-cache"
+
+      - name: Run tests
+        run: |
+          cargo test -p apalis-board-types
+          cargo test -p apalis-board-api --all-features
+
+  fmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Setup cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "rust-cache"
+
+      - name: Run clippy
+        run: |
+          cargo clippy -p apalis-board-types -- -W clippy::all
+          cargo clippy -p apalis-board-api --all-features -- -W clippy::all
+          cargo clippy -p apalis-board --all-features -- -W clippy::all
+
+  features:
+    name: Feature combinations
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        crate: [apalis-board-api]
+        features:
+          - actix
+          - axum
+          - actix,axum
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "rust-cache"
+
+      - name: Check with features
+        run: cargo check -p ${{ matrix.crate }} --no-default-features --features ${{ matrix.features }}
