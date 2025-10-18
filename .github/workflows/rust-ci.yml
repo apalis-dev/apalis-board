@@ -86,9 +86,9 @@ jobs:
 
       - name: Run clippy
         run: |
-          cargo clippy -p apalis-board-types -- -D warnings
-          cargo clippy -p apalis-board-api --all-features -- -D warnings
-          cargo clippy -p apalis-board --all-features -- -D warnings
+          cargo clippy -p apalis-board-types -- -W clippy::all
+          cargo clippy -p apalis-board-api --all-features -- -W clippy::all
+          cargo clippy -p apalis-board --all-features -- -W clippy::all
 
   features:
     name: Feature combinations
