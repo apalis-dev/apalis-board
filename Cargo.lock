@@ -461,7 +461,7 @@ version = "1.0.0-alpha.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "37f9798c00cd210796b6be718ea9c522e1e8ca1d1fe7c42822047b166f21e69e"
 dependencies = [
- "apalis-core",
+ "apalis-core 1.0.0-alpha.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures",
  "pin-project",
  "serde",
@@ -476,7 +476,7 @@ name = "apalis-board"
 version = "1.0.0-alpha.1"
 dependencies = [
  "apalis-board-types",
- "apalis-core",
+ "apalis-core 1.0.0-alpha.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono",
  "console_error_panic_hook",
  "futures",
@@ -499,7 +499,7 @@ dependencies = [
  "actix-web",
  "actix-web-lab",
  "apalis-board-types",
- "apalis-core",
+ "apalis-core 1.0.0-alpha.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "axum",
  "futures",
  "serde",
@@ -524,6 +524,22 @@ dependencies = [
  "futures-channel",
  "futures-core",
  "futures-sink",
+ "futures-util",
+ "pin-project",
+ "serde",
+ "thiserror 2.0.16",
+ "tower-layer",
+ "tower-service",
+]
+
+[[package]]
+name = "apalis-core"
+version = "1.0.0-alpha.4"
+source = "git+https://github.com/geofmureithi/apalis.git?branch=chore%2Ftraits-expansion#e66d2f8a707f49a050773ea51fb093c22f61b026"
+dependencies = [
+ "futures-channel",
+ "futures-core",
+ "futures-sink",
  "futures-timer",
  "futures-util",
  "pin-project",
@@ -538,7 +554,7 @@ dependencies = [
 name = "apalis-sqlite"
 version = "1.0.0-alpha.1"
 dependencies = [
- "apalis-core",
+ "apalis-core 1.0.0-alpha.4 (git+https://github.com/geofmureithi/apalis.git?branch=chore%2Ftraits-expansion)",
  "bytes",
  "chrono",
  "futures",
@@ -699,7 +715,7 @@ dependencies = [
  "apalis",
  "apalis-board-api",
  "apalis-board-types",
- "apalis-core",
+ "apalis-core 1.0.0-alpha.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "apalis-sqlite",
  "axum",
  "clap",
@@ -3195,7 +3211,7 @@ dependencies = [
  "apalis",
  "apalis-board-api",
  "apalis-board-types",
- "apalis-core",
+ "apalis-core 1.0.0-alpha.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "apalis-sqlite",
  "clap",
  "env_logger",
