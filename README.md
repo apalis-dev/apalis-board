@@ -19,6 +19,32 @@ Apalis board contains a number of crates useful for building UIs and apis for [a
 
 Get a clear overview of what's happening in your queues and manage jobs efficiently.
 
+## Development
+
+### Prerequisites
+
+- Rust (latest stable)
+- Node.js 20+
+- Trunk: `cargo install trunk`
+- wasm32 target: `rustup target add wasm32-unknown-unknown`
+
+### Building
+
+```sh
+# Install Tailwind CSS dependencies
+npm ci
+
+# Build the frontend
+cd crates/board
+trunk build
+
+# Build the backend crates
+cd ../..
+cargo build --workspace
+```
+
+For detailed development instructions, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Screenshots
 
 ### Tasks
@@ -46,8 +72,14 @@ trunk build
 
 ## Examples
 
-- axum-email-service : Basic example that shows how to send emails via smtp using `lettre` and `axum`
-- actix-ntfy-service : Basic example that shows how to publish notifications using `ntfy.sh` and `actix`
+- **axum-email-service**: Basic example showing how to send emails via SMTP using `lettre` and `axum`
+- **actix-ntfy-service**: Basic example showing how to publish notifications using `ntfy.sh` and `actix`
+
+Note: Examples depend on external repositories and are not part of the main workspace build.
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## Backlog
 
