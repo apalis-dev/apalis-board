@@ -1,0 +1,31 @@
+name: Tailwind CSS Check
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  
+jobs:
+  check-deps:
+    name: Check Tailwind CSS Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for outdated dependencies
+        run: npm outdated || true
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=moderate || true
