@@ -1,5 +1,5 @@
 use apalis_board_types::LogEntry;
-use futures::StreamExt;
+use chrono::{DateTime, Local, Utc};
 use leptos::{prelude::*, reactive::spawn_local};
 use serde::{Deserialize, Serialize};
 
@@ -66,5 +66,47 @@ pub fn create_sse_resource(url: &str) -> SseProvider {
     std::mem::forget(source);
     SseProvider { event_source: data }
 }
+
+pub fn resolve_timestamp(value: Signal<u64>) -> impl Fn() -> String {
+    let relative_time = move || {
+        let timestamp = || value.get();
+        let now = Utc::now().timestamp() as u64;
+
+        match timestamp().cmp(&now) {
+            std::cmp::Ordering::Greater => {
+                let future_diff = timestamp() - now;
+                match future_diff {
+                    0..=59 => "in a few seconds".to_string(),
+                    60..=3599 => format!("in {} minutes", future_diff / 60),
+                    3600..=86399 => format!("in {} hours", future_diff / 3600),
+                    86400..=2_592_000 => format!("in {} days", future_diff / 86400),
+                    _ => {
+                        let datetime = DateTime::<Utc>::from_timestamp(timestamp() as i64, 0)
+                            .expect("Invalid timestamp");
+                        let local: DateTime<Local> = datetime.into();
+                        format!("on {}", local.format("%B %d, %Y"))
+                    }
+                }
+            }
+            _ => {
+                let diff = now.saturating_sub(timestamp());
+                match diff {
+                    0..=59 => "just now".to_string(),
+                    60..=3599 => format!("{} minutes ago", diff / 60),
+                    3600..=86399 => format!("{} hours ago", diff / 3600),
+                    86400..=2_592_000 => format!("{} days ago", diff / 86400),
+                    _ => {
+                        let datetime = DateTime::<Utc>::from_timestamp(timestamp() as i64, 0)
+                            .expect("Invalid timestamp");
+                        let local: DateTime<Local> = datetime.into();
+                        local.format("%B %d, %Y").to_string()
+                    }
+                }
+            }
+        }
+    };
+    relative_time
+}
+
 
 pub type RawTask = apalis_core::task::Task<serde_json::Value, serde_json::Value, String>;

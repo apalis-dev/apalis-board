@@ -1,4 +1,6 @@
 /target
 /node_modules
 /crates/board/dist
-/examples/*/test.db*
+**/test.db*
+Cargo.lock
+.env

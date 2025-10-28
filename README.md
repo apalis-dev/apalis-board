@@ -2,8 +2,8 @@
 
 Apalis board contains a number of crates useful for building UIs and apis for [apalis](https://github.com/geofmureithi/apalis) backends.
 
-
 **Key features:**
+
 - Visualize your queues and jobs in real time
 - Beautiful UI to track job status and progress
 - Perform actions on jobs directly from the dashboard
@@ -12,6 +12,27 @@ Apalis board contains a number of crates useful for building UIs and apis for [a
 - Streamline job management and debugging
 
 Get a clear overview of what's happening in your queues and manage jobs efficiently.
+
+## Crates
+
+- `apalis-board-types`: Default types used around
+- `apalis-board-api`: Provides api utilities for `axum` and `actix`
+- `apalis-board`: Provides the UI interface written in `leptos`
+
+## Usage
+
+Here are the basics of setting up the board:
+```rs
+App::new()
+    .app_data(web::Data::new(broadcaster)) // Pass in the broadcaster for realtime logs
+    .service(
+        ApiBuilder::new(Scope::new("/api/v1")) // Setup the mount
+            .register(notification_store) // Add backends
+            .register(email_store)
+            .build(), // Build the routes
+    )
+    .service(ServeApp::new()) // Serve the frontend
+```
 
 ## Screenshots
 
@@ -50,4 +71,5 @@ trunk build
 - [ ] Some more cleanup?
 
 ## Acknowledgments
+
 - https://github.com/felixmosh/bull-board

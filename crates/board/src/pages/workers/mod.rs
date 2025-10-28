@@ -10,6 +10,8 @@ pub mod capability;
 pub mod index;
 pub mod provider;
 
+use crate::components::RelativeTimeRenderer;
+
 #[derive(TableRow, Serialize, Deserialize, Clone, Debug)]
 #[table(classes_provider = "TailwindClassesPreset")]
 pub struct Worker {
@@ -18,8 +20,10 @@ pub struct Worker {
     /// Backend of the worker
     pub backend: String,
     /// Timestamp when the worker was started
+     #[table(renderer = "RelativeTimeRenderer")]
     pub started_at: u64,
     /// Timestamp of the last heartbeat received from the worker
+     #[table(renderer = "RelativeTimeRenderer")]
     pub last_heartbeat: u64,
     /// Service name the worker is associated with
     #[table(renderer = "ServiceCellRenderer")]

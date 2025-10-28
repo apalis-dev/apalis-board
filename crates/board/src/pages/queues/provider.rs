@@ -1,5 +1,4 @@
-use leptos_struct_table::{ColumnSort, PaginatedTableDataProvider};
-use std::collections::VecDeque;
+use leptos_struct_table::PaginatedTableDataProvider;
 
 use crate::{api::ApiClient, pages::queues::Queue};
 

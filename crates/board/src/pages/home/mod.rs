@@ -5,10 +5,7 @@ use std::{
 
 use apalis_core::backend::{QueueInfo, Statistic};
 use gloo_net::http::Request;
-use leptos::{
-    prelude::*,
-    reactive::{spawn, spawn_local},
-};
+use leptos::{prelude::*, reactive::spawn_local};
 use leptos_router::components::A;
 use serde::Serialize;
 
@@ -84,12 +81,12 @@ pub fn Home() -> impl IntoView {
                                         {stats
                                             .into_iter()
                                             .map(|stat| {
-                                                let extra_info = match stat.title.as_str() {
+                                                let _extra_info = match stat.title.as_str() {
                                                     "Success rate" => Some(format!("{}%", stat.value)),
                                                     "Processed" => Some(format!("{} total", stat.value)),
                                                     _ => None,
                                                 };
-                                                let extra_class = match stat.title.as_str() {
+                                                let _extra_class = match stat.title.as_str() {
                                                     "Success rate" if stat.value.parse::<f64>().unwrap_or(0.0)
                                                         < 80.0 => Some("text-red-500".to_owned()),
                                                     "Success rate" if stat.value.parse::<f64>().unwrap_or(0.0)

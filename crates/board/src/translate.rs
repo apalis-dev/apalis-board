@@ -128,7 +128,7 @@ impl KnownStatistic {
             Self::DbPageSize => t!(i18n, DB_PAGE_SIZE).into_any(),
             Self::DbPageCount => t!(i18n, DB_PAGE_COUNT).into_any(),
             Self::DbSize => t!(i18n, DB_SIZE).into_any(),
-            _ => self.as_str().into_view().into_any(),
+            // _ => self.as_str().into_view().into_any(),
         }
     }
 }

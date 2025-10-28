@@ -1,20 +1,21 @@
 use std::{marker::PhantomData, str::FromStr};
 
 use actix_web::{
-    HttpResponse, Responder, Scope,
+    HttpRequest, HttpResponse, HttpResponseBuilder, Responder, Scope,
+    dev::HttpServiceFactory,
+    http::{StatusCode, header},
     web::{self, Data, Json},
 };
 use apalis_core::backend::{
-    self, Backend, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers,
-    Metrics, TaskSink, codec::Codec, queue,
+    Backend, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers,
+    Metrics, TaskSink, codec::Codec,
 };
 use serde::{Serialize, de::DeserializeOwned};
 use tokio::sync::RwLock;
 
 use crate::{
-    builder::Builder,
     fetch_queues,
-    framework::{ApiBuilder, RegisterRoute},
+    framework::{ApiBuilder, RegisterRoute, ServeApp},
     get_all_tasks, get_all_workers, get_task_by_id, get_tasks, get_workers, overview, push_task,
     stats_by_queue,
 };
@@ -249,6 +250,45 @@ where
             router: scope,
             root: false,
         }
+    }
+}
+
+impl ServeApp {
+    fn serve_file(path: &str) -> HttpResponse {
+        let mut file = Self::get_file(path);
+        if file.is_none() {
+            // Try fallback to index.html for unknown routes
+            file = Self::get_file("index.html");
+        }
+
+        match file {
+            Some(f) => {
+                let path_str = f.path().to_str().unwrap_or("");
+                let mut builder = HttpResponse::Ok();
+                let mut builder =
+                    builder.insert_header((header::CONTENT_TYPE, Self::content_type(path_str)));
+
+                if let Some(cache) = Self::cache_control(path_str) {
+                    builder = builder.insert_header((header::CACHE_CONTROL, cache));
+                }
+
+                builder.body(f.contents().to_vec())
+            }
+            None => HttpResponseBuilder::new(StatusCode::NOT_FOUND).finish(),
+        }
+    }
+}
+
+impl HttpServiceFactory for ServeApp {
+    fn register(self, config: &mut actix_web::dev::AppService) {
+        let resource = actix_web::Resource::new("/{tail:.*}").route(actix_web::web::get().to(
+            move |req: HttpRequest| async move {
+                let path = req.match_info().query("tail");
+                let response = Self::serve_file(path);
+                response
+            },
+        ));
+        resource.register(config);
     }
 }
 

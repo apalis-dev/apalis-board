@@ -1,4 +1,6 @@
 use crate::components::tailwind::TailwindClassesPreset;
+use crate::components::RelativeTimeRenderer;
+use crate::resolve_timestamp;
 use apalis_core::task::status::Status;
 use chrono::{DateTime, Local, Utc};
 use leptos::component;
@@ -36,55 +38,6 @@ pub struct Task {
     /// The task specific data provided by the backend
     #[table(renderer = "ContextCellRenderer")]
     pub meta: Value,
-}
-
-#[allow(unused_variables)]
-#[component]
-pub fn RelativeTimeRenderer(
-    class: String,
-    value: Signal<u64>,
-    row: RwSignal<Task>,
-    index: usize,
-) -> impl IntoView {
-    let relative_time = move || {
-        let timestamp = || value.get();
-        let now = Utc::now().timestamp() as u64;
-
-        match timestamp().cmp(&now) {
-            std::cmp::Ordering::Greater => {
-                let future_diff = timestamp() - now;
-                match future_diff {
-                    0..=59 => "in a few seconds".to_string(),
-                    60..=3599 => format!("in {} minutes", future_diff / 60),
-                    3600..=86399 => format!("in {} hours", future_diff / 3600),
-                    86400..=2_592_000 => format!("in {} days", future_diff / 86400),
-                    _ => {
-                        let datetime = DateTime::<Utc>::from_timestamp(timestamp() as i64, 0)
-                            .expect("Invalid timestamp");
-                        let local: DateTime<Local> = datetime.into();
-                        format!("on {}", local.format("%B %d, %Y"))
-                    }
-                }
-            }
-            _ => {
-                let diff = now.saturating_sub(timestamp());
-                match diff {
-                    0..=59 => "just now".to_string(),
-                    60..=3599 => format!("{} minutes ago", diff / 60),
-                    3600..=86399 => format!("{} hours ago", diff / 3600),
-                    86400..=2_592_000 => format!("{} days ago", diff / 86400),
-                    _ => {
-                        let datetime = DateTime::<Utc>::from_timestamp(timestamp() as i64, 0)
-                            .expect("Invalid timestamp");
-                        let local: DateTime<Local> = datetime.into();
-                        local.format("%B %d, %Y").to_string()
-                    }
-                }
-            }
-        }
-    };
-
-    view! { <td class=class>{relative_time}</td> }
 }
 
 #[allow(unused_variables)]
@@ -348,6 +301,131 @@ impl MetaKey {
                         </span>
                     </div>
                 </div>
+            }.into_any(),
+            _ => {
+                view! { <></> };
+                ().into_any()
+            },
+        }
+    }
+    fn render_full(self) -> impl IntoView {
+        match self {
+            MetaKey::Queue(ns) => view! {
+                <span class="inline-flex items-center gap-2 font-mono text-xs px-2 py-1 rounded-md bg-charcoal-700">
+                    <span class="w-4 h-4 flex items-center justify-center rounded bg-charcoal-900 text-white text-xxs font-bold">
+                        "ns"
+                    </span>
+                    {ns}
+                </span>
+            }.into_any(),
+            MetaKey::Priority(p) => view! {
+                <div class="flex items-center gap-1 px-1 py-0.5 rounded-sm border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 relative">
+                    <div class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs bg-gray-100 text-gray-800 rounded-md dark:bg-neutral-500/20 dark:text-neutral-400">
+                        <span class="inline-flex items-center gap-2 font-mono text-xs px-2 py-1 rounded-md bg-charcoal-700">{p}</span>
+                        <span class="flex-shrink-0" style:color="white">
+                            <svg
+                                class="h-5 w-5"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-arrow-up10-icon lucide-arrow-up-1-0"
+                            >
+                                <path d="m3 8 4-4 4 4" />
+                                <path d="M7 4v16" />
+                                <path d="M17 10V4h-2" />
+                                <path d="M15 10h4" />
+                                <rect x="15" y="14" width="4" height="6" ry="2" />
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+            }.into_any(),
+            MetaKey::DoneAt(ts) =>  view! {
+                <div class="flex items-center gap-1 px-1 py-0.5 rounded-sm border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 relative">
+                        <span class="inline-flex items-center gap-2 font-mono text-xs px-2 py-1 rounded-md bg-charcoal-700">
+                            Done at: {ts}
+                        </span>
+                        <span class="flex-shrink-0" style:color="white">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-alarm-clock-check-icon lucide-alarm-clock-check"
+                            >
+                                <circle cx="12" cy="13" r="8" />
+                                <path d="M5 3 2 6" />
+                                <path d="m22 6-3-3" />
+                                <path d="M6.38 18.7 4 21" />
+                                <path d="M17.64 18.67 20 21" />
+                                <path d="m9 13 2 2 4-4" />
+                            </svg>
+                        </span>
+                    </div>
+            }.into_any(),
+            MetaKey::LastResult(res) => view! {
+                <div class="flex items-center gap-1 px-1 py-0.5 rounded-sm border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 relative">
+                        <span class="inline-flex items-center gap-2 font-mono text-xs px-2 py-1 rounded-md bg-charcoal-700">
+                            Last result:
+                            <pre>{serde_json::to_string_pretty(&res).unwrap_or_default()}</pre>
+                        </span>
+                        <span class="flex-shrink-0" style:color="white">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-4 h-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-shapes-icon lucide-shapes"
+                            >
+                                <path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z" />
+                                <rect x="3" y="14" width="7" height="7" rx="1" />
+                                <circle cx="17.5" cy="17.5" r="3.5" />
+                            </svg>
+                        </span>
+                    </div>
+            }.into_any(),
+            MetaKey::LockBy(by) => view! {
+                <span class="inline-flex items-center gap-2 font-mono text-xs px-2 py-1 rounded-md bg-charcoal-700">
+                    <span class="w-4 h-4 flex items-center justify-center rounded bg-charcoal-900 text-white text-xxs font-bold">
+                        "w"
+                    </span>
+                    {by}
+                </span>
+            }.into_any(),
+            MetaKey::LockAt(at) => view! {
+                <div class="flex items-center gap-1 px-1 py-0.5 rounded-sm border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 relative">
+                        <span class="inline-flex items-center gap-2 font-mono text-xs px-2 py-1 rounded-md bg-charcoal-700">
+                            Lock at: {at}
+                        </span>
+                        <span class="flex-shrink-0" style:color="white">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-4 h-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-lock-icon lucide-lock"
+                            >
+                                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                        </span>
+                    </div>
             }.into_any(),
             _ => {
                 view! { <></> };
