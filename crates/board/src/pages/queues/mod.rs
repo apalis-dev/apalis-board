@@ -5,6 +5,7 @@ use leptos::component;
 use leptos::prelude::*;
 use leptos_struct_table::{EventHandler, TableRow};
 use serde::{Deserialize, Serialize};
+use leptos_router::components::A;
 
 pub mod index;
 pub mod provider;
@@ -79,12 +80,14 @@ pub fn TitleRenderer(
 ) -> impl IntoView {
     view! {
         <td class=class>
-            <div class="text-white flex items-center gap-1 m-1">
-                <div class="border border-gray-600 rounded-sm p-1 flex items-center justify-center">
-                    {queues_icon()}
+            <A href=move || format!("/queues/{}", value.get()) attr:class="flex items-center gap-2">
+                <div class="text-white flex items-center gap-1 m-1">
+                    <div class="border border-gray-600 rounded-sm p-1 flex items-center justify-center">
+                        {queues_icon()}
+                    </div>
+                    <span class="ms-1">{move || value.get()}</span>
                 </div>
-                <span class="ms-1">{move || value.get()}</span>
-            </div>
+            </A>
         </td>
     }
 }

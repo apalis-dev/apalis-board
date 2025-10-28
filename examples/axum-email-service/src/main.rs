@@ -1,32 +1,29 @@
-use std::{f64::consts::E, sync::Arc, time::Duration};
+use std::time::Duration;
 
 use apalis::{
     layers::{WorkerBuilderExt, retry::RetryPolicy},
     prelude::{
-        AbortError, BackoffConfig, BoxDynError, Codec, Data, IntervalStrategy, StrategyBuilder,
-        WorkerBuilder,
+        BackoffConfig, BoxDynError, Codec, Data, IntervalStrategy, StrategyBuilder, WorkerBuilder,
     },
 };
 use apalis_board_api::{
-    framework::{ApiBuilder, RegisterRoute},
+    framework::{ApiBuilder, RegisterRoute, ServeApp},
     logger::Subscriber,
     sse::Broadcaster,
 };
-use apalis_sqlite::{SqlitePool, SqliteStorage};
-use axum::{Extension, Router, ServiceExt, routing::get_service};
+use apalis_postgres::PostgresStorage;
+use axum::{Extension, Router, ServiceExt};
 use clap::Parser;
 use futures::{FutureExt, TryFutureExt};
 use lettre::{
-    AsyncSmtpTransport, AsyncTransport, Message, SmtpTransport, Tokio1Executor,
-    transport::smtp::authentication::{Credentials, Mechanism},
+    AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
+    transport::smtp::authentication::Mechanism,
 };
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
-use tokio::{net::TcpStream, signal::ctrl_c, sync::RwLock};
+use sqlx::PgPool;
+use tokio::signal::ctrl_c;
 use tower::Layer;
-use tower_http::{
-    normalize_path::NormalizePathLayer,
-    services::{ServeDir, ServeFile},
-};
+use tower_http::normalize_path::NormalizePathLayer;
 use tracing_subscriber::{
     EnvFilter, Layer as TraceLayer, layer::SubscriberExt, util::SubscriberInitExt,
 };
@@ -104,10 +101,10 @@ async fn main() {
                 .with_filter(EnvFilter::builder().parse(&args.log_level).unwrap()),
         );
     tracer.try_init().unwrap();
-    let pool = SqlitePool::connect(&args.database_url).await.unwrap();
-    SqliteStorage::setup(&pool).await.unwrap();
+    let pool = PgPool::connect(&args.database_url).await.unwrap();
+    PostgresStorage::setup(&pool).await.unwrap();
 
-    let config = apalis_sqlite::Config::new(&args.queue).with_poll_interval(
+    let config = apalis_sql::config::Config::new(&args.queue).with_poll_interval(
         StrategyBuilder::new()
             .apply(
                 IntervalStrategy::new(Duration::from_secs(1))
@@ -115,7 +112,7 @@ async fn main() {
             )
             .build(),
     );
-    let email_store = SqliteStorage::new_with_codec_callback::<MessagePack>(&pool, &config);
+    let email_store = PostgresStorage::new_with_notify(&pool, &config).with_codec::<MessagePack>();
 
     let email_worker = WorkerBuilder::new("lettre-email-worker")
         .backend(email_store.clone())
@@ -134,10 +131,7 @@ async fn main() {
         let layer = NormalizePathLayer::trim_trailing_slash();
         let router = Router::new()
             .nest("/api/v1", api)
-            .fallback_service(
-                ServeDir::new("../../crates/board/dist/")
-                    .fallback(ServeFile::new("../../crates/board/dist/index.html")),
-            )
+            .fallback_service(ServeApp::new())
             .layer(Extension(broadcaster.clone()));
 
         let listener = tokio::net::TcpListener::bind(&args.api_host).await.unwrap();

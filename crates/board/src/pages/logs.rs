@@ -5,13 +5,15 @@ use crate::{pages::tasks::single::LogViewer, use_sse_provider};
 
 #[component]
 pub fn LogsPage() -> impl IntoView {
-    let logs = RwSignal::new(vec![]);
+    let logs = RwSignal::new(Vec::new());
 
     let sse = use_sse_provider();
 
     spawn_local(async move {
         let ev = sse.event_source();
-        let mut stream = ev.to_stream().boxed_local();
+        let mut stream = ev
+            .to_stream()
+            .boxed_local();
         while let Some(next) = stream.next().await {
             logs.update(|list| {
                 list.push(next);

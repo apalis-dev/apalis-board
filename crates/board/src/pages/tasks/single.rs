@@ -18,12 +18,12 @@ pub fn SingleTaskView(
 
     let keys = [
         "queue",
+        "last_result",
         "priority",
         "lock_by",
         "lock_at",
         "max_attempts",
         "done_at",
-        "last_result",
     ];
     let ctx = task.parts.ctx.clone();
     let items = move || {
@@ -32,9 +32,9 @@ pub fn SingleTaskView(
                 let mut res = {
                     obj.iter()
                         .filter_map(|(k, v)| {
-                            if !keys.contains(&k.as_str()) {
-                                return None;
-                            }
+                            // if !keys.contains(&k.as_str()) {
+                            //     return None;
+                            // }
                             MetaKey::from_key_value(k, v)
                         })
                         .collect::<Vec<_>>()
@@ -104,7 +104,7 @@ pub fn SingleTaskView(
                                                     {val.key().to_string()}
                                                 </span>
                                                 <span class=" text-charcoal-100 dark:text-charcoal-100 text-right max-w-md truncate">
-                                                    {val.render()}
+                                                    {val.render_full()}
                                                 </span>
                                             </div>
                                         }
@@ -201,7 +201,7 @@ pub fn TaskPage() -> impl IntoView {
 }
 
 #[component]
-pub fn LogViewer(items: RwSignal<Vec<LogEntry>>) -> impl IntoView {
+pub fn LogViewer(items: RwSignal<Vec<LogEntry>>, #[prop(optional)] show_id: bool) -> impl IntoView {
     let (search_term, set_search_term) = signal(String::new());
     let (current_filter, set_current_filter) = signal(None::<LogLevel>);
 
@@ -329,9 +329,10 @@ pub fn LogViewer(items: RwSignal<Vec<LogEntry>>) -> impl IntoView {
                             )
                         }
                         children=move |log: LogEntry| {
-                            let attempt = log.span.map(|s| s.attempt).unwrap_or(0);
+                            let attempt = log.span.as_ref().map(|s| s.attempt).unwrap_or(0);
                             view! {
                                 <div class="hover:bg-charcoal-900 px-1 -mx-1 rounded">
+                                    <span class="text-charcoal-500 mx-2">"["{log.span.map(|s| s.task_id).unwrap_or_default()}"]"</span>
                                     <span class="text-charcoal-500">{log.timestamp}</span>
                                     <span class=format!(
                                         "{} mx-2",
@@ -370,17 +371,6 @@ fn log_level_symbol(level: &LogLevel) -> &'static str {
         LogLevel::Error => "✗",
         LogLevel::Debug => "●",
         LogLevel::Trace => "◆",
-    }
-}
-
-fn log_level_as_str(level: &LogLevel) -> &'static str {
-    match level {
-        LogLevel::Info => "info",
-        LogLevel::Success => "success",
-        LogLevel::Warn => "warning",
-        LogLevel::Error => "error",
-        LogLevel::Debug => "debug",
-        LogLevel::Trace => "trace",
     }
 }
 

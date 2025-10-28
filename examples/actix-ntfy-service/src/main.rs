@@ -1,30 +1,21 @@
-use actix::clock::sleep;
-use actix_files::{Files, NamedFile};
-use actix_web::dev::{fn_service, ServiceRequest, ServiceResponse};
 use actix_web::Scope;
 use actix_web::{rt::signal::ctrl_c, web, App, HttpServer};
 use apalis::layers::retry::RetryPolicy;
 use apalis::prelude::*;
-use apalis_board_api::builder::Builder;
-use apalis_board_api::framework::{actix::*, ApiBuilder, RegisterRoute};
+use apalis_board_api::framework::{ApiBuilder, RegisterRoute, ServeApp};
 use apalis_board_api::logger::Subscriber;
 use apalis_board_api::sse::Broadcaster;
-use apalis_sqlite::{SqliteContext, SqlitePool, SqliteStorage};
+use apalis_sqlite::{SqlitePool, SqliteStorage};
 use clap::Parser;
+use futures::{future, TryFutureExt};
 use reqwest::Client;
-use std::fmt::Debug;
+use std::time::Duration;
 use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{EnvFilter, Layer};
 
-use futures::{future, TryFutureExt};
-use log::info;
-use serde::{Deserialize, Serialize};
-use std::time::Duration;
-
-use tracing_subscriber::util::SubscriberInitExt;
-
 use crate::cli::Args;
-use crate::notification::{send_notification, Notification};
+use crate::notification::send_notification;
 
 mod cli;
 mod notification;
@@ -83,18 +74,7 @@ async fn main() -> Result<(), BoxDynError> {
                         .register(notification_store.clone())
                         .build(),
                 )
-                .service(
-                    Files::new("/", "../../crates/board/dist/")
-                        .prefer_utf8(true)
-                        .index_file("index.html")
-                        .default_handler(fn_service(|req: ServiceRequest| async {
-                            let (req, _) = req.into_parts();
-                            let file =
-                                NamedFile::open_async("../../crates/board/dist/index.html").await?;
-                            let res = file.into_response(&req);
-                            Ok(ServiceResponse::new(req, res))
-                        })),
-                )
+                .service(ServeApp::new())
         })
         .bind(&args.host)?
         .run()

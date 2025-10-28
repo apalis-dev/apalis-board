@@ -5,12 +5,13 @@ edition = "2024"
 
 [dependencies]
 apalis-core = { version = "1.0.0-alpha.4", features = ["serde"] }
-apalis-board-types = { path = "../types" }
+apalis-board-types = { path = "../types", version = "1.0.0-alpha.1" }
 serde = { version = "1", features = ["derive"] }
 futures = "0.3"
 tokio = { version = "1", features = ["full"] }
 serde_json = "1"
 tracing-subscriber = { version = "0.3.11", features = ["json", "env-filter"] }
+include_dir = "0.7.4"
 
 actix-web = { version = "4.5.1", optional = true }
 actix-web-lab = { version = "0.24.3", optional = true }

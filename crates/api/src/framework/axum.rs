@@ -1,24 +1,31 @@
 use apalis_board_types::ApiError;
 use apalis_core::{
     backend::{
-        self, Backend, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks,
-        ListWorkers, Metrics, QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec, queue,
+        Backend, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers,
+        Metrics, QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec,
     },
+    layers::Service,
     task::Task,
 };
 use axum::{
     Extension, Json, Router,
-    extract::{FromRequest, Path, Query, Request, rejection::JsonRejection},
-    handler::Handler,
-    http::StatusCode,
+    body::Body,
+    extract::{Path, Query, rejection::JsonRejection},
+    http::{Request, StatusCode},
     response::{IntoResponse, Response},
     routing::{get, put},
 };
+
 use serde::{Serialize, de::DeserializeOwned};
-use std::{f64::consts::E, marker::PhantomData, str::FromStr, sync::Arc};
+use std::{
+    convert::Infallible,
+    str::FromStr,
+    sync::Arc,
+    task::{Context, Poll},
+};
 use tokio::sync::RwLock;
 
-use crate::framework::{ApiBuilder, RegisterRoute};
+use crate::framework::{ApiBuilder, RegisterRoute, ServeApp};
 
 #[derive(Debug)]
 pub enum AppError {
@@ -267,6 +274,48 @@ where
             router: scope,
             root: false,
         }
+    }
+}
+
+impl Service<Request<Body>> for ServeApp {
+    type Response = Response<Body>;
+    type Error = Infallible;
+    type Future = std::future::Ready<Result<Self::Response, Self::Error>>;
+
+    fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        Poll::Ready(Ok(()))
+    }
+
+    fn call(&mut self, req: Request<Body>) -> Self::Future {
+        let path = req.uri().path();
+        let mut file = Self::get_file(path);
+
+        // If no matching file, fall back to index.html
+        if file.is_none() {
+            file = Self::get_file("index.html");
+        }
+
+        let response = match file {
+            Some(file) => {
+                let path_str = file.path().to_str().unwrap_or("");
+                let content_type = Self::content_type(path_str);
+                let mut builder = Response::builder()
+                    .status(StatusCode::OK)
+                    .header("Content-Type", content_type);
+
+                if let Some(cache) = Self::cache_control(path_str) {
+                    builder = builder.header("Cache-Control", cache);
+                }
+
+                builder.body(file.contents().to_vec().into()).unwrap()
+            }
+            None => Response::builder()
+                .status(StatusCode::NOT_FOUND)
+                .body(Vec::new().into())
+                .unwrap(),
+        };
+
+        std::future::ready(Ok(response))
     }
 }
 
