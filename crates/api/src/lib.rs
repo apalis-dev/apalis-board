@@ -1,3 +1,4 @@
+#![doc = include_str!("../../../README.md")]
 use std::{str::FromStr, sync::Arc};
 
 use apalis_board_types::ApiError;

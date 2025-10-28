@@ -1,3 +1,4 @@
+#![doc = include_str!("../../../README.md")]
 use apalis_board_types::LogEntry;
 use chrono::{DateTime, Local, Utc};
 use leptos::{prelude::*, reactive::spawn_local};

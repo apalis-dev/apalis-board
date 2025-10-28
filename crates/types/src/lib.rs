@@ -1,17 +1,5 @@
+#![doc = include_str!("../../../README.md")]
 use serde::{Deserialize, Serialize};
-use std::time::Duration;
-
-#[derive(Debug, Serialize, Deserialize)]
-pub enum Layer {
-    Retry { retries: u64 },
-    Timeout { duration: Duration },
-    LoadShed,
-    RateLimit { num: u64, per: Duration },
-    ConcurrencyLimit { max: usize },
-    Buffer { bound: usize },
-    Sentry { dsn: String },
-    Prometheus,
-}
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
