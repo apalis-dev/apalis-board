@@ -1,0 +1,51 @@
+# Automatically label PRs based on changed files
+# https://github.com/actions/labeler
+
+# Rust code changes
+rust:
+  - '**/*.rs'
+  - '**/Cargo.toml'
+  - '**/Cargo.lock'
+
+# Frontend changes
+frontend:
+  - 'crates/board/**/*'
+  - '**/*.html'
+  - '**/*.css'
+
+# API changes
+api:
+  - 'crates/api/**/*'
+
+# Types changes
+types:
+  - 'crates/types/**/*'
+
+# Documentation changes
+documentation:
+  - '**/*.md'
+  - '**/docs/**/*'
+
+# CI/CD changes
+ci/cd:
+  - '.github/**/*'
+  - '**/*.yml'
+  - '**/*.yaml'
+
+# Dependencies
+dependencies:
+  - '**/Cargo.toml'
+  - '**/Cargo.lock'
+  - 'package.json'
+  - 'package-lock.json'
+
+# Configuration
+configuration:
+  - '**/*.toml'
+  - '**/*.json'
+  - '.gitignore'
+  - '.gitattributes'
+
+# Examples
+examples:
+  - 'examples/**/*'

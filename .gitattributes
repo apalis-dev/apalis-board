@@ -1,0 +1,32 @@
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# Rust files
+*.rs text diff=rust
+
+# Web files
+*.js text
+*.json text
+*.html text
+*.css text
+*.md text
+
+# Configuration files
+*.toml text
+*.yml text
+*.yaml text
+
+# Shell scripts
+*.sh text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.wasm binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
