@@ -3,8 +3,8 @@ use std::{str::FromStr, sync::Arc};
 use apalis_board_types::ApiError;
 use apalis_core::{
     backend::{
-        Backend, FetchById, Filter, ListQueues, ListTasks, ListWorkers, Metrics, QueueInfo,
-        RunningWorker, Statistic, TaskSink, codec::Codec, ListAllTasks
+        Backend, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers, Metrics,
+        QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec,
     },
     task::{Task, builder::TaskBuilder, task_id::TaskId},
 };

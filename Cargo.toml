@@ -3,7 +3,7 @@ members = [
     "crates/api",
     "crates/board",
     "crates/types",
-    "examples/axum-email-service",
-    "examples/actix-ntfy-service",
 ]
+# Examples are excluded because they depend on external crates not in this repo
+# examples/axum-email-service and examples/actix-ntfy-service
 resolver = "2"

@@ -1,4 +1,4 @@
-use apalis_core::backend::{codec::Codec, Backend, FetchById, ListTasks, TaskSink};
+use apalis_core::backend::{Backend, FetchById, ListTasks, TaskSink, codec::Codec};
 use serde::{Serialize, de::DeserializeOwned};
 
 pub trait Builder<B, Compact> {

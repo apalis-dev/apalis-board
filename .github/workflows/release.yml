@@ -1,0 +1,127 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - name: Get version from tag
+        id: get_version
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+  build-frontend:
+    name: Build and Upload Frontend
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install trunk
+        run: |
+          wget -qO- https://github.com/trunk-rs/trunk/releases/download/v0.21.5/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
+          sudo mv trunk /usr/local/bin/
+
+      - name: Setup cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates/board
+          shared-key: "frontend-cache"
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: |
+          cd crates/board
+          trunk build --release
+
+      - name: Create frontend archive
+        run: |
+          cd crates/board
+          tar -czf ../../frontend-dist.tar.gz dist/
+
+      - name: Upload frontend artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./frontend-dist.tar.gz
+          asset_name: frontend-dist-v${{ needs.create-release.outputs.version }}.tar.gz
+          asset_content_type: application/gzip
+
+  build-crates:
+    name: Build Rust Crates
+    needs: create-release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        crate:
+          - apalis-board-types
+          - apalis-board-api
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build crate
+        run: cargo build -p ${{ matrix.crate }} --release --all-features
+
+      - name: Package crate
+        run: cargo package -p ${{ matrix.crate }} --allow-dirty
+
+      - name: Create crate archive
+        run: |
+          cd target/package
+          CRATE_FILE=$(ls ${{ matrix.crate }}-*.crate)
+          mv "$CRATE_FILE" ../../${{ matrix.crate }}.crate
+
+      - name: Upload crate artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./${{ matrix.crate }}.crate
+          asset_name: ${{ matrix.crate }}-v${{ needs.create-release.outputs.version }}.crate
+          asset_content_type: application/octet-stream
