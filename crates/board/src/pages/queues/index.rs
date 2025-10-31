@@ -55,14 +55,29 @@ pub fn QueuePage() -> impl IntoView {
     let rows = QueueProvider::new();
     let pagination_controller = PaginationController::default();
     view! {
-        <div class="flex flex-col w-full">
-            <div class="w-full bg-background-bright border-b border-gray-700 flex items-center">
+        <div class="flex flex-col h-full w-full">
+            <div class="w-full bg-background-bright border-b border-gray-700 flex items-center h-[2.75rem]">
                 <span class="ml-2 mr-1 rounded p-1 bg-charcoal-700 text-text-bright p-2">
                     {queues_icon()}
                 </span>
                 <h3 class="text-base font-bold m-2 flex-1">Queues</h3>
                 <div class="justify-center flex items-center gap-x-2.5 mr-4 rounded-md border border-transparent bg-primary px-2.5 py-1 text-sm font-medium text-background-bright shadow-sm hover:bg-primary/80 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-plus-icon lucide-folder-plus"><path d="M12 10v6"/><path d="M9 13h6"/><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-folder-plus-icon lucide-folder-plus"
+                    >
+                        <path d="M12 10v6" />
+                        <path d="M9 13h6" />
+                        <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
+                    </svg>
                     <span class="text-xs">"Add Task"</span>
                 </div>
             </div>

@@ -6,6 +6,7 @@ use std::{
 use apalis_core::backend::{QueueInfo, Statistic};
 use gloo_net::http::Request;
 use leptos::{prelude::*, reactive::spawn_local};
+use leptos_meta::Title;
 use leptos_router::components::A;
 use serde::Serialize;
 
@@ -66,6 +67,7 @@ pub fn Home() -> impl IntoView {
         }
     });
     view! {
+        <Title text="Home" />
         <div class="p-4 space-y-8 w-full overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-charcoal-700 hover:scrollbar-thumb-charcoal-600 transition-transform duration-200 ease-out transform">
             <section>
                 <h2 class="text-base">"Overview"</h2>
@@ -95,8 +97,8 @@ pub fn Home() -> impl IntoView {
                                                     _ => None,
                                                 };
                                                 stats_card(
-                                                    &stat.title,
-                                                    &stat.value,
+                                                    stat.title.clone(),
+                                                    stat.value.clone(),
                                                     last_10_stats
                                                         .get()
                                                         .get(&stat.title)
@@ -150,10 +152,10 @@ pub fn Home() -> impl IntoView {
     }
 }
 
-fn stats_card(title: &String, value: &String, last_10: VecDeque<f64>) -> impl IntoView {
+fn stats_card(title: String, value: String, last_10: VecDeque<f64>) -> impl IntoView {
     let max = last_10.iter().cloned().fold(0. / 0., f64::max);
     let i18n = use_i18n();
-    let title = KnownStatistic::from_str(title)
+    let title = KnownStatistic::from_str(&title)
         .unwrap_or(KnownStatistic::TotalJobs)
         .translate(i18n);
     view! {

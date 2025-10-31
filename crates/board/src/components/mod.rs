@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 
-use crate::resolve_timestamp;
+use crate::relative_timestamp;
 
 pub mod icon;
 pub mod layout;
@@ -17,6 +17,6 @@ pub fn RelativeTimeRenderer<T>(
     row: RwSignal<T>,
     index: usize,
 ) -> impl IntoView {
-    let relative_time = resolve_timestamp(value);
+    let relative_time = move || relative_timestamp(value.get());
     view! { <td class=class>{relative_time}</td> }
 }

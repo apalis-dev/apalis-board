@@ -1,4 +1,5 @@
-use futures::StreamExt;
+use apalis_board_types::LogEntry;
+use futures::{StreamExt, future::ready};
 use leptos::{prelude::*, reactive::spawn_local};
 
 use crate::{pages::tasks::single::LogViewer, use_sse_provider};
@@ -13,6 +14,7 @@ pub fn LogsPage() -> impl IntoView {
         let ev = sse.event_source();
         let mut stream = ev
             .to_stream()
+            .filter(move |log: &LogEntry| ready(log.span.is_some()))
             .boxed_local();
         while let Some(next) = stream.next().await {
             logs.update(|list| {
@@ -21,8 +23,8 @@ pub fn LogsPage() -> impl IntoView {
         }
     });
     view! {
-        <div class="h-full w-full overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-charcoal-700 hover:scrollbar-thumb-charcoal-600 p-4">
-            <LogViewer items=logs />
+        <div class="h-full w-full overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-charcoal-700 hover:scrollbar-thumb-charcoal-600">
+            <LogViewer items=logs title="Logs" show_id=true />
         </div>
     }
 }

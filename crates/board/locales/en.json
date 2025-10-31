@@ -17,7 +17,7 @@
     "DONE_JOBS": "Done Jobs",
     "KILLED_JOBS": "Killed Jobs",
     "SUCCESS_RATE": "Success Rate",
-    "AVG_JOB_DURATION_MINS": "Avg Job Duration (mins)",
+    "AVG_JOB_DURATION_MINS": "Avg Job Duration (secs)",
     "LONGEST_RUNNING_JOB_MINS": "Longest Running Job (mins)",
     "QUEUE_BACKLOG": "Queue Backlog",
     "FAILED_JOBS_PAST_7_DAYS": "Failed Jobs (Past 7 Days)",

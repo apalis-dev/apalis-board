@@ -66,12 +66,17 @@ pub struct Email {
 }
 
 pub async fn send_email(task: Email, client: Data<MailClient>) -> Result<String, BoxDynError> {
+    log::info!("Sending email to {}", task.to);
     let message = Message::builder()
         .from("John Smith <example@email.com>".parse()?)
         .to(task.to.parse()?)
         .subject(&task.subject)
         .body(task.text)?;
+    log::debug!("Email message created: {:?}", message.headers());
     client.send(message).await?;
+    log::warn!("Email sent to {}", task.to);
+
+    log::trace!("Email Trace sent to {}", task.to);
     Ok(format!("Email sent to {}", task.to))
 }
 

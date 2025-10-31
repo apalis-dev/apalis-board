@@ -25,8 +25,8 @@ pub fn StatusPage() -> impl IntoView {
     let rows = move || TaskProvider::new_with_status(queue(), status());
     let pagination_controller = PaginationController::default();
     view! {
-        <div class="flex flex-col w-full">
-            <div class="w-full bg-background-bright border-b border-gray-700 flex items-center">
+        <div class="flex flex-col h-full w-full overflow-y-auto">
+            <div class="w-full bg-background-bright border-b border-gray-700 flex items-center h-[2.75rem]">
                 <span class="ml-2 mr-1 rounded p-1 bg-charcoal-700 text-text-bright p-2">
                     {queues_icon()}
                 </span>

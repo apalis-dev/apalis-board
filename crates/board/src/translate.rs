@@ -1,12 +1,9 @@
 use std::{fmt, str::FromStr};
 
-use leptos::{
-    prelude::{AnyView, IntoAny},
-    IntoView,
-};
+use leptos::prelude::{AnyView, IntoAny};
 use leptos_i18n::I18nContext;
 
-use crate::i18n::{t, I18nKeys, Locale};
+use crate::i18n::{I18nKeys, Locale, t};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[non_exhaustive]
@@ -44,7 +41,6 @@ pub enum KnownStatistic {
 }
 
 impl KnownStatistic {
-
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::RunningJobs => "RUNNING_JOBS",
@@ -223,12 +219,18 @@ mod tests {
 
     #[test]
     fn test_stat_type() {
-        assert_eq!(KnownStatistic::FailureRate.stat_type(), StatType::Percentage);
+        assert_eq!(
+            KnownStatistic::FailureRate.stat_type(),
+            StatType::Percentage
+        );
         assert_eq!(
             KnownStatistic::AvgJobDurationMins.stat_type(),
             StatType::Decimal
         );
-        assert_eq!(KnownStatistic::MostRecentJob.stat_type(), StatType::Timestamp);
+        assert_eq!(
+            KnownStatistic::MostRecentJob.stat_type(),
+            StatType::Timestamp
+        );
         assert_eq!(KnownStatistic::RunningJobs.stat_type(), StatType::Number);
     }
 }

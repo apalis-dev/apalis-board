@@ -67,4 +67,7 @@ trunk build
 
 ## Acknowledgments
 
+The following repos were referenced in building the frontend
+
 - [bull-board](https://github.com/felixmosh/bull-board/)
+- [trigger.dev](https://github.com/triggerdotdev/trigger.dev)
