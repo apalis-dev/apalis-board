@@ -1,7 +1,7 @@
 use include_dir::{Dir, File, include_dir};
 
 /// Embed the built frontend directory into the lib.
-static APP_DIST: Dir = include_dir!("$CARGO_MANIFEST_DIR/../board/dist");
+static APP_DIST: Dir = include_dir!("$CARGO_MANIFEST_DIR/dist");
 
 #[derive(Clone, Debug, Default)]
 pub struct ServeUI;
