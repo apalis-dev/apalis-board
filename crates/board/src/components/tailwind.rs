@@ -9,7 +9,7 @@ impl TableClassesProvider for TailwindClassesPreset {
     }
 
     fn thead(&self, prop_class: &str) -> String {
-        format!("sticky top-0 z-10 {}", prop_class)
+        format!("sticky top-0 z-10 {prop_class}")
     }
 
     fn thead_row(&self, template_classes: &str) -> String {

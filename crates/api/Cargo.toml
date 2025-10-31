@@ -1,6 +1,6 @@
 [package]
 name = "apalis-board-api"
-version = "0.1.0"
+version = "1.0.0-alpha.1"
 edition = "2024"
 
 [dependencies]
@@ -8,10 +8,14 @@ apalis-core = { version = "1.0.0-alpha.4", features = ["serde"] }
 apalis-board-types = { path = "../types", version = "1.0.0-alpha.1" }
 serde = { version = "1", features = ["derive"] }
 futures = "0.3"
-tokio = { version = "1", features = ["full"] }
+tokio = { version = "1", default-features = false, features = ["sync"] }
 serde_json = "1"
-tracing-subscriber = { version = "0.3.11", features = ["json", "env-filter"] }
-include_dir = "0.7.4"
+tracing-core = { version = "0.1.34", optional = true }
+tracing-subscriber = { version = "0.3.20", features = [
+    "json",
+    "env-filter",
+], optional = true }
+include_dir = { version = "0.7.4", optional = true }
 
 actix-web = { version = "4.5.1", optional = true }
 actix-web-lab = { version = "0.24.3", optional = true }
@@ -24,6 +28,8 @@ axum = { version = "0.8", optional = true, features = [
 ], default-features = false }
 
 [features]
-default = []
+default = ["sse", "ui"]
 actix = ["dep:actix-web", "dep:actix-web-lab"]
 axum = ["dep:axum"]
+sse = ["dep:tracing-core", "dep:tracing-subscriber"]
+ui = ["dep:include_dir"]

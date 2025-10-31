@@ -14,9 +14,7 @@ apalis-sqlite = { features = [
     "tokio-comp",
 ], version = "1.0.0-alpha.3" }
 apalis-board-types = { path = "../../crates/types" }
-apalis-board-api = { path = "../../crates/api", default-features = false, features = [
-    "actix",
-] }
+apalis-board-api = { path = "../../crates/api", features = ["actix"] }
 
 actix-web = "4.5.1"
 actix-web-actors = "4.3.0"

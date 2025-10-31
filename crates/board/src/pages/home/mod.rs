@@ -48,7 +48,7 @@ pub fn Home() -> impl IntoView {
         if let Some(Ok(ref stats)) = stats.get() {
             last_10_stats.update(|map| {
                 for stat in stats {
-                    let entry = map.entry(stat.title.clone()).or_insert_with(VecDeque::new);
+                    let entry: &mut VecDeque<f64> = map.entry(stat.title.clone()).or_default();
                     entry.push_back(f64::from_str(&stat.value).unwrap_or(0.0));
                     if entry.len() > 10 {
                         entry.pop_front();
@@ -153,7 +153,7 @@ pub fn Home() -> impl IntoView {
 }
 
 fn stats_card(title: String, value: String, last_10: VecDeque<f64>) -> impl IntoView {
-    let max = last_10.iter().cloned().fold(0. / 0., f64::max);
+    let max = last_10.iter().cloned().fold(0., f64::max);
     let i18n = use_i18n();
     let title = KnownStatistic::from_str(&title)
         .unwrap_or(KnownStatistic::TotalJobs)
@@ -174,7 +174,7 @@ fn stats_card(title: String, value: String, last_10: VecDeque<f64>) -> impl Into
                                 .iter()
                                 .map(|v| {
                                     let percent = if max > 0.0 {
-                                        (*v as f64 / max as f64) * 80.0 + 20.0
+                                        (*v / max) * 80.0 + 20.0
                                     } else {
                                         20.0
                                     };

@@ -2,6 +2,7 @@ use std::str::FromStr;
 
 use apalis_core::task::status::Status;
 use leptos::prelude::*;
+use leptos_meta::Title;
 use leptos_router::{components::A, hooks::use_params_map};
 use leptos_struct_table::{DisplayStrategy, PaginationController, SortingMode, TableContent};
 
@@ -23,6 +24,7 @@ pub fn AllTasksPage() -> impl IntoView {
     let rows = move || TaskProvider::all(status());
     let pagination_controller = PaginationController::default();
     view! {
+        <Title text=move || format!("Tasks - {}", status()) />
         <div class="flex flex-col h-full w-full">
             <div class="w-full bg-background-bright border-b border-gray-700 flex items-center h-[2.75rem]">
                 <span class="ml-2 mr-1 rounded p-1 bg-charcoal-700 text-text-bright p-2">
@@ -58,17 +60,16 @@ pub fn AllTasksPage() -> impl IntoView {
 pub fn TaskNav() -> impl IntoView {
     let params = use_params_map();
 
-    let tasks_page = move |status: &Status| format!("/tasks/{}", status);
+    let tasks_page = move |status: &Status| format!("/tasks/{status}");
 
     let calculate_active = move |status: &Status| {
         let current_status =
             params.with(|p| p.get("status").and_then(|s| Status::from_str(&s).ok()));
         match current_status {
             Some(s) => s == *status,
-            None => Status::Pending == *status
+            None => Status::Pending == *status,
         }
     };
-
 
     let calculate_class_active = move |active: bool| {
         if active {

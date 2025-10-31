@@ -1,9 +1,7 @@
 use std::{marker::PhantomData, str::FromStr};
 
 use actix_web::{
-    HttpRequest, HttpResponse, HttpResponseBuilder, Responder, Scope,
-    dev::HttpServiceFactory,
-    http::{StatusCode, header},
+    HttpResponse, Responder, Scope,
     web::{self, Data, Json},
 };
 use apalis_core::backend::{
@@ -15,10 +13,13 @@ use tokio::sync::RwLock;
 
 use crate::{
     fetch_queues,
-    framework::{ApiBuilder, RegisterRoute, ServeApp},
+    framework::{ApiBuilder, RegisterRoute},
     get_all_tasks, get_all_workers, get_task_by_id, get_tasks, get_workers, overview, push_task,
     stats_by_queue,
 };
+
+#[cfg(feature = "ui")]
+use crate::ui::ServeUI;
 
 pub struct Handler<S, T, Compact> {
     _phantom: PhantomData<(S, T, Compact)>,
@@ -208,7 +209,8 @@ where
         let queue = backend.get_queue();
         let backend = web::Data::new(RwLock::new(backend));
         if self.root {
-            self.router = self
+            #[allow(unused_mut)]
+            let mut router = self
                 .router
                 .app_data(backend.clone())
                 .route("/", web::get().to(Handler::<B, (), Compact>::fetch_queues))
@@ -223,8 +225,14 @@ where
                 .route(
                     "/overview",
                     web::get().to(Handler::<B, (), Compact>::overview),
-                )
-                .route("/events", web::get().to(sse::new_client));
+                );
+
+            #[cfg(feature = "sse")]
+            {
+                router = router.route("/events", web::get().to(sse::new_client));
+            }
+
+            self.router = router;
         }
         let scope = self.router.service(
             Scope::new(&format!("/queues/{queue}"))
@@ -253,56 +261,65 @@ where
     }
 }
 
-impl ServeApp {
-    fn serve_file(path: &str) -> HttpResponse {
-        let mut file = Self::get_file(path);
-        if file.is_none() {
-            // Try fallback to index.html for unknown routes
-            file = Self::get_file("index.html");
-        }
-
-        match file {
-            Some(f) => {
-                let path_str = f.path().to_str().unwrap_or("");
-                let mut builder = HttpResponse::Ok();
-                let mut builder =
-                    builder.insert_header((header::CONTENT_TYPE, Self::content_type(path_str)));
-
-                if let Some(cache) = Self::cache_control(path_str) {
-                    builder = builder.insert_header((header::CACHE_CONTROL, cache));
-                }
-
-                builder.body(f.contents().to_vec())
+#[cfg(feature = "ui")]
+mod ui {
+    use super::ServeUI;
+    use actix_web::{
+        HttpRequest, HttpResponse, HttpResponseBuilder,
+        dev::HttpServiceFactory,
+        http::{StatusCode, header},
+    };
+    impl ServeUI {
+        fn serve_file(path: &str) -> HttpResponse {
+            let mut file = Self::get_file(path);
+            if file.is_none() {
+                // Try fallback to index.html for unknown routes
+                file = Self::get_file("index.html");
             }
-            None => HttpResponseBuilder::new(StatusCode::NOT_FOUND).finish(),
+
+            match file {
+                Some(f) => {
+                    let path_str = f.path().to_str().unwrap_or("");
+                    let mut builder = HttpResponse::Ok();
+                    let mut builder =
+                        builder.insert_header((header::CONTENT_TYPE, Self::content_type(path_str)));
+
+                    if let Some(cache) = Self::cache_control(path_str) {
+                        builder = builder.insert_header((header::CACHE_CONTROL, cache));
+                    }
+
+                    builder.body(f.contents().to_vec())
+                }
+                None => HttpResponseBuilder::new(StatusCode::NOT_FOUND).finish(),
+            }
+        }
+    }
+    impl HttpServiceFactory for ServeUI {
+        fn register(self, config: &mut actix_web::dev::AppService) {
+            let resource = actix_web::Resource::new("/{tail:.*}").route(actix_web::web::get().to(
+                move |req: HttpRequest| async move {
+                    let path = req.match_info().query("tail");
+                    
+                    Self::serve_file(path)
+                },
+            ));
+            resource.register(config);
         }
     }
 }
 
-impl HttpServiceFactory for ServeApp {
-    fn register(self, config: &mut actix_web::dev::AppService) {
-        let resource = actix_web::Resource::new("/{tail:.*}").route(actix_web::web::get().to(
-            move |req: HttpRequest| async move {
-                let path = req.match_info().query("tail");
-                let response = Self::serve_file(path);
-                response
-            },
-        ));
-        resource.register(config);
-    }
-}
-
+#[cfg(feature = "sse")]
 pub mod sse {
     use std::{sync::Arc, time::Duration};
 
-    use crate::sse::Broadcaster;
+    use crate::sse::TracingBroadcaster;
     use actix_web::web::*;
     use actix_web_lab::sse::Event;
     use futures::StreamExt;
     use std::sync::Mutex;
 
     pub async fn new_client(
-        broadcaster: Data<Arc<Mutex<Broadcaster>>>,
+        broadcaster: Data<Arc<Mutex<TracingBroadcaster>>>,
     ) -> impl actix_web::Responder {
         let rx = broadcaster.lock().unwrap().new_client();
 

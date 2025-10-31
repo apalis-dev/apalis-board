@@ -13,9 +13,7 @@ apalis-postgres = { version = "1.0.0-alpha.2", features = [
     "tokio-comp",
 ] }
 apalis-board-types = { path = "../../crates/types" }
-apalis-board-api = { path = "../../crates/api", default-features = false, features = [
-    "axum",
-] }
+apalis-board-api = { path = "../../crates/api", features = ["axum"] }
 
 serde = "1"
 env_logger = "0.11"

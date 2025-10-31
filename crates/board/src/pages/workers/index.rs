@@ -1,4 +1,5 @@
 use leptos::prelude::*;
+use leptos_meta::Title;
 use leptos_struct_table::*;
 
 use crate::components::sidebar::workers_icon;
@@ -9,6 +10,7 @@ pub fn WorkersPage() -> impl IntoView {
     let rows = WorkerProvider::all();
 
     view! {
+        <Title text="Workers" />
         <div class="flex flex-col h-full w-full">
             <div class="w-full bg-background-bright border-b border-gray-700 flex items-center h-[2.75rem]">
                 <span class="ml-2 mr-1 rounded p-1 bg-charcoal-700 text-text-bright p-2">

@@ -70,5 +70,5 @@ pub struct Span {
 #[serde(tag = "type", content = "message")]
 pub enum ApiError {
     CodecError(String),
-    BackendError(String)
+    BackendError(String),
 }

@@ -4,28 +4,21 @@ use apalis_core::{
         Backend, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers,
         Metrics, QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec,
     },
-    layers::Service,
     task::Task,
 };
 use axum::{
     Extension, Json, Router,
-    body::Body,
     extract::{Path, Query, rejection::JsonRejection},
-    http::{Request, StatusCode},
+    http::StatusCode,
     response::{IntoResponse, Response},
     routing::{get, put},
 };
 
 use serde::{Serialize, de::DeserializeOwned};
-use std::{
-    convert::Infallible,
-    str::FromStr,
-    sync::Arc,
-    task::{Context, Poll},
-};
+use std::{str::FromStr, sync::Arc};
 use tokio::sync::RwLock;
 
-use crate::framework::{ApiBuilder, RegisterRoute, ServeApp};
+use crate::framework::{ApiBuilder, RegisterRoute};
 
 #[derive(Debug)]
 pub enum AppError {
@@ -43,7 +36,8 @@ pub enum AppError {
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
-        let response = match self {
+        
+        match self {
             AppError::JsonRejection(rejection) => {
                 // This error is caused by bad user input so don't log it
                 (rejection.status(), rejection.body_text()).into_response()
@@ -58,8 +52,7 @@ impl IntoResponse for AppError {
                 "Missing application state",
             )
                 .into_response(),
-        };
-        response
+        }
     }
 }
 
@@ -249,14 +242,20 @@ where
         let queue = backend.get_queue();
         let backend = Arc::new(RwLock::new(backend));
         if self.root {
-            self.router = self
+            #[allow(unused_mut)]
+            let mut r = self
                 .router
                 .route("/", get(fetch_queues::<B>))
                 .route("/tasks", get(get_all_tasks::<B>))
                 .route("/workers", get(get_all_workers::<B>))
-                .route("/overview", get(overview::<B>))
-                .route("/events", get(sse::new_client))
-                .layer(Extension(backend.clone()));
+                .route("/overview", get(overview::<B>));
+
+            #[cfg(feature = "sse")]
+            {
+                r = r.route("/events", get(sse::new_client));
+            }
+
+            self.router = r.layer(Extension(backend.clone()));
         }
         let scope = self.router.nest(
             &format!("/queues/{queue}"),
@@ -277,48 +276,65 @@ where
     }
 }
 
-impl Service<Request<Body>> for ServeApp {
-    type Response = Response<Body>;
-    type Error = Infallible;
-    type Future = std::future::Ready<Result<Self::Response, Self::Error>>;
+#[cfg(feature = "ui")]
+mod ui {
+    use std::{
+        convert::Infallible,
+        task::{Context, Poll},
+    };
 
-    fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        Poll::Ready(Ok(()))
-    }
+    use apalis_core::layers::Service;
+    use axum::{
+        body::Body,
+        http::{Request, Response, StatusCode},
+    };
 
-    fn call(&mut self, req: Request<Body>) -> Self::Future {
-        let path = req.uri().path();
-        let mut file = Self::get_file(path);
+    use crate::ui::ServeUI;
 
-        // If no matching file, fall back to index.html
-        if file.is_none() {
-            file = Self::get_file("index.html");
+    impl Service<Request<Body>> for ServeUI {
+        type Response = Response<Body>;
+        type Error = Infallible;
+        type Future = std::future::Ready<Result<Self::Response, Self::Error>>;
+
+        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
         }
 
-        let response = match file {
-            Some(file) => {
-                let path_str = file.path().to_str().unwrap_or("");
-                let content_type = Self::content_type(path_str);
-                let mut builder = Response::builder()
-                    .status(StatusCode::OK)
-                    .header("Content-Type", content_type);
+        fn call(&mut self, req: Request<Body>) -> Self::Future {
+            let path = req.uri().path();
+            let mut file = Self::get_file(path);
 
-                if let Some(cache) = Self::cache_control(path_str) {
-                    builder = builder.header("Cache-Control", cache);
-                }
-
-                builder.body(file.contents().to_vec().into()).unwrap()
+            // If no matching file, fall back to index.html
+            if file.is_none() {
+                file = Self::get_file("index.html");
             }
-            None => Response::builder()
-                .status(StatusCode::NOT_FOUND)
-                .body(Vec::new().into())
-                .unwrap(),
-        };
 
-        std::future::ready(Ok(response))
+            let response = match file {
+                Some(file) => {
+                    let path_str = file.path().to_str().unwrap_or("");
+                    let content_type = Self::content_type(path_str);
+                    let mut builder = Response::builder()
+                        .status(StatusCode::OK)
+                        .header("Content-Type", content_type);
+
+                    if let Some(cache) = Self::cache_control(path_str) {
+                        builder = builder.header("Cache-Control", cache);
+                    }
+
+                    builder.body(file.contents().to_vec().into()).unwrap()
+                }
+                None => Response::builder()
+                    .status(StatusCode::NOT_FOUND)
+                    .body(Vec::new().into())
+                    .unwrap(),
+            };
+
+            std::future::ready(Ok(response))
+        }
     }
 }
 
+#[cfg(feature = "sse")]
 pub mod sse {
 
     use std::{sync::Mutex, time::Duration};
@@ -326,11 +342,11 @@ pub mod sse {
     use axum::response::{Sse, sse::Event};
     use futures::{Stream, StreamExt, channel::mpsc::TryRecvError};
 
-    use crate::sse::Broadcaster;
+    use crate::sse::TracingBroadcaster;
 
     use super::*;
     pub async fn new_client(
-        broadcaster: Extension<Arc<Mutex<Broadcaster>>>,
+        broadcaster: Extension<Arc<Mutex<TracingBroadcaster>>>,
     ) -> Sse<impl Stream<Item = Result<Event, TryRecvError>>> {
         let rx = broadcaster.lock().unwrap().new_client();
         let stream = rx

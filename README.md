@@ -21,19 +21,44 @@ Get a clear overview of what's happening in your queues and manage jobs efficien
 
 ## Usage
 
+Each version of `apalis-board-api` includes a compatible version of the ui so you only need to include one dep.
+
+```toml
+apalis-board-api = { version = "1.0.0-alpha.1", features = ["actix"] } #Or axum
+```
+
 Here are the basics of setting up the board:
 
-```rust
+```rust,ignore
 App::new()
-    .app_data(web::Data::new(broadcaster)) // Pass in the broadcaster for realtime logs
     .service(
         ApiBuilder::new(Scope::new("/api/v1")) // Setup the mount
             .register(notification_store) // Add backends
             .register(email_store)
-            .build(), // Build the routes
+            .build(), // Build the routes an
     )
     .service(ServeApp::new()) // Serve the frontend
 ```
+
+### Including Realtime tracing events
+
+```rust,ignore
+let broadcaster = TracingBroadcaster::create();
+
+let tracing_subscriber = TracingSubscriber::new(&broadcaster);
+let tracing_layer = tracing_subscriber.layer()
+    .with_filter(EnvFilter::builder().parse("debug").unwrap());
+
+
+tracing_subscriber::registry().with(tracing_layer).init();
+
+/// Then register the broadcaster
+App::new()
+    .app_data(broadcaster.clone())
+
+```
+
+If you visit `/api/v1/events` you will receive the task logs. This is also accessible on the `/logs` page in the board.
 
 ## Screenshots
 

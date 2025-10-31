@@ -9,6 +9,7 @@ use apalis_board_types::{LogEntry, LogLevel};
 use apalis_core::task::status::Status;
 use futures::StreamExt;
 use leptos::{leptos_dom::logging::console_debug_log, prelude::*, reactive::spawn_local};
+use leptos_meta::Title;
 use leptos_router::hooks::use_params_map;
 
 #[component]
@@ -32,7 +33,7 @@ pub fn SingleTaskView(
     let items = move || {
         ctx.as_object()
             .map(|obj| {
-                console_debug_log(&format!("{:?}", obj));
+                console_debug_log(&format!("{obj:?}"));
                 let mut res = {
                     obj.iter()
                         .filter_map(|(k, v)| {
@@ -111,11 +112,11 @@ pub fn SingleTaskView(
                                                 }
                                                     .into_any()
                                             } else {
-                                                view! { <></> }.into_any()
+                                                ().into_any()
                                             }}
                                             <span class=format!(
                                                 "text-charcoal-100 dark:text-charcoal-100 truncate {}",
-                                                (!has_title).then(|| "w-full").unwrap_or_default(),
+                                                if !has_title { "w-full" } else { Default::default() },
                                             )>{val.render_full()}</span>
                                         </div>
                                     }
@@ -134,14 +135,14 @@ pub fn SingleTaskView(
 
 #[component]
 pub fn TaskPage() -> impl IntoView {
-    let params = use_params_map().get_untracked();
-    let task_id = params.get("task_id").unwrap();
-    let queue = params.get("queue").unwrap();
-    let url = format!("/queues/{queue}/tasks/{task_id}");
+    let params = use_params_map();
+    let task_id = move || params.get().get("task_id").unwrap();
+    let queue = move || params.get().get("queue").unwrap();
+    let url = move || format!("/queues/{}/tasks/{}", queue(), task_id());
     let task = LocalResource::new(move || {
-        let url = url.clone();
+        let url = url;
         async move {
-            let resp: RawTask = ApiClient::get(&url).await.ok()?;
+            let resp: RawTask = ApiClient::get(&url()).await.ok()?;
             Some(resp)
         }
     });
@@ -157,7 +158,7 @@ pub fn TaskPage() -> impl IntoView {
                 let matches = log
                     .span
                     .as_ref()
-                    .map(|s| s.task_id == task_id)
+                    .map(|s| s.task_id == task_id())
                     .unwrap_or(false);
                 async move { matches }
             })
@@ -180,12 +181,12 @@ pub fn TaskPage() -> impl IntoView {
 
     view! {
         <>
+            <Title text=move || format!("Task - {}", task_id()) />
             {move || {
                 task.get()
                     .map(|task_opt| {
                         if let Some(task) = task_opt {
-                            view! { <SingleTaskView task logs=logs queue=queue.clone() /> }
-                                .into_any()
+                            view! { <SingleTaskView task logs=logs queue=queue() /> }.into_any()
                         } else {
                             view! {
                                 <div class="text-center text-charcoal-400 dark:text-charcoal-300">
@@ -381,7 +382,7 @@ pub fn LogViewer(
                                     }
                                         .into_any()
                                 } else {
-                                    view! {}.into_any()
+                                    ().into_any()
                                 }} <span class="text-charcoal-500">{log.timestamp}</span>
                                 <span class=format!(
                                     "{} mx-2",

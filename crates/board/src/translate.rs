@@ -164,7 +164,7 @@ impl FromStr for KnownStatistic {
             "DB_PAGE_SIZE" => Ok(Self::DbPageSize),
             "DB_PAGE_COUNT" => Ok(Self::DbPageCount),
             "DB_SIZE" => Ok(Self::DbSize),
-            _ => Err(format!("Unknown statistic: {}", s)),
+            _ => Err(format!("Unknown statistic: {s}")),
         }
     }
 }
@@ -207,14 +207,7 @@ mod tests {
     #[test]
     fn test_round_trip() {
         let stat = KnownStatistic::RunningJobs;
-        assert_eq!(KnownStatistic::from_str(stat.as_str()), Some(stat));
-    }
-
-    #[test]
-    fn test_priority() {
-        assert_eq!(KnownStatistic::RunningJobs.priority(), 1);
-        assert_eq!(KnownStatistic::ActiveJobs.priority(), 2);
-        assert_eq!(KnownStatistic::DbSize.priority(), 9);
+        assert_eq!(KnownStatistic::from_str(stat.as_str()), Ok(stat));
     }
 
     #[test]

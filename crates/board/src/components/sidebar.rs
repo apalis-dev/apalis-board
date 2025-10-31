@@ -20,10 +20,8 @@ pub fn Sidebar() -> impl IntoView {
     };
 
     let status_message = move || {
-        sse.is_healthy()
-            .get()
-            .then(|| "All systems are operational.")
-            .unwrap_or("System unhealthy")
+        if sse.is_healthy()
+            .get() { "All systems are operational." } else { "System unhealthy" }
     };
 
     view! {
