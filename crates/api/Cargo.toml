@@ -11,7 +11,7 @@ documentation = "https://docs.rs/apalis-board-api"
 authors = ["Njuguna Mureithi <mureithinjuguna@gmail.com>"]
 keywords = ["apalis", "api", "http"]
 categories = ["asynchronous"]
-include = ["src/**", "Cargo.toml", "LICENSE*", "README.md"]
+include = ["src/**", "Cargo.toml", "LICENSE*", "README.md", "dist/**"]
 publish = true
 
 
