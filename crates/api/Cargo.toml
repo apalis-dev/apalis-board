@@ -2,6 +2,18 @@
 name = "apalis-board-api"
 version = "1.0.0-alpha.1"
 edition = "2024"
+description = "HTTP utilities for managing apalis task queues."
+license = "MIT OR Apache-2.0"
+readme = "../../README.md"
+repository = "https://github.com/apalis-dev/apalis-board"
+homepage = "https://github.com/apalis-dev/apalis-board"
+documentation = "https://docs.rs/apalis-board-api"
+authors = ["Njuguna Mureithi <mureithinjuguna@gmail.com>"]
+keywords = ["apalis", "api", "http"]
+categories = ["asynchronous"]
+include = ["src/**", "Cargo.toml", "LICENSE*"]
+publish = true
+
 
 [dependencies]
 apalis-core = { version = "1.0.0-alpha.4", features = ["serde"] }
