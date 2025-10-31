@@ -11,7 +11,7 @@ documentation = "https://docs.rs/apalis-board"
 authors = ["Njuguna Mureithi <mureithinjuguna@gmail.com>"]
 keywords = ["apalis", "board", "frontend", "leptos"]
 categories = ["asynchronous"]
-include = ["src/**", "Cargo.toml", "README.md", "LICENSE*"]
+include = ["src/**", "Cargo.toml", "README.md", "LICENSE*", "locales/**"]
 publish = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
