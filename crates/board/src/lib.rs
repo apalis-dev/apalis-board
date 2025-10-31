@@ -1,4 +1,4 @@
-#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../README.md"))]
+#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
 use apalis_board_types::LogEntry;
 use chrono::{DateTime, Local, Utc};
 use leptos::{prelude::*, reactive::spawn_local};
