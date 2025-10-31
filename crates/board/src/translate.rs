@@ -1,12 +1,9 @@
 use std::{fmt, str::FromStr};
 
-use leptos::{
-    prelude::{AnyView, IntoAny},
-    IntoView,
-};
+use leptos::prelude::{AnyView, IntoAny};
 use leptos_i18n::I18nContext;
 
-use crate::i18n::{t, I18nKeys, Locale};
+use crate::i18n::{I18nKeys, Locale, t};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[non_exhaustive]
@@ -44,7 +41,6 @@ pub enum KnownStatistic {
 }
 
 impl KnownStatistic {
-
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::RunningJobs => "RUNNING_JOBS",
@@ -168,7 +164,7 @@ impl FromStr for KnownStatistic {
             "DB_PAGE_SIZE" => Ok(Self::DbPageSize),
             "DB_PAGE_COUNT" => Ok(Self::DbPageCount),
             "DB_SIZE" => Ok(Self::DbSize),
-            _ => Err(format!("Unknown statistic: {}", s)),
+            _ => Err(format!("Unknown statistic: {s}")),
         }
     }
 }
@@ -211,24 +207,23 @@ mod tests {
     #[test]
     fn test_round_trip() {
         let stat = KnownStatistic::RunningJobs;
-        assert_eq!(KnownStatistic::from_str(stat.as_str()), Some(stat));
-    }
-
-    #[test]
-    fn test_priority() {
-        assert_eq!(KnownStatistic::RunningJobs.priority(), 1);
-        assert_eq!(KnownStatistic::ActiveJobs.priority(), 2);
-        assert_eq!(KnownStatistic::DbSize.priority(), 9);
+        assert_eq!(KnownStatistic::from_str(stat.as_str()), Ok(stat));
     }
 
     #[test]
     fn test_stat_type() {
-        assert_eq!(KnownStatistic::FailureRate.stat_type(), StatType::Percentage);
+        assert_eq!(
+            KnownStatistic::FailureRate.stat_type(),
+            StatType::Percentage
+        );
         assert_eq!(
             KnownStatistic::AvgJobDurationMins.stat_type(),
             StatType::Decimal
         );
-        assert_eq!(KnownStatistic::MostRecentJob.stat_type(), StatType::Timestamp);
+        assert_eq!(
+            KnownStatistic::MostRecentJob.stat_type(),
+            StatType::Timestamp
+        );
         assert_eq!(KnownStatistic::RunningJobs.stat_type(), StatType::Number);
     }
 }

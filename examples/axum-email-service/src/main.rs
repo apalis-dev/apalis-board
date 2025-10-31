@@ -7,9 +7,9 @@ use apalis::{
     },
 };
 use apalis_board_api::{
-    framework::{ApiBuilder, RegisterRoute, ServeApp},
-    logger::Subscriber,
-    sse::Broadcaster,
+    framework::{ApiBuilder, RegisterRoute},
+    sse::{TracingBroadcaster, TracingSubscriber},
+    ui::ServeUI,
 };
 use apalis_postgres::PostgresStorage;
 use axum::{Extension, Router, ServiceExt};
@@ -66,19 +66,24 @@ pub struct Email {
 }
 
 pub async fn send_email(task: Email, client: Data<MailClient>) -> Result<String, BoxDynError> {
+    log::info!("Sending email to {}", task.to);
     let message = Message::builder()
         .from("John Smith <example@email.com>".parse()?)
         .to(task.to.parse()?)
         .subject(&task.subject)
         .body(task.text)?;
+    log::debug!("Email message created: {:?}", message.headers());
     client.send(message).await?;
+    log::warn!("Email sent to {}", task.to);
+
+    log::trace!("Email Trace sent to {}", task.to);
     Ok(format!("Email sent to {}", task.to))
 }
 
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
-    let broadcaster = Broadcaster::create();
+    let broadcaster = TracingBroadcaster::create();
 
     let client: MailClient =
         AsyncSmtpTransport::<Tokio1Executor>::builder_dangerous(args.smtp_host)
@@ -86,18 +91,15 @@ async fn main() {
             .authentication(vec![Mechanism::Plain])
             .build();
 
-    let line_sub = Subscriber::new(&broadcaster);
+    let line_sub = TracingSubscriber::new(&broadcaster);
     let tracer = tracing_subscriber::registry()
         .with(
             tracing_subscriber::fmt::layer()
                 .with_filter(EnvFilter::builder().parse(&args.log_level).unwrap()),
         )
         .with(
-            tracing_subscriber::fmt::layer()
-                .with_ansi(false)
-                .fmt_fields(tracing_subscriber::fmt::format::JsonFields::new())
-                .event_format(tracing_subscriber::fmt::format().with_ansi(false).json())
-                .with_writer(line_sub)
+            line_sub
+                .layer()
                 .with_filter(EnvFilter::builder().parse(&args.log_level).unwrap()),
         );
     tracer.try_init().unwrap();
@@ -131,7 +133,7 @@ async fn main() {
         let layer = NormalizePathLayer::trim_trailing_slash();
         let router = Router::new()
             .nest("/api/v1", api)
-            .fallback_service(ServeApp::new())
+            .fallback_service(ServeUI::new())
             .layer(Extension(broadcaster.clone()));
 
         let listener = tokio::net::TcpListener::bind(&args.api_host).await.unwrap();
@@ -151,10 +153,10 @@ async fn main() {
             log::info!("Shutting down");
         }
         Err(futures::future::Either::Left((_res, _http))) => {
-            log::error!("An error in worker occurred {}", _res);
+            log::error!("An error in worker occurred {_res}");
         }
         Err(futures::future::Either::Right((_res, _worker))) => {
-            log::error!("An error occurred in http {}", _res);
+            log::error!("An error occurred in http {_res}");
         }
     }
 }

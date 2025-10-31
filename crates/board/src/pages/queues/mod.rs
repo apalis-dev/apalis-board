@@ -3,9 +3,9 @@ use crate::components::tailwind::TailwindClassesPreset;
 use apalis_core::backend::{StatType, Statistic};
 use leptos::component;
 use leptos::prelude::*;
+use leptos_router::components::A;
 use leptos_struct_table::{EventHandler, TableRow};
 use serde::{Deserialize, Serialize};
-use leptos_router::components::A;
 
 pub mod index;
 pub mod provider;
@@ -108,10 +108,7 @@ pub fn StatsCellRenderer(
                         value
                             .get()
                             .into_iter()
-                            .filter(|stat| match stat.stat_type {
-                                StatType::Percentage => true,
-                                _ => false,
-                            })
+                            .filter(|stat| matches!(stat.stat_type, StatType::Percentage))
                             .map(|stat| {
                                 view! {
                                     <div class="flex items-center">
@@ -167,7 +164,6 @@ pub fn WorkersCellRenderer(
                             }
                                 .into_any()
                         } else {
-                            view! {};
                             ().into_any()
                         }}
                     }

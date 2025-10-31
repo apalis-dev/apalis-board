@@ -1,21 +1,23 @@
-#![doc = include_str!("../../../README.md")]
+#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../README.md"))]
 use std::{str::FromStr, sync::Arc};
 
 use apalis_board_types::ApiError;
 use apalis_core::{
     backend::{
-        Backend, FetchById, Filter, ListQueues, ListTasks, ListWorkers, Metrics, QueueInfo,
-        RunningWorker, Statistic, TaskSink, codec::Codec, ListAllTasks
+        Backend, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers, Metrics,
+        QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec,
     },
     task::{Task, builder::TaskBuilder, task_id::TaskId},
 };
 use serde::{Serialize, de::DeserializeOwned};
 use tokio::sync::RwLock;
 
-pub mod builder;
 pub mod framework;
-pub mod logger;
+
+#[cfg(feature = "sse")]
 pub mod sse;
+#[cfg(feature = "ui")]
+pub mod ui;
 
 pub async fn push_task<Args, B, Compact>(
     queue: String,
@@ -47,8 +49,8 @@ where
 {
     let stats = storage.read().await.fetch_by_queue(queue.as_ref()).await;
     match stats {
-        Ok(stats) => return Ok(stats),
-        Err(e) => return Err(ApiError::BackendError(e.to_string())),
+        Ok(stats) => Ok(stats),
+        Err(e) => Err(ApiError::BackendError(e.to_string())),
     }
 }
 

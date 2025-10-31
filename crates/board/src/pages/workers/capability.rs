@@ -140,7 +140,7 @@ impl ServiceTypeParser {
         }
     }
 }
-fn capability_icon_svg(capability: &Capability) -> impl IntoView {
+fn capability_icon_svg(capability: Capability) -> impl IntoView {
     match capability {
         // Apalis capabilities
         Capability::AcknowledgeService => view! {
@@ -451,14 +451,12 @@ pub fn ServiceInfoDisplay(service: Signal<String>) -> impl IntoView {
             }}
             <div class="flex gap-1">
                 {move || {
-                    service_info
-                        .get()
-                        .capabilities
-                        .iter()
+                    let capabilities = service_info.get().capabilities.clone();
+                    capabilities
+                        .into_iter()
                         .map(|cap| {
-                            let icon_svg = capability_icon_svg(cap);
                             let label = cap.to_string();
-
+                            let icon_svg = capability_icon_svg(cap);
                             view! {
                                 <div class="flex items-center gap-1 px-1 py-0.5 rounded-sm border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 relative">
                                     <div class="has-tooltip">
@@ -490,9 +488,11 @@ mod tests {
         let result = ServiceTypeParser::parse(type_str).unwrap();
 
         assert_eq!(result.fn_name, Some("send_email".to_string()));
-        assert!(result
-            .capabilities
-            .contains(&Capability::AcknowledgeService));
+        assert!(
+            result
+                .capabilities
+                .contains(&Capability::AcknowledgeService)
+        );
         assert!(result.capabilities.contains(&Capability::Trace));
         assert!(result.capabilities.contains(&Capability::ReadinessService));
         assert!(result.capabilities.contains(&Capability::TrackerService));

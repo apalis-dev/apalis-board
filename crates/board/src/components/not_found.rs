@@ -24,7 +24,7 @@ pub fn NotFound() -> impl IntoView {
                                 y="12"
                                 width="96"
                                 height="96"
-                                rx="0"
+                                rx="5"
                                 fill="#1A1B1F"
                                 stroke="currentColor"
                                 stroke-width="4"

@@ -2,9 +2,10 @@ use actix_web::Scope;
 use actix_web::{rt::signal::ctrl_c, web, App, HttpServer};
 use apalis::layers::retry::RetryPolicy;
 use apalis::prelude::*;
-use apalis_board_api::framework::{ApiBuilder, RegisterRoute, ServeApp};
-use apalis_board_api::logger::Subscriber;
-use apalis_board_api::sse::Broadcaster;
+use apalis_board_api::framework::{ApiBuilder, RegisterRoute};
+use apalis_board_api::sse::TracingBroadcaster;
+use apalis_board_api::sse::TracingSubscriber;
+use apalis_board_api::ui::ServeUI;
 use apalis_sqlite::{SqlitePool, SqliteStorage};
 use clap::Parser;
 use futures::{future, TryFutureExt};
@@ -23,23 +24,21 @@ mod notification;
 #[actix_web::main]
 async fn main() -> Result<(), BoxDynError> {
     let args = Args::parse();
-    let broadcaster = Broadcaster::create();
 
-    let line_sub = Subscriber::new(&broadcaster);
-    let tracer = tracing_subscriber::registry()
-        .with(
-            tracing_subscriber::fmt::layer()
-                .with_filter(EnvFilter::builder().parse(&args.log_level).unwrap()),
-        )
-        .with(
-            tracing_subscriber::fmt::layer()
-                .with_ansi(false)
-                .fmt_fields(tracing_subscriber::fmt::format::JsonFields::new())
-                .event_format(tracing_subscriber::fmt::format().with_ansi(false).json())
-                .with_writer(line_sub)
-                .with_filter(EnvFilter::builder().parse(&args.log_level).unwrap()),
-        );
-    tracer.try_init().unwrap();
+    let broadcaster = TracingBroadcaster::create();
+
+    let tracing_subscriber = TracingSubscriber::new(&broadcaster);
+    let tracing_layer = tracing_subscriber
+        .layer()
+        .with_filter(EnvFilter::builder().parse(&args.log_level).unwrap());
+
+    let stdio_layer = tracing_subscriber::fmt::layer()
+        .with_filter(EnvFilter::builder().parse(&args.log_level).unwrap());
+
+    tracing_subscriber::registry()
+        .with(stdio_layer)
+        .with(tracing_layer)
+        .init();
     let pool = SqlitePool::connect(&args.database_url).await.unwrap();
     SqliteStorage::setup(&pool).await.unwrap();
 
@@ -68,13 +67,13 @@ async fn main() -> Result<(), BoxDynError> {
     let http = async move {
         HttpServer::new(move || {
             App::new()
-                .app_data(web::Data::new(broadcaster.clone()))
+                .app_data(web::Data::new(broadcaster.clone())) // Add the broadcaster to the app data
                 .service(
                     ApiBuilder::new(Scope::new("/api/v1"))
                         .register(notification_store.clone())
                         .build(),
                 )
-                .service(ServeApp::new())
+                .service(ServeUI::new())
         })
         .bind(&args.host)?
         .run()

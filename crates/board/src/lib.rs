@@ -1,4 +1,4 @@
-#![doc = include_str!("../../../README.md")]
+#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../README.md"))]
 use apalis_board_types::LogEntry;
 use chrono::{DateTime, Local, Utc};
 use leptos::{prelude::*, reactive::spawn_local};
@@ -26,14 +26,19 @@ pub fn use_sse_signal() -> RwSignal<Vec<String>> {
     use_context::<RwSignal<Vec<String>>>().expect("SSE Signal")
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct SseProvider {
     event_source: RwSignal<LogEntry>,
+    is_healthy: RwSignal<bool>,
 }
 
 impl SseProvider {
     pub fn event_source(&self) -> RwSignal<LogEntry> {
         self.event_source
+    }
+
+    pub fn is_healthy(&self) -> RwSignal<bool> {
+        self.is_healthy
     }
 }
 
@@ -56,58 +61,59 @@ pub fn create_sse_resource(url: &str) -> SseProvider {
             .expect("couldn't parse message")),
             Err(e) => Err(e),
         });
+    let is_healthy = RwSignal::new(true);
     spawn_local(async move {
         while let Some(next_value) = stream.next().await {
             if let Ok(log_entry) = next_value {
                 data.set(log_entry);
+            } else {
+                is_healthy.set(false);
+                source.close();
+                break;
             }
         }
     });
-
-    std::mem::forget(source);
-    SseProvider { event_source: data }
+    SseProvider {
+        event_source: data,
+        is_healthy,
+    }
 }
 
-pub fn resolve_timestamp(value: Signal<u64>) -> impl Fn() -> String {
-    let relative_time = move || {
-        let timestamp = || value.get();
-        let now = Utc::now().timestamp() as u64;
+pub fn relative_timestamp(timestamp: u64) -> String {
+    let now = Utc::now().timestamp() as u64;
 
-        match timestamp().cmp(&now) {
-            std::cmp::Ordering::Greater => {
-                let future_diff = timestamp() - now;
-                match future_diff {
-                    0..=59 => "in a few seconds".to_string(),
-                    60..=3599 => format!("in {} minutes", future_diff / 60),
-                    3600..=86399 => format!("in {} hours", future_diff / 3600),
-                    86400..=2_592_000 => format!("in {} days", future_diff / 86400),
-                    _ => {
-                        let datetime = DateTime::<Utc>::from_timestamp(timestamp() as i64, 0)
-                            .expect("Invalid timestamp");
-                        let local: DateTime<Local> = datetime.into();
-                        format!("on {}", local.format("%B %d, %Y"))
-                    }
-                }
-            }
-            _ => {
-                let diff = now.saturating_sub(timestamp());
-                match diff {
-                    0..=59 => "just now".to_string(),
-                    60..=3599 => format!("{} minutes ago", diff / 60),
-                    3600..=86399 => format!("{} hours ago", diff / 3600),
-                    86400..=2_592_000 => format!("{} days ago", diff / 86400),
-                    _ => {
-                        let datetime = DateTime::<Utc>::from_timestamp(timestamp() as i64, 0)
-                            .expect("Invalid timestamp");
-                        let local: DateTime<Local> = datetime.into();
-                        local.format("%B %d, %Y").to_string()
-                    }
+    match timestamp.cmp(&now) {
+        std::cmp::Ordering::Greater => {
+            let future_diff = timestamp - now;
+            match future_diff {
+                0..=59 => "in a few seconds".to_string(),
+                60..=3599 => format!("in {} minutes", future_diff / 60),
+                3600..=86399 => format!("in {} hours", future_diff / 3600),
+                86400..=2_592_000 => format!("in {} days", future_diff / 86400),
+                _ => {
+                    let datetime = DateTime::<Utc>::from_timestamp(timestamp as i64, 0)
+                        .expect("Invalid timestamp");
+                    let local: DateTime<Local> = datetime.into();
+                    format!("on {}", local.format("%B %d, %Y"))
                 }
             }
         }
-    };
-    relative_time
+        _ => {
+            let diff = now.saturating_sub(timestamp);
+            match diff {
+                0..=59 => "just now".to_string(),
+                60..=3599 => format!("{} minutes ago", diff / 60),
+                3600..=86399 => format!("{} hours ago", diff / 3600),
+                86400..=2_592_000 => format!("{} days ago", diff / 86400),
+                _ => {
+                    let datetime = DateTime::<Utc>::from_timestamp(timestamp as i64, 0)
+                        .expect("Invalid timestamp");
+                    let local: DateTime<Local> = datetime.into();
+                    local.format("%B %d, %Y").to_string()
+                }
+            }
+        }
+    }
 }
-
 
 pub type RawTask = apalis_core::task::Task<serde_json::Value, serde_json::Value, String>;

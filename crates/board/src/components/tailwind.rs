@@ -8,6 +8,10 @@ impl TableClassesProvider for TailwindClassesPreset {
         Self
     }
 
+    fn thead(&self, prop_class: &str) -> String {
+        format!("sticky top-0 z-10 {prop_class}")
+    }
+
     fn thead_row(&self, template_classes: &str) -> String {
         format!(
             "{} {}",
@@ -35,7 +39,7 @@ impl TableClassesProvider for TailwindClassesPreset {
         format!(
             "{} {}",
             "border-b border-grid-dimmed transition-colors hover:bg-mint-50 dark:hover:bg-charcoal-900 focus-custom cursor-pointer",
-             template_classes
+            template_classes
         )
     }
 

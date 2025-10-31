@@ -1,6 +1,8 @@
 use leptos::{ev::MouseEvent, prelude::*};
 use leptos_router::{components::A, hooks::use_location};
 
+use crate::use_sse_provider;
+
 #[component]
 pub fn Sidebar() -> impl IntoView {
     let version = env!("CARGO_PKG_VERSION");
@@ -8,12 +10,24 @@ pub fn Sidebar() -> impl IntoView {
     let (manage_expanded, set_manage_expanded) = signal(true);
     let location = use_location();
 
+    let sse = use_sse_provider();
+
+    let is_healthy = move || {
+        sse.is_healthy()
+            .get()
+            .then(|| view! { <span class="text-green-600">"Healthy"</span> })
+            .unwrap_or(view! { <span class="text-red-600">"Unhealthy"</span> })
+    };
+
+    let status_message = move || {
+        if sse.is_healthy()
+            .get() { "All systems are operational." } else { "System unhealthy" }
+    };
+
     view! {
-        <div class="grid h-full grid-rows-[2.5rem_1fr_auto] overflow-hidden border-r border-grid-bright bg-background-bright transition">
-            // Header
+        <div class="grid h-full grid-rows-[2.75rem_1fr_auto] overflow-hidden border-r border-grid-bright bg-background-bright transition">
             <div class="flex items-center justify-between overflow-hidden border-b px-3 py-1 transition duration-300 border-grid-bright">
                 <div class="flex flex-row text-text-bright font-normal text-center font-sans items-center gap-1">
-                    // Apalis Logo SVG
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 512 512"
@@ -114,8 +128,18 @@ pub fn Sidebar() -> impl IntoView {
                         />
                         <Show when=move || manage_expanded.get()>
                             <div class="opacity-100">
-                                <NavItem href="/logs" icon=logs_icon() text="Logs" />
-                                <NavItem href="/settings" icon=settings_icon() text="Settings" />
+                                <NavItem
+                                    href="/logs"
+                                    icon=logs_icon()
+                                    text="Logs"
+                                    is_active=location.pathname.get().starts_with("/logs")
+                                />
+                                <NavItem
+                                    href="/settings"
+                                    icon=settings_icon()
+                                    text="Settings"
+                                    is_active=location.pathname.get().starts_with("/settings")
+                                />
                             </div>
                         </Show>
                     </div>
@@ -123,18 +147,16 @@ pub fn Sidebar() -> impl IntoView {
             </div>
 
             // Footer
-            <div>
-                // System Status
+            <div class="font-sans text-xs text-text-dimmed">
                 <div class="flex flex-col gap-1 border-t border-grid-bright p-1">
                     <div class="flex flex-col w-full mx-2">
                         <div class="flex gap-2 text-sm">
                             <div class="h-2 w-2 rounded-full bg-green-500 animate-pulse my-[0.3rem]"></div>
                             <span class="text-muted-foreground">"System Status:"</span>
-                            <span class="text-green-600">"Healthy"</span>
+                            {is_healthy}
+
                         </div>
-                        <div class="mt-1 text-xs text-muted-foreground">
-                            "All queues operational"
-                        </div>
+                        <div class="mt-1 text-xs text-muted-foreground">{status_message}</div>
                     </div>
                 </div>
 
@@ -348,7 +370,7 @@ fn complex_icon() -> impl IntoView {
     }
 }
 
-fn logs_icon() -> impl IntoView {
+pub fn logs_icon() -> impl IntoView {
     view! {
         <svg
             xmlns="http://www.w3.org/2000/svg"
