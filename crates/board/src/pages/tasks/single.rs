@@ -8,7 +8,7 @@ use crate::{
 use apalis_board_types::{LogEntry, LogLevel};
 use apalis_core::task::status::Status;
 use futures::StreamExt;
-use leptos::{leptos_dom::logging::console_debug_log, prelude::*, reactive::spawn_local};
+use leptos::{prelude::*, reactive::spawn_local};
 use leptos_meta::Title;
 use leptos_router::hooks::use_params_map;
 
@@ -33,7 +33,6 @@ pub fn SingleTaskView(
     let items = move || {
         ctx.as_object()
             .map(|obj| {
-                console_debug_log(&format!("{obj:?}"));
                 let mut res = {
                     obj.iter()
                         .filter_map(|(k, v)| {

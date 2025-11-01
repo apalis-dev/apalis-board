@@ -4,11 +4,11 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-apalis-core = { version = "1.0.0-alpha.7", features = ["serde"] }
-apalis = { version = "1.0.0-alpha.7", features = ["limit", "retry"] }
-apalis-sql = { version = "1.0.0-alpha.7" }
+apalis-core = { version = "1.0.0-alpha.8", features = ["serde"] }
+apalis = { version = "1.0.0-alpha.8", features = ["limit", "retry"] }
+apalis-sql = { version = "1.0.0-alpha.8" }
 sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres"] }
-apalis-postgres = { version = "1.0.0-alpha.2", features = [
+apalis-postgres = { version = "1.0.0-alpha.3", features = [
     "migrate",
     "tokio-comp",
 ] }
