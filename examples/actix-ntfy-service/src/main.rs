@@ -6,7 +6,7 @@ use apalis_board_api::framework::{ApiBuilder, RegisterRoute};
 use apalis_board_api::sse::TracingBroadcaster;
 use apalis_board_api::sse::TracingSubscriber;
 use apalis_board_api::ui::ServeUI;
-use apalis_sqlite::{SqlitePool, SqliteStorage};
+use apalis_sqlite::{SharedSqliteStorage, SqlitePool, SqliteStorage};
 use clap::Parser;
 use futures::{future, TryFutureExt};
 use reqwest::Client;
@@ -39,19 +39,23 @@ async fn main() -> Result<(), BoxDynError> {
         .with(stdio_layer)
         .with(tracing_layer)
         .init();
-    let pool = SqlitePool::connect(&args.database_url).await.unwrap();
+
+    let pool = SqlitePool::connect(&args.database_url).await?;
+
     SqliteStorage::setup(&pool).await.unwrap();
 
     let config = apalis_sqlite::Config::new(&args.queue).with_poll_interval(
         StrategyBuilder::new()
             .apply(
-                IntervalStrategy::new(Duration::from_millis(100))
+                IntervalStrategy::new(Duration::from_millis(10000))
                     .with_backoff(BackoffConfig::default()),
             )
             .build(),
     );
 
-    let notification_store = SqliteStorage::new_with_callback(&pool, &config);
+    let mut store = SharedSqliteStorage::new(&args.database_url);
+
+    let notification_store = store.make_shared_with_config(config).unwrap();
 
     let worker = WorkerBuilder::new("ntfy-banana")
         .backend(notification_store.clone())

@@ -5,8 +5,7 @@ use actix_web::{
     web::{self, Data, Json},
 };
 use apalis_core::backend::{
-    Backend, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers,
-    Metrics, TaskSink, codec::Codec,
+    Backend, BackendExt, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers, Metrics, TaskSink, codec::Codec
 };
 use serde::{Serialize, de::DeserializeOwned};
 use tokio::sync::RwLock;
@@ -33,7 +32,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
     ) -> impl Responder
     where
         T: Serialize + DeserializeOwned + 'static,
-        S: ListTasks<T> + Send + 'static,
+        S: ListTasks<T> + Send + 'static + BackendExt,
         S::Context: Serialize + 'static,
         S::IdType: Serialize + 'static,
         <S as Backend>::Error: std::error::Error + 'static,
@@ -90,10 +89,10 @@ impl<S, T, Compact> Handler<S, T, Compact> {
     ) -> impl Responder
     where
         T: Serialize + DeserializeOwned + 'static,
-        S: TaskSink<T> + Send,
+        S: TaskSink<T> + Send + BackendExt,
         S::Error: std::error::Error,
         S::Codec: Codec<T, Compact = Compact>,
-        <<S as Backend>::Codec as Codec<T>>::Error: std::error::Error,
+        <<S as BackendExt>::Codec as Codec<T>>::Error: std::error::Error,
     {
         let queue = queue.into_inner().to_string();
         match push_task(queue, task.into_inner(), storage.into_inner()).await {
@@ -136,7 +135,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
         S::IdType: Serialize,
         S::Compact: Serialize,
         <S as Backend>::Error: std::error::Error,
-        <<S as Backend>::Codec as Codec<<S as Backend>::Args>>::Error: std::error::Error,
+        <<S as BackendExt>::Codec as Codec<<S as Backend>::Args>>::Error: std::error::Error,
     {
         let storage = storage.into_inner();
         let filter = query.into_inner();
@@ -198,11 +197,11 @@ where
     Compact: Serialize + 'static,
     B::Compact: Serialize,
     <B as Backend>::Error: std::error::Error,
-    <<B as Backend>::Codec as Codec<<B as Backend>::Args>>::Error: std::error::Error,
+    <<B as BackendExt>::Codec as Codec<<B as Backend>::Args>>::Error: std::error::Error,
     T: Serialize + DeserializeOwned + 'static,
     B: ListTasks<T> + FetchById<T>,
     B::Codec: Codec<T, Compact = Compact>,
-    <<B as Backend>::Codec as Codec<T>>::Error: std::error::Error,
+    <<B as BackendExt>::Codec as Codec<T>>::Error: std::error::Error,
     B: TaskSink<T> + ConfigExt,
 {
     fn register(mut self, backend: B) -> Self {
