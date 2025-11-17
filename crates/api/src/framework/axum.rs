@@ -1,8 +1,8 @@
 use apalis_board_types::ApiError;
 use apalis_core::{
     backend::{
-        Backend, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers,
-        Metrics, QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec,
+        Backend, BackendExt, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks,
+        ListWorkers, Metrics, QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec,
     },
     task::Task,
 };
@@ -36,7 +36,6 @@ pub enum AppError {
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
-        
         match self {
             AppError::JsonRejection(rejection) => {
                 // This error is caused by bad user input so don't log it
@@ -66,7 +65,7 @@ pub async fn get_tasks<S, T, Compact>(
 ) -> Result<Json<Vec<Task<T, S::Context, S::IdType>>>, AppError>
 where
     T: Serialize + DeserializeOwned + 'static,
-    S: ListTasks<T> + Send + 'static,
+    S: ListTasks<T> + Send + 'static + BackendExt,
     S::Context: Serialize + 'static,
     S::IdType: Serialize + 'static,
     <S as Backend>::Error: std::error::Error + 'static,
@@ -123,10 +122,10 @@ pub async fn push_task<S, T, Compact>(
 ) -> Result<Json<()>, AppError>
 where
     T: Serialize + DeserializeOwned + 'static + Send,
-    S: TaskSink<T> + 'static + Send,
+    S: TaskSink<T> + 'static + Send + BackendExt,
     S::Error: std::error::Error,
     S::Codec: Codec<T, Compact = Compact>,
-    <<S as Backend>::Codec as Codec<T>>::Error: std::error::Error,
+    <<S as BackendExt>::Codec as Codec<T>>::Error: std::error::Error,
 {
     let queue = queue.to_string();
     match crate::push_task(queue, task.0, storage.0).await {
@@ -163,12 +162,12 @@ pub async fn get_all_tasks<S>(
     storage: State<S>,
 ) -> Result<Json<Vec<Task<S::Compact, S::Context, S::IdType>>>, AppError>
 where
-    S: ListAllTasks + Send + 'static,
+    S: ListAllTasks + BackendExt + Send + 'static,
     S::Context: Serialize,
     S::IdType: Serialize,
     S::Compact: Serialize,
     <S as Backend>::Error: std::error::Error,
-    <<S as Backend>::Codec as Codec<<S as Backend>::Args>>::Error: std::error::Error,
+    <<S as BackendExt>::Codec as Codec<<S as Backend>::Args>>::Error: std::error::Error,
 {
     let storage = storage.0;
     let filter = query.0;
@@ -231,12 +230,12 @@ where
     B::Compact: Serialize + 'static + Send,
     B::Context: Serialize + 'static + Send,
     <B as Backend>::Error: std::error::Error,
-    <<B as Backend>::Codec as Codec<<B as Backend>::Args>>::Error: std::error::Error,
+    <<B as BackendExt>::Codec as Codec<<B as Backend>::Args>>::Error: std::error::Error,
     T: Serialize + DeserializeOwned + 'static + Send,
     B: ListTasks<T> + FetchById<T>,
     B::Codec: Codec<T, Compact = Compact>,
-    <<B as Backend>::Codec as Codec<T>>::Error: std::error::Error,
-    B: TaskSink<T> + ConfigExt + Send + Sync + 'static,
+    <<B as BackendExt>::Codec as Codec<T>>::Error: std::error::Error,
+    B: TaskSink<T> + BackendExt + ConfigExt + Send + Sync + 'static,
 {
     fn register(mut self, backend: B) -> Self {
         let queue = backend.get_queue();

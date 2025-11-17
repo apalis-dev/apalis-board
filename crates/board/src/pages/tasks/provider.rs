@@ -92,12 +92,18 @@ impl PaginatedTableDataProvider<Task> for TaskProvider {
                 attempt: t.parts.attempt.current(),
                 status: t.parts.status.load(),
                 run_at: t.parts.run_at,
-                meta: t.parts.ctx,
                 queue: t
                     .parts
-                    .queue
-                    .map(|a| a.to_string())
-                    .unwrap_or("default".to_string()),
+                    .ctx
+                    .as_object()
+                    .and_then(|obj| {
+                        obj.get("queue")
+                            .or_else(|| obj.get("job_type"))
+                            .and_then(|v| v.as_str())
+                    })
+                    .unwrap_or("")
+                    .to_string(),
+                meta: t.parts.ctx,
             })
             .collect();
         Ok(tasks)

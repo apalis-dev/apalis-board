@@ -4,8 +4,8 @@ use std::{str::FromStr, sync::Arc};
 use apalis_board_types::ApiError;
 use apalis_core::{
     backend::{
-        Backend, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers, Metrics,
-        QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec,
+        Backend, BackendExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers,
+        Metrics, QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec,
     },
     task::{Task, builder::TaskBuilder, task_id::TaskId},
 };
@@ -20,18 +20,18 @@ pub mod sse;
 pub mod ui;
 
 pub async fn push_task<Args, B, Compact>(
-    queue: String,
+    _queue: String,
     task: Args,
     storage: Arc<RwLock<B>>,
 ) -> Result<(), ApiError>
 where
     Args: Serialize + DeserializeOwned + 'static,
-    B: TaskSink<Args> + Send,
+    B: TaskSink<Args> + Send + BackendExt,
     B::Error: std::error::Error,
     B::Codec: Codec<Args, Compact = Compact>,
-    <<B as Backend>::Codec as Codec<Args>>::Error: std::error::Error,
+    <<B as BackendExt>::Codec as Codec<Args>>::Error: std::error::Error,
 {
-    let task = TaskBuilder::new(task).with_queue(&queue).build();
+    let task = TaskBuilder::new(task).build();
     let res = storage.write().await.push_task(task).await;
     match res {
         Ok(_) => Ok(()),
@@ -61,7 +61,7 @@ pub async fn get_tasks<S, T, Compact>(
 ) -> Result<Vec<Task<T, S::Context, S::IdType>>, ApiError>
 where
     T: Serialize + DeserializeOwned + 'static,
-    S: ListTasks<T> + Send,
+    S: ListTasks<T> + Send + BackendExt,
     S::Context: Serialize,
     S::IdType: Serialize,
     <S as Backend>::Error: std::error::Error,
@@ -126,7 +126,7 @@ where
     S::IdType: Serialize,
     S::Compact: Serialize,
     <S as Backend>::Error: std::error::Error,
-    <<S as Backend>::Codec as Codec<<S as Backend>::Args>>::Error: std::error::Error,
+    <<S as BackendExt>::Codec as Codec<<S as Backend>::Args>>::Error: std::error::Error,
 {
     storage
         .read()

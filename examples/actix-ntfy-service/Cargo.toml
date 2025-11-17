@@ -6,13 +6,13 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-apalis-core = { version = "1.0.0-alpha.8", features = ["serde"] }
-apalis-sql = { version = "1.0.0-alpha.8" }
-apalis = { version = "1.0.0-alpha.8", features = ["limit", "retry"] }
+apalis-core = { version = "1.0.0-beta.1", features = ["serde"] }
+apalis-sql = { version = "1.0.0-beta.1" }
+apalis = { version = "1.0.0-beta.1", features = ["limit", "retry"] }
 apalis-sqlite = { features = [
     "migrate",
     "tokio-comp",
-], version = "1.0.0-alpha.5" }
+], version = "1.0.0-beta.2" }
 apalis-board-types = { path = "../../crates/types" }
 apalis-board-api = { path = "../../crates/api", features = ["actix"] }
 
