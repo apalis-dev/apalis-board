@@ -24,7 +24,7 @@ Get a clear overview of what's happening in your queues and manage jobs efficien
 Each version of `apalis-board-api` includes a compatible version of the ui so you only need to include one dep.
 
 ```toml
-apalis-board-api = { version = "1.0.0-alpha.2", features = ["actix"] } #Or axum
+apalis-board-api = { version = "1.0.0-beta.1", features = ["actix"] } #Or axum
 ```
 
 Here are the basics of setting up the board:
