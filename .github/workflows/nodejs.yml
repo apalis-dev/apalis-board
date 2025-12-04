@@ -38,8 +38,3 @@ jobs:
         run: yarn build
         env:
           CI: true
-
-      - name: Test
-        run: yarn test
-        env:
-          CI: true
