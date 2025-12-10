@@ -1,6 +1,6 @@
-# <img alt="apalis-board" src="https://github.com/apalis-dev/apalis-board/raw/master/screenshots/logo.svg" width="24px" /> apalis-board
+# <img alt="apalis-board" src="https://github.com/apalis-dev/apalis-board/raw/main/screenshots/logo.svg" width="24px" /> apalis-board
 
-Apalis board contains a number of crates useful for building UIs and apis for [apalis](https://github.com/geofmureithi/apalis) backends.
+Apalis board contains a number of crates useful for building UIs and apis for [apalis](https://github.com/apalis-dev/apalis) backends.
 
 **Key features:**
 
@@ -64,19 +64,19 @@ If you visit `/api/v1/events` you will receive the task logs. This is also acces
 
 ### Tasks
 
-![Tasks](https://github.com/apalis-dev/apalis-board/raw/master/screenshots/tasks.png)
+![Tasks](https://github.com/apalis-dev/apalis-board/raw/main/screenshots/tasks.png)
 
 ### Single Task
 
-![Tasks](https://github.com/apalis-dev/apalis-board/raw/master/screenshots/task.png)
+![Tasks](https://github.com/apalis-dev/apalis-board/raw/main/screenshots/task.png)
 
 ### Workers
 
-![Workers](https://github.com/apalis-dev/apalis-board/raw/master/screenshots/workers.png)
+![Workers](https://github.com/apalis-dev/apalis-board/raw/main/screenshots/workers.png)
 
 ### Queues
 
-![Queues](https://github.com/apalis-dev/apalis-board/raw/master/screenshots/queues.png)
+![Queues](https://github.com/apalis-dev/apalis-board/raw/main/screenshots/queues.png)
 
 ## Building the frontend
 
