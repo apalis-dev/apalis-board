@@ -34,7 +34,7 @@ jobs:
 
       - name: Build project
         run: trunk build --release
-        working-directory: ./crates/board
+        working-directory: crates/board
   coverage:
     name: Code Coverage
     runs-on: ubuntu-latest

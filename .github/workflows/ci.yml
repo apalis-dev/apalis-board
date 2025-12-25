@@ -33,7 +33,7 @@ jobs:
 
       - name: Build project
         run: trunk build --release
-        working-directory: ./crates/board
+        working-directory: crates/board
   test:
     name: Test Suite
     needs: compile-web
