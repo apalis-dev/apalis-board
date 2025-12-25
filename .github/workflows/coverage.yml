@@ -14,9 +14,31 @@ env:
   RUST_BACKTRACE: 1
 
 jobs:
+  compile-web:
+    name: Compile Board Web Assets
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        rust: [stable, beta]
+        include:
+          - os: ubuntu-latest
+            rust: nightly
+    steps:
+      - name: Install cargo-binstall
+        uses: cargo-bins/cargo-binstall@v1.16.5
+
+      - name: Install dependencies
+        run: |
+          cargo binstall --no-confirm trunk
+
+      - name: Build project
+        run: trunk build --release
+        working-directory: ./crates/board
   coverage:
     name: Code Coverage
     runs-on: ubuntu-latest
+    needs: compile-web
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
