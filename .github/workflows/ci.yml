@@ -26,13 +26,31 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
-        
+
       - name: Install cargo-binstall
         uses: cargo-bins/cargo-binstall@v1.16.5
 
       - name: Install dependencies
         run: |
           cargo binstall --no-confirm trunk
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ matrix.rust }}
+          targets: wasm32-unknown-unknown
+      
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ matrix.rust }}-
+            ${{ runner.os }}-cargo-
 
       - name: Build project
         run: trunk build --release
@@ -49,23 +67,6 @@ jobs:
           - os: ubuntu-latest
             rust: nightly
     steps:
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ matrix.rust }}
-
-      - name: Cache cargo registry
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-${{ matrix.rust }}-
-            ${{ runner.os }}-cargo-
-
       - name: Run cargo test with all features
         run: cargo test --all-features --verbose
 
