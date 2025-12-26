@@ -124,14 +124,18 @@ jobs:
         with:
           components: clippy
 
-      - name: Cache cargo registry
+      - name: Cache cargo registry and trunk assets
         uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-clippy-${{ hashFiles('**/Cargo.lock') }}
+            crates/board/dist
+          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ matrix.rust }}-
+            ${{ runner.os }}-cargo-
 
       - name: Run cargo clippy
         run: cargo clippy --all-targets --all-features
@@ -147,14 +151,18 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@nightly
 
-      - name: Cache cargo registry
+      - name: Cache cargo registry and trunk assets
         uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-docs-${{ hashFiles('**/Cargo.lock') }}
+            crates/board/dist
+          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ matrix.rust }}-
+            ${{ runner.os }}-cargo-
 
       - name: Build documentation
         run: cargo doc --all-features --no-deps --document-private-items
@@ -171,6 +179,19 @@ jobs:
 
       - name: Install Rust nightly toolchain
         uses: dtolnay/rust-toolchain@nightly
+      
+      - name: Cache cargo registry and trunk assets
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+            crates/board/dist
+          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ matrix.rust }}-
+            ${{ runner.os }}-cargo-
 
       - name: Install cargo-udeps
         uses: taiki-e/install-action@cargo-udeps

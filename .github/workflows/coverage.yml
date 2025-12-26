@@ -16,14 +16,7 @@ env:
 jobs:
   compile-web:
     name: Compile Board Web Assets
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        rust: [stable, beta]
-        include:
-          - os: ubuntu-latest
-            rust: nightly
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
@@ -38,24 +31,33 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: ${{ matrix.rust }}
+          toolchain: stable
           targets: wasm32-unknown-unknown
-      
-      - name: Cache cargo registry
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@main
+        with:
+          node-version: 24
+          cache: 'yarn'
+      - name: Install npm dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build project
+        run: trunk build --release
+        working-directory: crates/board
+
+      - name: Cache cargo registry and trunk assets
         uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
+            crates/board/dist
+          key: ${{ runner.os }}-cargo-stable-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-${{ matrix.rust }}-
+            ${{ runner.os }}-cargo-stable-${{ hashFiles('**/Cargo.lock') }}
             ${{ runner.os }}-cargo-
-
-      - name: Build project
-        run: trunk build --release
-        working-directory: crates/board
   coverage:
     name: Code Coverage
     runs-on: ubuntu-latest
@@ -63,6 +65,18 @@ jobs:
     steps:
       - name: Install cargo-tarpaulin
         run: cargo install cargo-tarpaulin
+      - name: Cache cargo registry and trunk assets
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+            crates/board/dist
+          key: ${{ runner.os }}-cargo-stable-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-stable-${{ hashFiles('**/Cargo.lock') }}
+            ${{ runner.os }}-cargo-
 
       - name: Generate code coverage
         run: cargo tarpaulin --all-features --verbose --workspace --timeout 120 --out xml
