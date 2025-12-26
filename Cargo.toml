@@ -1,9 +1,93 @@
+[package]
+name = "apalis-board"
+version = "1.0.0-rc.1"
+authors = ["Njuguna Mureithi <mureithinjuguna@gmail.com>"]
+description = "Apalis board contains a number of crates useful for building UIs and apis for managing Apalis task queues."
+edition.workspace = true
+repository.workspace = true
+documentation = "https://docs.rs/apalis-board"
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+keywords = ["background-job", "background-task", "worker", "apalis"]
+categories = ["http-server", "database"]
+
+[lib]
+
+[features]
+default = []
+web = ["dep:apalis-board-web"]
+actix = ["apalis-board-api/actix"]
+axum = ["apalis-board-api/axum"]
+
+[dependencies]
+apalis-board-web = { path = "crates/web", optional = true }
+apalis-board-api = { path = "crates/api", optional = true }
+
+[package.metadata.docs.rs]
+# defines the configuration attribute `docsrs`
+rustdoc-args = ["--cfg", "docsrs"]
+all-features = true
+
 [workspace]
-members = [
-    "crates/api",
-    "crates/board",
-    "crates/types",
-    "examples/axum-email-service",
-    "examples/actix-ntfy-service",
-]
+members = ["crates/*", "examples/*"]
+default-members = [".", "crates/*"]
 resolver = "2"
+
+[workspace.package]
+rust-version = "1.85"
+edition = "2024"
+repository = "https://github.com/apalis-dev/apalis-board"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+rust_2018_idioms = { level = "warn", priority = -1 }
+missing_debug_implementations = "warn"
+missing_docs = "warn"
+unreachable_pub = "warn"
+
+[workspace.lints.clippy]
+type_complexity = "allow"
+
+await_holding_lock = "warn"
+dbg_macro = "warn"
+empty_enum = "warn"
+enum_glob_use = "warn"
+equatable_if_let = "warn"
+exit = "warn"
+filter_map_next = "warn"
+fn_params_excessive_bools = "warn"
+if_let_mutex = "warn"
+implicit_clone = "warn"
+imprecise_flops = "warn"
+inefficient_to_string = "warn"
+linkedlist = "warn"
+lossy_float_literal = "warn"
+macro_use_imports = "warn"
+manual_let_else = "warn"
+match_same_arms = "warn"
+match_wildcard_for_single_variants = "warn"
+mem_forget = "warn"
+must_use_candidate = "warn"
+needless_borrow = "warn"
+needless_continue = "warn"
+needless_pass_by_ref_mut = "warn"
+needless_pass_by_value = "warn"
+option_option = "warn"
+redundant_clone = "warn"
+ref_option = "warn"
+rest_pat_in_fully_bound_structs = "warn"
+return_self_not_must_use = "warn"
+single_match_else = "warn"
+str_to_string = "warn"
+suboptimal_flops = "warn"
+todo = "warn"
+trivially_copy_pass_by_ref = "warn"
+uninlined_format_args = "warn"
+unnested_or_patterns = "warn"
+unused_self = "warn"
+use_self = "warn"
+verbose_file_reads = "warn"
+
+[workspace.metadata.cargo-udeps.ignore]
+normal = ["apalis-board-web", "apalis-board-api"]

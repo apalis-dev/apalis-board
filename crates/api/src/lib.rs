@@ -12,13 +12,16 @@ use apalis_core::{
 use serde::{Serialize, de::DeserializeOwned};
 use tokio::sync::RwLock;
 
+/// Contains different web framework routes.
 pub mod framework;
-
+/// Expose Server-Sent Events (SSE) functionality.
 #[cfg(feature = "sse")]
 pub mod sse;
+/// Expose UI components and functionality.
 #[cfg(feature = "ui")]
 pub mod ui;
 
+/// Push a new task to the specified queue.
 pub async fn push_task<Args, B, Compact>(
     _queue: String,
     task: Args,
@@ -38,7 +41,7 @@ where
         Err(e) => Err(ApiError::BackendError(e.to_string())),
     }
 }
-
+/// Get statistics for a specific queue.
 pub async fn stats_by_queue<S>(
     storage: Arc<RwLock<S>>,
     queue: String,
@@ -54,6 +57,7 @@ where
     }
 }
 
+/// Get a list of tasks from the specified queue with filtering options.
 pub async fn get_tasks<S, T, Compact>(
     queue: String,
     storage: Arc<RwLock<S>>,
@@ -75,6 +79,7 @@ where
         .map_err(|e| ApiError::BackendError(e.to_string()))
 }
 
+/// Get workers for a specific queue.
 pub async fn get_workers<S>(
     storage: Arc<RwLock<S>>,
     queue: String,
@@ -91,6 +96,7 @@ where
         .map_err(|e| ApiError::BackendError(e.to_string()))
 }
 
+/// Get a task by its ID.
 pub async fn get_task_by_id<B, T>(
     task_id: String,
     storage: Arc<RwLock<B>>,
@@ -116,6 +122,7 @@ where
         .map_err(|e| ApiError::BackendError(e.to_string()))
 }
 
+/// Get all tasks across all queues.
 pub async fn get_all_tasks<S>(
     storage: Arc<RwLock<S>>,
     filter: Filter,
@@ -136,6 +143,7 @@ where
         .map_err(|e| ApiError::BackendError(e.to_string()))
 }
 
+/// Get all workers across all queues.
 pub async fn get_all_workers<S>(storage: Arc<RwLock<S>>) -> Result<Vec<RunningWorker>, ApiError>
 where
     S: ListWorkers,
@@ -149,6 +157,7 @@ where
         .map_err(|e| ApiError::BackendError(e.to_string()))
 }
 
+/// Fetch all queues.
 pub async fn fetch_queues<S>(storage: Arc<RwLock<S>>) -> Result<Vec<QueueInfo>, ApiError>
 where
     S::Error: std::error::Error,
@@ -162,6 +171,7 @@ where
         .map_err(|e| ApiError::BackendError(e.to_string()))
 }
 
+/// Get an overview of statistics.
 pub async fn overview<S>(storage: Arc<RwLock<S>>) -> Result<Vec<Statistic>, ApiError>
 where
     S::Error: std::error::Error,

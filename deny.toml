@@ -1,0 +1,61 @@
+[graph]
+exclude-unpublished = true
+
+[advisories]
+unmaintained = "none"
+ignore = []
+
+[licenses]
+confidence-threshold = 0.8
+allow = [
+    "Apache-2.0",
+    "BSD-3-Clause",
+    "MIT",
+    "Unicode-3.0",
+    "Zlib",
+    "ISC",
+    "CDLA-Permissive-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "CC0-1.0",
+    "0BSD",
+    "BSL-1.0"
+]
+
+[bans]
+multiple-versions = "deny"
+highlight = "all"
+skip-tree = [
+    { name = "windows_x86_64_msvc" },
+    { name = "windows_x86_64_gnullvm" },
+    { name = "windows_x86_64_gnu" },
+    { name = "windows_i686_msvc" },
+    { name = "windows_i686_gnullvm" },
+    { name = "windows_i686_gnu" },
+    { name = "windows_aarch64_msvc" },
+    { name = "windows_aarch64_gnullvm" },
+    { name = "windows-targets" },
+    { name = "windows-sys" },
+    # TODO: @geofmureithi Investigate why these are causing issues possibly due to sqlx dependencies
+    { name = "getrandom" },
+    { name = "hashbrown" },
+    { name = "rand" },
+    { name = "rand_chacha" },
+    { name = "rand_core" },
+
+    # TODO: @geofmureithi Investigate why these are causing issues possibly due to axum/actix dependencies
+    { name = "convert_case" },
+    { name = "cookie" },
+    { name = "h2" },
+    { name = "heck" },
+    { name = "http" },
+    { name = "socket2" },
+    { name = "thiserror" },
+    { name = "thiserror-impl" },
+    { name = "typed-builder" },
+    { name = "typed-builder-macro" },
+]
+
+[sources]
+unknown-registry = "warn"
+unknown-git = "warn"
+allow-git = []

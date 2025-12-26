@@ -1,8 +1,8 @@
 use apalis_board_types::ApiError;
 use apalis_core::{
     backend::{
-        Backend, BackendExt, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks,
-        ListWorkers, Metrics, QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec,
+        Backend, BackendExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers,
+        Metrics, QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec,
     },
     task::Task,
 };
@@ -20,33 +20,38 @@ use tokio::sync::RwLock;
 
 use crate::framework::{ApiBuilder, RegisterRoute};
 
-#[derive(Debug)]
+/// An enumeration of possible application errors.
+#[derive(Debug, thiserror::Error)]
 pub enum AppError {
-    // The request body contained invalid JSON
+    /// The request body contained invalid JSON
+    #[error("JSON Rejection: {0}")]
     JsonRejection(JsonRejection),
 
     /// An error occurred in the API
+    #[error("API Error: {0}")]
     ApiError(ApiError),
     /// Resource not found
+    #[error("Resource not found")]
     NotFound,
 
     /// Missing application state
+    #[error("Missing application state")]
     MissingState,
 }
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         match self {
-            AppError::JsonRejection(rejection) => {
+            Self::JsonRejection(rejection) => {
                 // This error is caused by bad user input so don't log it
                 (rejection.status(), rejection.body_text()).into_response()
             }
-            AppError::ApiError(err) => {
+            Self::ApiError(err) => {
                 // These errors are unexpected and should be logged
                 (StatusCode::INTERNAL_SERVER_ERROR, Json(err).into_response()).into_response()
             }
-            AppError::NotFound => (StatusCode::NOT_FOUND, ()).into_response(),
-            AppError::MissingState => (
+            Self::NotFound => (StatusCode::NOT_FOUND, ()).into_response(),
+            Self::MissingState => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "Missing application state",
             )
@@ -55,9 +60,10 @@ impl IntoResponse for AppError {
     }
 }
 
-// Some shared state used throughout our application
+/// Type alias for application state extension.
 pub type State<B> = Extension<Arc<RwLock<B>>>;
 
+/// Fetch all tasks from the backend storage.
 pub async fn get_tasks<S, T, Compact>(
     query: Query<Filter>,
     queue: Extension<String>,
@@ -72,7 +78,7 @@ where
     S::Codec: Codec<T, Compact = Compact> + 'static,
     Compact: 'static,
 {
-    let queue = queue.0.to_string();
+    let queue = queue.0.clone();
     let storage = storage.0;
     let filter = query.0;
 
@@ -81,6 +87,8 @@ where
         .map(Json)
         .map_err(AppError::ApiError)
 }
+
+/// Fetch statistics for a specific queue from the backend storage.
 pub async fn stats_by_queue<S>(
     queue: Extension<String>,
     storage: State<S>,
@@ -92,12 +100,13 @@ where
     let queue = queue.0;
     let storage = storage.0;
 
-    match crate::stats_by_queue::<S>(storage, queue.to_string()).await {
+    match crate::stats_by_queue::<S>(storage, queue.clone()).await {
         Ok(stats) => Ok(Json(stats)),
         Err(e) => Err(AppError::ApiError(e)),
     }
 }
 
+/// Fetch all workers from the backend storage.
 pub async fn get_workers<S>(
     queue: Extension<String>,
     storage: State<S>,
@@ -106,7 +115,7 @@ where
     S: ListWorkers,
     S::Error: std::error::Error,
 {
-    let queue = queue.0.to_string();
+    let queue = queue.0.clone();
     let storage = storage.0;
 
     match crate::get_workers::<S>(storage, queue).await {
@@ -115,6 +124,7 @@ where
     }
 }
 
+/// Push a new task to the backend storage.
 pub async fn push_task<S, T, Compact>(
     queue: Extension<String>,
     storage: State<S>,
@@ -134,6 +144,7 @@ where
     }
 }
 
+/// Fetch a task by its ID from the backend storage.
 pub async fn get_task_by_id<S, T>(
     Path(task_id): Path<String>,
     storage: State<S>,
@@ -147,7 +158,7 @@ where
     S::IdType: FromStr + 'static + Send,
     <<S as Backend>::IdType as FromStr>::Err: std::error::Error,
 {
-    let task_id = task_id.to_string();
+    let task_id = task_id.clone();
     let storage = storage.0;
 
     match crate::get_task_by_id::<S, T>(task_id, storage).await {
@@ -157,6 +168,7 @@ where
     }
 }
 
+/// Fetch all tasks from the backend storage.
 pub async fn get_all_tasks<S>(
     query: Query<Filter>,
     storage: State<S>,
@@ -178,6 +190,7 @@ where
     }
 }
 
+/// Fetch all workers from the backend storage.
 pub async fn get_all_workers<S>(storage: State<S>) -> Result<Json<Vec<RunningWorker>>, AppError>
 where
     S: ListWorkers + 'static,
@@ -191,6 +204,7 @@ where
     }
 }
 
+/// Fetch all queues from the backend storage.
 pub async fn fetch_queues<S>(storage: State<S>) -> Result<Json<Vec<QueueInfo>>, AppError>
 where
     S::Error: std::error::Error,
@@ -204,6 +218,7 @@ where
         .map(Json)
 }
 
+/// Get an overview of statistics across all queues.
 pub async fn overview<S>(storage: State<S>) -> Result<Json<Vec<Statistic>>, AppError>
 where
     S::Error: std::error::Error,
@@ -235,7 +250,7 @@ where
     B: ListTasks<T> + FetchById<T>,
     B::Codec: Codec<T, Compact = Compact>,
     <<B as BackendExt>::Codec as Codec<T>>::Error: std::error::Error,
-    B: TaskSink<T> + BackendExt + ConfigExt + Send + Sync + 'static,
+    B: TaskSink<T> + BackendExt + Send + Sync + 'static,
 {
     fn register(mut self, backend: B) -> Self {
         let queue = backend.get_queue();
@@ -265,7 +280,7 @@ where
                 .route("/tasks", put(push_task::<B, T, Compact>))
                 .route("/tasks/{task_id}", get(get_task_by_id::<B, T>))
                 .layer(Extension(queue.to_string()))
-                .layer(Extension(backend.clone())),
+                .layer(Extension(backend)),
         );
 
         Self {
@@ -333,6 +348,7 @@ mod ui {
     }
 }
 
+/// Expose Server-Sent Events (SSE) functionality.
 #[cfg(feature = "sse")]
 pub mod sse {
 
@@ -344,6 +360,8 @@ pub mod sse {
     use crate::sse::TracingBroadcaster;
 
     use super::*;
+
+    /// Create a new SSE client and register it with the broadcaster.
     pub async fn new_client(
         broadcaster: Extension<Arc<Mutex<TracingBroadcaster>>>,
     ) -> Sse<impl Stream<Item = Result<Event, TryRecvError>>> {

@@ -82,19 +82,19 @@ impl ServiceTypeParser {
                 let simple_name = type_name.split("::").last().unwrap_or(type_name);
 
                 // Check if this is a capability we're interested in
-                if let Some(cap) = Self::parse_capability(simple_name) {
-                    if !capabilities.contains(&cap) {
-                        capabilities.push(cap);
-                    }
+                if let Some(cap) = Self::parse_capability(simple_name)
+                    && !capabilities.contains(&cap)
+                {
+                    capabilities.push(cap);
                 }
 
                 // Check for TaskFn to extract function name
-                if simple_name == "TaskFn" {
-                    if let Some(fn_pos) = s[type_end..].find('<') {
-                        let inner_start = type_end + fn_pos + 1;
-                        if let Some(fn_extracted) = Self::extract_task_fn_name(&s[inner_start..]) {
-                            *fn_name = Some(fn_extracted);
-                        }
+                if simple_name == "TaskFn"
+                    && let Some(fn_pos) = s[type_end..].find('<')
+                {
+                    let inner_start = type_end + fn_pos + 1;
+                    if let Some(fn_extracted) = Self::extract_task_fn_name(&s[inner_start..]) {
+                        *fn_name = Some(fn_extracted);
                     }
                 }
 

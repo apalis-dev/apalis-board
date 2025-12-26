@@ -1,6 +1,6 @@
 [package]
 name = "apalis-board-types"
-version = "1.0.0-beta.1"
+version = "1.0.0-rc.1"
 edition = "2024"
 description = "Shared types and data structures used by the apalis-board workspace."
 license = "MIT OR Apache-2.0"
@@ -18,3 +18,12 @@ publish = true
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
+thiserror = "2"
+
+[package.metadata.docs.rs]
+# defines the configuration attribute `docsrs`
+rustdoc-args = ["--cfg", "docsrs"]
+all-features = true
+
+[lints]
+workspace = true

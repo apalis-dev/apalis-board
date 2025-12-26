@@ -1,15 +1,23 @@
+/// Exposes Actix framework routes.
 #[cfg(feature = "actix")]
 pub mod actix;
+/// Exposes Axum framework routes.
 #[cfg(feature = "axum")]
 pub mod axum;
 
+/// Trait for registering routes with a backend
 pub trait RegisterRoute<B, T> {
+    /// Register routes with the given backend
+    #[must_use]
     fn register(self, backend: B) -> Self;
 }
 
+/// Builder for API routes
+#[derive(Clone, Debug)]
 pub struct ApiBuilder<R> {
     router: R,
-    #[allow(dead_code)]
+    #[allow(unused)]
+    /// may not be used in some conditional compilation
     root: bool,
 }
 
