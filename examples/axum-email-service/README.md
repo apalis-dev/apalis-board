@@ -1,20 +1,13 @@
 # axum-email-service
 
-Basic example that shows how to send emails via smtp using `lettre` and `axum`
+Basic example that shows how to send emails via smtp using `apalis-postgres`, `lettre` and `axum`
 
-## Compiling
+## Running
 
-1. Compile the `frontend`:
-
-```
-cd board
-trunk build --release
-```
-
-2. Run the `backend`
+1. Run the `backend`
 
 ```
-cargo run -- -d <path to sqlite db>
+cargo run -- -d <Postgres URL>
 ```
 
 You can now access the dashboard at `localhost:8000`
@@ -22,7 +15,7 @@ You can now access the dashboard at `localhost:8000`
 ### Push some notifications
 
 ```sh
-curl -X PUT http://127.0.0.1:8000/api/v1/queues/Notifications/tasks \
+curl -X PUT http://127.0.0.1:8000/api/v1/queues/Emails/tasks \
   -H "Content-Type: application/json" \
   -d '{
     "index": 122,
