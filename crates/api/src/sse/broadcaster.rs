@@ -18,13 +18,13 @@ impl Default for TracingBroadcaster {
 
 impl TracingBroadcaster {
     /// Create a new `TracingBroadcaster` wrapped in an `Arc<Mutex<>>`.
-    #[must_use] 
+    #[must_use]
     pub fn create() -> Arc<Mutex<Self>> {
         Arc::new(Mutex::new(Self::new()))
     }
 
     /// Create a new `TracingBroadcaster`.
-    #[must_use] 
+    #[must_use]
     pub fn new() -> Self {
         Self {
             clients: Vec::new(),

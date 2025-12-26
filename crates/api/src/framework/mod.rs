@@ -16,7 +16,8 @@ pub trait RegisterRoute<B, T> {
 #[derive(Clone, Debug)]
 pub struct ApiBuilder<R> {
     router: R,
-    #[allow(unused)] /// may not be used in some conditional compilation
+    #[allow(unused)]
+    /// may not be used in some conditional compilation
     root: bool,
 }
 

@@ -23,7 +23,7 @@ impl TracingSubscriber {
     }
 
     /// Create a new `TracingSubscriber` from a raw broadcaster.
-    #[must_use] 
+    #[must_use]
     pub fn new_inner(broadcaster: TracingBroadcaster) -> Self {
         Self {
             broadcaster: Arc::new(Mutex::new(broadcaster)),
@@ -31,13 +31,13 @@ impl TracingSubscriber {
     }
 
     /// Get the underlying broadcaster.
-    #[must_use] 
+    #[must_use]
     pub fn get_broadcaster(&self) -> &Arc<Mutex<TracingBroadcaster>> {
         &self.broadcaster
     }
 
     /// Create a tracing layer that uses this subscriber as a writer.
-    #[must_use] 
+    #[must_use]
     pub fn layer<S>(self) -> Layer<S, JsonFields, Format<Json>, Self>
     where
         S: tracing_core::Subscriber + for<'a> LookupSpan<'a>,

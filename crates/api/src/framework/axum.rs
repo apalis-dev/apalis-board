@@ -1,8 +1,8 @@
 use apalis_board_types::ApiError;
 use apalis_core::{
     backend::{
-        Backend, BackendExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks,
-        ListWorkers, Metrics, QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec,
+        Backend, BackendExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers,
+        Metrics, QueueInfo, RunningWorker, Statistic, TaskSink, codec::Codec,
     },
     task::Task,
 };
@@ -360,7 +360,7 @@ pub mod sse {
     use crate::sse::TracingBroadcaster;
 
     use super::*;
-    
+
     /// Create a new SSE client and register it with the broadcaster.
     pub async fn new_client(
         broadcaster: Extension<Arc<Mutex<TracingBroadcaster>>>,

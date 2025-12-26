@@ -5,8 +5,8 @@ use actix_web::{
     web::{self, Data, Json},
 };
 use apalis_core::backend::{
-    Backend, BackendExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks,
-    ListWorkers, Metrics, TaskSink, codec::Codec,
+    Backend, BackendExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers,
+    Metrics, TaskSink, codec::Codec,
 };
 use serde::{Serialize, de::DeserializeOwned};
 use tokio::sync::RwLock;

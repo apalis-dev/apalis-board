@@ -13,10 +13,11 @@ pub fn Paginator(pagination_controller: PaginationController) -> impl IntoView {
         let mut end = start + 5;
 
         if let Some(row_count) = page_count.get()
-            && end > row_count {
-                end = row_count;
-                start = end.saturating_sub(5);
-            }
+            && end > row_count
+        {
+            end = row_count;
+            start = end.saturating_sub(5);
+        }
 
         start..end
     };
