@@ -1,20 +1,21 @@
-use apalis_board::components::layout::Layout;
-use apalis_board::components::not_found::NotFound;
-use apalis_board::create_sse_resource;
-use apalis_board::pages::home::Home;
-use apalis_board::pages::logs::LogsPage;
-use apalis_board::pages::queues::index::QueuePage;
-use apalis_board::pages::queues::single::SingleQueuePage;
-use apalis_board::pages::queues::status::StatusPage;
-use apalis_board::pages::tasks::index::AllTasksPage;
-use apalis_board::pages::tasks::single::TaskPage;
-use apalis_board::pages::workers::index::WorkersPage;
+use apalis_board_web::components::layout::Layout;
+use apalis_board_web::components::not_found::NotFound;
+use apalis_board_web::create_sse_resource;
+use apalis_board_web::pages::home::Home;
+use apalis_board_web::pages::logs::LogsPage;
+use apalis_board_web::pages::queues::index::QueuePage;
+use apalis_board_web::pages::queues::single::SingleQueuePage;
+use apalis_board_web::pages::queues::status::StatusPage;
+use apalis_board_web::pages::tasks::index::AllTasksPage;
+use apalis_board_web::pages::tasks::single::TaskPage;
+use apalis_board_web::pages::workers::index::WorkersPage;
 use leptos::prelude::*;
 use leptos_router::components::*;
 use leptos_router::path;
 
-use apalis_board::i18n::I18nContextProvider;
+use apalis_board_web::locales::i18n::I18nContextProvider;
 
+/// Main application routes component
 #[component]
 pub fn AppRoutes() -> impl IntoView {
     leptos_meta::provide_meta_context();

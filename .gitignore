@@ -1,5 +1,5 @@
 /target
 /node_modules
-/crates/board/dist
+/crates/web/dist
 **/test.db*
 .env

@@ -5,7 +5,7 @@ use actix_web::{
     web::{self, Data, Json},
 };
 use apalis_core::backend::{
-    Backend, BackendExt, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks,
+    Backend, BackendExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks,
     ListWorkers, Metrics, TaskSink, codec::Codec,
 };
 use serde::{Serialize, de::DeserializeOwned};
@@ -21,11 +21,14 @@ use crate::{
 #[cfg(feature = "ui")]
 use crate::ui::ServeUI;
 
+/// Handler struct for Actix web routes.
+#[derive(Debug, Clone)]
 pub struct Handler<S, T, Compact> {
     _phantom: PhantomData<(S, T, Compact)>,
 }
 
 impl<S, T, Compact> Handler<S, T, Compact> {
+    /// Get tasks for a specific queue.
     pub async fn get_tasks(
         queue: web::Data<String>,
         storage: web::Data<RwLock<S>>,
@@ -49,6 +52,8 @@ impl<S, T, Compact> Handler<S, T, Compact> {
             Err(e) => HttpResponse::InternalServerError().json(e),
         }
     }
+
+    /// Get statistics for a specific queue.
     pub async fn stats_by_queue(
         queue: web::Data<String>,
         storage: web::Data<RwLock<S>>,
@@ -66,6 +71,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
         }
     }
 
+    /// Get workers for a specific queue.
     pub async fn get_workers(
         queue: web::Data<String>,
         storage: web::Data<RwLock<S>>,
@@ -83,6 +89,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
         }
     }
 
+    /// Push a new task to the specified queue.
     pub async fn push_task(
         queue: web::Data<String>,
         task: Json<T>,
@@ -102,6 +109,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
         }
     }
 
+    /// Get a task by its ID.
     pub async fn get_task_by_id(
         task_id: web::Path<String>,
         storage: web::Data<RwLock<S>>,
@@ -116,7 +124,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
         S::IdType: FromStr,
         <<S as Backend>::IdType as FromStr>::Err: std::error::Error,
     {
-        let task_id = task_id.into_inner().to_string();
+        let task_id = task_id.into_inner();
         let storage = storage.into_inner();
 
         match get_task_by_id::<S, T>(task_id, storage).await {
@@ -126,6 +134,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
         }
     }
 
+    /// Get all tasks across all queues.
     pub async fn get_all_tasks(
         storage: web::Data<RwLock<S>>,
         query: web::Query<Filter>,
@@ -147,6 +156,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
         }
     }
 
+    /// Get all workers across all queues.
     pub async fn get_all_workers(storage: web::Data<RwLock<S>>) -> impl Responder
     where
         S: ListWorkers,
@@ -160,6 +170,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
         }
     }
 
+    /// Fetch all queues.
     pub async fn fetch_queues(storage: web::Data<RwLock<S>>) -> impl Responder
     where
         S::Error: std::error::Error,
@@ -173,6 +184,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
         }
     }
 
+    /// Get an overview of statistics.
     pub async fn overview(storage: web::Data<RwLock<S>>) -> impl Responder
     where
         S::Error: std::error::Error,
@@ -203,7 +215,7 @@ where
     B: ListTasks<T> + FetchById<T>,
     B::Codec: Codec<T, Compact = Compact>,
     <<B as BackendExt>::Codec as Codec<T>>::Error: std::error::Error,
-    B: TaskSink<T> + ConfigExt,
+    B: TaskSink<T>,
 {
     fn register(mut self, backend: B) -> Self {
         let queue = backend.get_queue();
@@ -308,6 +320,7 @@ mod ui {
     }
 }
 
+/// Expose Server-Sent Events (SSE) functionality.
 #[cfg(feature = "sse")]
 pub mod sse {
     use std::{sync::Arc, time::Duration};
@@ -318,6 +331,7 @@ pub mod sse {
     use futures::StreamExt;
     use std::sync::Mutex;
 
+    /// Create a new SSE client connection.
     pub async fn new_client(
         broadcaster: Data<Arc<Mutex<TracingBroadcaster>>>,
     ) -> impl actix_web::Responder {

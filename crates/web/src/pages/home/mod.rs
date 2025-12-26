@@ -10,7 +10,7 @@ use leptos_meta::Title;
 use leptos_router::components::A;
 use serde::Serialize;
 
-use crate::{i18n::*, translate::KnownStatistic};
+use crate::{locales::i18n::*, translate::KnownStatistic};
 
 pub fn resolve_json<V: Serialize>(val: V) -> String {
     serde_json::to_string_pretty(&val).unwrap()

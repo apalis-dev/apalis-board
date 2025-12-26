@@ -4,6 +4,7 @@ use std::sync::{Arc, Mutex};
 
 use crate::sse::Client;
 
+/// A broadcaster that sends log entries to multiple connected SSE clients.
 #[derive(Debug)]
 pub struct TracingBroadcaster {
     clients: Vec<Sender<LogEntry>>,
@@ -16,16 +17,21 @@ impl Default for TracingBroadcaster {
 }
 
 impl TracingBroadcaster {
+    /// Create a new `TracingBroadcaster` wrapped in an `Arc<Mutex<>>`.
+    #[must_use] 
     pub fn create() -> Arc<Mutex<Self>> {
-        Arc::new(Mutex::new(TracingBroadcaster::new()))
+        Arc::new(Mutex::new(Self::new()))
     }
 
+    /// Create a new `TracingBroadcaster`.
+    #[must_use] 
     pub fn new() -> Self {
-        TracingBroadcaster {
+        Self {
             clients: Vec::new(),
         }
     }
 
+    /// Create a new client and register it with the broadcaster.
     pub fn new_client(&mut self) -> Client {
         let (tx, rx) = channel(100);
 
@@ -33,7 +39,8 @@ impl TracingBroadcaster {
         Client(rx)
     }
 
-    pub fn send(&mut self, msg: LogEntry) -> Result<(), SendError> {
+    /// Send a log entry to all connected clients.
+    pub fn send(&mut self, msg: &LogEntry) -> Result<(), SendError> {
         for client in self.clients.iter_mut().filter(|client| !client.is_closed()) {
             client
                 .try_send(msg.clone())

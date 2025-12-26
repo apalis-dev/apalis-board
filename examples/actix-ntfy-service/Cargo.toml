@@ -2,28 +2,21 @@
 name = "ntfy-sh-actix-example"
 version = "0.1.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-apalis-core = { version = "1.0.0-beta.1", features = ["serde"] }
-apalis-sql = { version = "1.0.0-beta.1" }
-apalis = { version = "1.0.0-beta.1", features = ["limit", "retry"] }
+apalis-core = { version = "1.0.0-rc.1", features = ["serde"] }
+apalis-sql = { version = "1.0.0-rc.1" }
+apalis = { version = "1.0.0-rc.1", features = ["limit", "retry"] }
 apalis-sqlite = { features = [
     "migrate",
     "tokio-comp",
-], version = "1.0.0-beta.2" }
-apalis-board-types = { path = "../../crates/types" }
-apalis-board-api = { path = "../../crates/api", features = ["actix"] }
-
+], version = "1.0.0-rc.1" }
+apalis-board = { path = "../../", features = ["actix"] }
 actix-web = "4.5.1"
-actix-web-actors = "4.3.0"
-actix = "0.13.3"
-actix-files = "0.6.6"
-actix-cors = "0.7"
-
 serde = "1"
-env_logger = "0.11"
 futures = "0.3"
 tower = "0.5"
 tokio = { version = "1", features = ["full"] }

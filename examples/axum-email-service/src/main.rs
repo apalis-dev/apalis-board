@@ -6,7 +6,7 @@ use apalis::{
         BackoffConfig, BoxDynError, Codec, Data, IntervalStrategy, StrategyBuilder, WorkerBuilder,
     },
 };
-use apalis_board_api::{
+use apalis_board::axum::{
     framework::{ApiBuilder, RegisterRoute},
     sse::{TracingBroadcaster, TracingSubscriber},
     ui::ServeUI,

@@ -44,13 +44,13 @@ jobs:
         uses: actions/setup-node@main
         with:
           node-version: 24
-          cache: 'yarn'
+          cache: "yarn"
       - name: Install npm dependencies
         run: yarn install --frozen-lockfile
 
       - name: Build project
         run: trunk build --release
-        working-directory: crates/board
+        working-directory: crates/web
 
       - name: Cache cargo registry and trunk assets
         uses: actions/cache@v4
@@ -59,7 +59,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-            crates/board/dist
+            crates/web/dist
           key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-${{ matrix.rust }}-
@@ -72,9 +72,6 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         rust: [stable, beta]
-        # include:
-        #   - os: ubuntu-latest
-        #     rust: nightly
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
@@ -86,7 +83,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-            crates/board/dist
+            crates/web/dist
           key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-${{ matrix.rust }}-
@@ -94,6 +91,11 @@ jobs:
 
       - name: Run cargo test with all features
         run: cargo test --all-features --verbose
+
+      - name: cargo install cargo-hack
+        uses: taiki-e/install-action@cargo-hack
+      - name: cargo hack
+        run: cargo hack --feature-powerset check
 
   fmt:
     name: Rustfmt
@@ -131,7 +133,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-            crates/board/dist
+            crates/web/dist
           key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-${{ matrix.rust }}-
@@ -158,7 +160,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-            crates/board/dist
+            crates/web/dist
           key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-${{ matrix.rust }}-
@@ -179,7 +181,7 @@ jobs:
 
       - name: Install Rust nightly toolchain
         uses: dtolnay/rust-toolchain@nightly
-      
+
       - name: Cache cargo registry and trunk assets
         uses: actions/cache@v4
         with:
@@ -187,7 +189,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-            crates/board/dist
+            crates/web/dist
           key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-${{ matrix.rust }}-

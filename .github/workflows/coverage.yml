@@ -44,7 +44,7 @@ jobs:
 
       - name: Build project
         run: trunk build --release
-        working-directory: crates/board
+        working-directory: crates/web
 
       - name: Cache cargo registry and trunk assets
         uses: actions/cache@v4
@@ -53,7 +53,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-            crates/board/dist
+            crates/web/dist
           key: ${{ runner.os }}-cargo-stable-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-stable-${{ hashFiles('**/Cargo.lock') }}
@@ -72,7 +72,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-            crates/board/dist
+            crates/web/dist
           key: ${{ runner.os }}-cargo-stable-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-stable-${{ hashFiles('**/Cargo.lock') }}

@@ -1,4 +1,5 @@
 #![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
+
 use apalis_board_types::LogEntry;
 use chrono::{DateTime, Local, Utc};
 use leptos::{prelude::*, reactive::spawn_local};
@@ -9,7 +10,11 @@ pub mod components;
 pub mod pages;
 pub mod translate;
 
-leptos_i18n::load_locales!();
+#[allow(deprecated)]
+pub mod locales {
+    // TODO: @geofmureithi move to build script
+    leptos_i18n::load_locales!();
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct User {

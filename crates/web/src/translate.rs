@@ -3,7 +3,7 @@ use std::{fmt, str::FromStr};
 use leptos::prelude::{AnyView, IntoAny};
 use leptos_i18n::I18nContext;
 
-use crate::i18n::{I18nKeys, Locale, t};
+use crate::locales::i18n::{I18nKeys, Locale, t};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[non_exhaustive]
