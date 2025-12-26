@@ -20,9 +20,9 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         rust: [stable, beta]
-        include:
-          - os: ubuntu-latest
-            rust: nightly
+        # include:
+        #   - os: ubuntu-latest
+        #     rust: nightly
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
