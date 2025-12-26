@@ -16,7 +16,7 @@ env:
 
 jobs:
   test:
-    uses: ./.github/workflows/ci.yaml
+    uses: ./.github/workflows/ci.yml
   validate:
     name: Validate Release
     runs-on: ubuntu-latest
