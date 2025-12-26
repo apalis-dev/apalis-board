@@ -78,7 +78,20 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
-        
+
+      - name: Cache cargo registry and trunk assets
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+            crates/board/dist
+          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ matrix.rust }}-
+            ${{ runner.os }}-cargo-
+
       - name: Run cargo test with all features
         run: cargo test --all-features --verbose
 
