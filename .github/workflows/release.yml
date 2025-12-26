@@ -94,5 +94,5 @@ jobs:
         run:  |
           cargo publish -p apalis-board-types
           cargo publish -p apalis-board-web --allow-dirty
-          cargo publish -p apalis-board-api
-          cargo publish -p apalis-board
+          cargo publish -p apalis-board-api --allow-dirty
+          cargo publish -p apalis-board --allow-dirty

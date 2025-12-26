@@ -1,18 +1,9 @@
 # actix-ntfy-service
 
-Basic example that shows how to publish notifications
+Basic example that shows how to publish notifications using `apalis-sqlite`
 The example uses `ntfy.sh` for simplicity and `actix` as a webserver
 
-## Compiling
-
-1. Compile the `frontend`:
-
-```
-cd board
-trunk build --release
-```
-
-2. Run the `backend`
+## Running
 
 ```
 cargo run -- -d <path to sqlite db>

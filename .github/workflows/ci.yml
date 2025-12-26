@@ -7,6 +7,7 @@ on:
   push:
     branches: [main, develop]
   pull_request:
+  workflow_call:
 
 env:
   CARGO_TERM_COLOR: always
@@ -53,7 +54,7 @@ jobs:
         working-directory: crates/web
 
       - name: Cache cargo registry and trunk assets
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
@@ -77,7 +78,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cache cargo registry and trunk assets
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
@@ -127,7 +128,7 @@ jobs:
           components: clippy
 
       - name: Cache cargo registry and trunk assets
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
@@ -154,7 +155,7 @@ jobs:
         uses: dtolnay/rust-toolchain@nightly
 
       - name: Cache cargo registry and trunk assets
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
@@ -183,7 +184,7 @@ jobs:
         uses: dtolnay/rust-toolchain@nightly
 
       - name: Cache cargo registry and trunk assets
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
