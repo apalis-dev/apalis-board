@@ -52,6 +52,15 @@ jobs:
             ${{ runner.os }}-cargo-${{ matrix.rust }}-
             ${{ runner.os }}-cargo-
 
+      - name: Setup Node.js environment
+        uses: actions/setup-node@main
+        with:
+          node-version: 24
+          cache: 'yarn'
+      - name: Install npm dependencies
+        working-directory: crates/board
+        run: yarn install --frozen-lockfile --silent
+
       - name: Build project
         run: trunk build --release
         working-directory: crates/board
