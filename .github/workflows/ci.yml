@@ -58,8 +58,7 @@ jobs:
           node-version: 24
           cache: 'yarn'
       - name: Install npm dependencies
-        working-directory: crates/board
-        run: yarn install --frozen-lockfile --silent
+        run: yarn install --frozen-lockfile
 
       - name: Build project
         run: trunk build --release
