@@ -9,7 +9,7 @@ documentation = "https://docs.rs/apalis-board"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 keywords = ["background-job", "background-task", "worker", "apalis"]
-categories = ["http-server", "database"]
+categories = ["database"]
 
 [lib]
 
@@ -20,8 +20,8 @@ actix = ["apalis-board-api/actix"]
 axum = ["apalis-board-api/axum"]
 
 [dependencies]
-apalis-board-web = { path = "crates/web", optional = true }
-apalis-board-api = { path = "crates/api", optional = true }
+apalis-board-web = { path = "crates/web", version = "1.0.0-rc.1", optional = true }
+apalis-board-api = { path = "crates/api", version = "1.0.0-rc.1", optional = true }
 
 [package.metadata.docs.rs]
 # defines the configuration attribute `docsrs`
