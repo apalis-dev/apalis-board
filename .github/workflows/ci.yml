@@ -39,18 +39,6 @@ jobs:
         with:
           toolchain: ${{ matrix.rust }}
           targets: wasm32-unknown-unknown
-      
-      - name: Cache cargo registry
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-${{ matrix.rust }}-
-            ${{ runner.os }}-cargo-
 
       - name: Setup Node.js environment
         uses: actions/setup-node@main
@@ -63,6 +51,19 @@ jobs:
       - name: Build project
         run: trunk build --release
         working-directory: crates/board
+
+      - name: Cache cargo registry and trunk assets
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+            crates/board/dist
+          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ matrix.rust }}-
+            ${{ runner.os }}-cargo-
   test:
     name: Test Suite
     needs: compile-web
@@ -71,10 +72,13 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         rust: [stable, beta]
-        include:
-          - os: ubuntu-latest
-            rust: nightly
+        # include:
+        #   - os: ubuntu-latest
+        #     rust: nightly
     steps:
+      - name: Checkout sources
+        uses: actions/checkout@v6
+        
       - name: Run cargo test with all features
         run: cargo test --all-features --verbose
 

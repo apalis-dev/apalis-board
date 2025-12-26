@@ -5,7 +5,8 @@ use actix_web::{
     web::{self, Data, Json},
 };
 use apalis_core::backend::{
-    Backend, BackendExt, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers, Metrics, TaskSink, codec::Codec
+    Backend, BackendExt, ConfigExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks,
+    ListWorkers, Metrics, TaskSink, codec::Codec,
 };
 use serde::{Serialize, de::DeserializeOwned};
 use tokio::sync::RwLock;
@@ -298,7 +299,7 @@ mod ui {
             let resource = actix_web::Resource::new("/{tail:.*}").route(actix_web::web::get().to(
                 move |req: HttpRequest| async move {
                     let path = req.match_info().query("tail");
-                    
+
                     Self::serve_file(path)
                 },
             ));

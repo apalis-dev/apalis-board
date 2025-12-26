@@ -57,23 +57,15 @@ impl std::io::Write for TracingSubscriber {
         let len = buf.len();
         let msg = std::str::from_utf8(buf).unwrap_or_default();
         let log_entry = serde_json::from_str(msg).map_err(|e| {
-            std::io::Error::new(
-                std::io::ErrorKind::InvalidData,
-                format!("JSON Error: {e}"),
-            )
+            std::io::Error::new(std::io::ErrorKind::InvalidData, format!("JSON Error: {e}"))
         })?;
         self.broadcaster
             .try_lock()
             .map(|mut b| {
-                b.send(log_entry).map_err(|e| {
-                    std::io::Error::other(
-                        format!("Broadcast Error: {e}"),
-                    )
-                })
+                b.send(log_entry)
+                    .map_err(|e| std::io::Error::other(format!("Broadcast Error: {e}")))
             })
-            .map_err(|e| {
-                std::io::Error::other(format!("Lock Error: {e}"))
-            })??;
+            .map_err(|e| std::io::Error::other(format!("Lock Error: {e}")))??;
         Ok(len)
     }
 
