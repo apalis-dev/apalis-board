@@ -2566,9 +2566,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_i18n"
-version = "0.6.0-rc.4"
+version = "0.6.0-rc.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2392bdc7aecf66ee2de439f514b16517438fe2e909a58b6aea30b4981467d0d5"
+checksum = "1eb0b7dd16e7d6d7f772e558898ffaafefe28fcb07ff05cb73e81bfc316ef5ed"
 dependencies = [
  "codee",
  "default-struct-builder",
@@ -2591,9 +2591,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_i18n_codegen"
-version = "0.6.0-rc.4"
+version = "0.6.0-rc.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "056c4a2d79df196ef6225ffcd418b9537485bebcbb17cc75bfbdab8b73858e82"
+checksum = "d72ce2a79a6875fb94595dcc876fa4054a1edfd308815b9806a90c28dab0d966"
 dependencies = [
  "icu_locale",
  "leptos_i18n_parser",
@@ -2605,9 +2605,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_i18n_macro"
-version = "0.6.0-rc.4"
+version = "0.6.0-rc.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9431ba65a96433cefa6fef983e83671167857be18d6bbee5272d10cf45a0f321"
+checksum = "d5d5af55f06331143c062c9930cd3fd1caa2d61b0ccccde1037dd91ef3f54c55"
 dependencies = [
  "fixed_decimal",
  "icu_locale",
@@ -2624,9 +2624,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_i18n_parser"
-version = "0.6.0-rc.4"
+version = "0.6.0-rc.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f00319fe7a44c71204c1184ee9c4746ddf81416879167b95814c0eef8638c200"
+checksum = "8688c8fb538eacc00deeaca07bcd477b7d10a2543923be9f06a5ad39855ed97f"
 dependencies = [
  "fixed_decimal",
  "icu_locale",

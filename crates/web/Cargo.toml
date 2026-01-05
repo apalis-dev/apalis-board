@@ -32,7 +32,7 @@ web-sys = "0.3"
 console_error_panic_hook = "0.1.7"
 chrono = { version = "0.4", features = ["serde"] }
 futures = "0.3"
-leptos_i18n = "0.6.0-rc.2"
+leptos_i18n = "0.6.0-rc.5"
 leptos_meta = "0.8.5"
 
 
