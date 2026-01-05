@@ -24,4 +24,4 @@ log = "0.4"
 serde_json = "1"
 tracing-subscriber = { version = "0.3.11", features = ["json", "env-filter"] }
 reqwest = { version = "0.12", features = ["json"] }
-clap = { version = "4.5.49", features = ["derive"] }
+clap = { version = "4.5.54", features = ["derive"] }
