@@ -1,7 +1,7 @@
-## [unreleased]
+## [Unreleased]
 
 ### 💼 Other
-
+- _chore_: bump to v1.0.0-rc.2 #45 
 - Rewrite the board in rust
 - To the latest apalis version
 - Rewrite the board in rust
