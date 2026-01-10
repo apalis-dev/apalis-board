@@ -1,7 +1,8 @@
-## [unreleased]
+## [Unreleased]
 
 ### 💼 Other
 
+- Update v1.0.0-rc.1 deps
 - Rewrite the board in rust
 - To the latest apalis version
 - Rewrite the board in rust
