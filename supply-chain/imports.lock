@@ -1,2 +1,14 @@
 
 # cargo-vet imports lock
+
+[[unpublished.apalis-board]]
+version = "1.0.0-rc.2"
+audited_as = "1.0.0-rc.1"
+
+[[unpublished.apalis-board-api]]
+version = "1.0.0-rc.2"
+audited_as = "1.0.0-rc.1"
+
+[[unpublished.apalis-board-types]]
+version = "1.0.0-rc.2"
+audited_as = "1.0.0-rc.1"

@@ -118,7 +118,7 @@ version = "1.0.100"
 criteria = "safe-to-deploy"
 
 [[exemptions.apalis]]
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 criteria = "safe-to-deploy"
 
 [[exemptions.apalis-board]]
@@ -134,23 +134,23 @@ version = "1.0.0-rc.1"
 criteria = "safe-to-deploy"
 
 [[exemptions.apalis-codec]]
-version = "0.1.0-rc.1"
+version = "0.1.0-rc.2"
 criteria = "safe-to-deploy"
 
 [[exemptions.apalis-core]]
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 criteria = "safe-to-deploy"
 
 [[exemptions.apalis-postgres]]
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 criteria = "safe-to-deploy"
 
 [[exemptions.apalis-sql]]
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 criteria = "safe-to-deploy"
 
 [[exemptions.apalis-sqlite]]
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 criteria = "safe-to-deploy"
 
 [[exemptions.ar_archive_writer]]
