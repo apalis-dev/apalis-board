@@ -7,13 +7,13 @@ license = "MIT OR Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-apalis-core = { version = "1.0.0-rc.1", features = ["serde"] }
-apalis-sql = { version = "1.0.0-rc.1" }
-apalis = { version = "1.0.0-rc.1", features = ["limit", "retry"] }
+apalis-core = { version = "1.0.0-rc.2", features = ["serde"] }
+apalis-sql = { version = "1.0.0-rc.2" }
+apalis = { version = "1.0.0-rc.2", features = ["limit", "retry"] }
 apalis-sqlite = { features = [
     "migrate",
     "tokio-comp",
-], version = "1.0.0-rc.1" }
+], version = "1.0.0-rc.2" }
 apalis-board = { path = "../../", features = ["actix"] }
 actix-web = "4.5.1"
 serde = "1"

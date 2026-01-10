@@ -5,11 +5,11 @@ edition = "2024"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-apalis-core = { version = "1.0.0-rc.1", features = ["serde"] }
-apalis = { version = "1.0.0-rc.1", features = ["limit", "retry"] }
-apalis-sql = { version = "1.0.0-rc.1" }
+apalis-core = { version = "1.0.0-rc.2", features = ["serde"] }
+apalis = { version = "1.0.0-rc.2", features = ["limit", "retry"] }
+apalis-sql = { version = "1.0.0-rc.2" }
 sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres"] }
-apalis-postgres = { version = "1.0.0-rc.1", features = [
+apalis-postgres = { version = "1.0.0-rc.2", features = [
     "migrate",
     "tokio-comp",
 ] }

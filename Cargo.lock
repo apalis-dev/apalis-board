@@ -374,7 +374,7 @@ dependencies = [
 
 [[package]]
 name = "apalis-board"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 dependencies = [
  "apalis-board-api",
  "apalis-board-web",
@@ -382,7 +382,7 @@ dependencies = [
 
 [[package]]
 name = "apalis-board-api"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 dependencies = [
  "actix-web",
  "actix-web-lab",
@@ -401,7 +401,7 @@ dependencies = [
 
 [[package]]
 name = "apalis-board-types"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 dependencies = [
  "serde",
  "thiserror 2.0.17",
@@ -409,7 +409,7 @@ dependencies = [
 
 [[package]]
 name = "apalis-board-web"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 dependencies = [
  "apalis-board-types",
  "apalis-core",
