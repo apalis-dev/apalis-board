@@ -1,6 +1,6 @@
 [package]
 name = "apalis-board"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 authors = ["Njuguna Mureithi <mureithinjuguna@gmail.com>"]
 description = "Apalis board contains a number of crates useful for building UIs and apis for managing Apalis task queues."
 edition.workspace = true
@@ -20,8 +20,8 @@ actix = ["apalis-board-api/actix"]
 axum = ["apalis-board-api/axum"]
 
 [dependencies]
-apalis-board-web = { path = "crates/web", version = "1.0.0-rc.1", optional = true }
-apalis-board-api = { path = "crates/api", version = "1.0.0-rc.1", optional = true }
+apalis-board-web = { path = "crates/web", version = "1.0.0-rc.2", optional = true }
+apalis-board-api = { path = "crates/api", version = "1.0.0-rc.2", optional = true }
 
 [package.metadata.docs.rs]
 # defines the configuration attribute `docsrs`

@@ -360,9 +360,9 @@ checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
 
 [[package]]
 name = "apalis"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f93be0eb33b912f5e66004d0b756423c285273259068b1c80a71d7842658189b"
+checksum = "543708a780aff326f4fd63bf8ed85f9d79647af7fa1fbe33bb1e221930cd3e25"
 dependencies = [
  "apalis-core",
  "futures-util",
@@ -374,7 +374,7 @@ dependencies = [
 
 [[package]]
 name = "apalis-board"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 dependencies = [
  "apalis-board-api",
  "apalis-board-web",
@@ -382,7 +382,7 @@ dependencies = [
 
 [[package]]
 name = "apalis-board-api"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 dependencies = [
  "actix-web",
  "actix-web-lab",
@@ -401,7 +401,7 @@ dependencies = [
 
 [[package]]
 name = "apalis-board-types"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 dependencies = [
  "serde",
  "thiserror 2.0.17",
@@ -409,7 +409,7 @@ dependencies = [
 
 [[package]]
 name = "apalis-board-web"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 dependencies = [
  "apalis-board-types",
  "apalis-core",
@@ -430,9 +430,9 @@ dependencies = [
 
 [[package]]
 name = "apalis-codec"
-version = "0.1.0-rc.1"
+version = "0.1.0-rc.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a5ed6bb8e64c360ed4ad666a6cbc42e9e6df73087461dc4071f510a3af284637"
+checksum = "ce833bf2acb6984eaa4e58ee4afacc0eaaefabc2c54ad5df46ea43255d115f7f"
 dependencies = [
  "apalis-core",
  "serde",
@@ -441,9 +441,9 @@ dependencies = [
 
 [[package]]
 name = "apalis-core"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b1557d680ee4a9b42a76ab3a9572cee1a00d45e7eb455427d906c42774766e7"
+checksum = "54b7edea7ba9866a1bc2e58f39183bdf204d78db45402d9ac1eb67d0e482735e"
 dependencies = [
  "futures-channel",
  "futures-core",
@@ -460,14 +460,13 @@ dependencies = [
 
 [[package]]
 name = "apalis-postgres"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1ed69f789b8d9f5fc0c1a3f3785b936154cfaf8b63314d68c302a2b3d70a2fd"
+checksum = "a1e1d12998964c87df0f8171bbee14783ad576dde7d1b32c87dce404977e3901"
 dependencies = [
  "apalis-codec",
  "apalis-core",
  "apalis-sql",
- "chrono",
  "futures",
  "pin-project",
  "serde",
@@ -480,9 +479,9 @@ dependencies = [
 
 [[package]]
 name = "apalis-sql"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ade5d8faa60e9975b01d3bb1ebc5028589aa4986365eaa4d080d30ed3b5141f"
+checksum = "02b9d5873918c664ffcd0768f5048a261cd83a1741eed80f96a77091e6dc3e47"
 dependencies = [
  "apalis-core",
  "chrono",
@@ -493,14 +492,13 @@ dependencies = [
 
 [[package]]
 name = "apalis-sqlite"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd43020ce13d6cb8c8d8c09657a6691d8490cd1ce0d8bc0f7fef8bf9b23cfe86"
+checksum = "97a5dc503ddc3d0ec25437b3d0f62170557d7daa2d57eccf5f21c5e36bcebeab"
 dependencies = [
  "apalis-codec",
  "apalis-core",
  "apalis-sql",
- "chrono",
  "futures",
  "log",
  "pin-project",

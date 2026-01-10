@@ -1,6 +1,6 @@
 [package]
 name = "apalis-board-api"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 edition = "2024"
 description = "HTTP utilities for managing apalis task queues."
 license = "MIT OR Apache-2.0"
@@ -16,8 +16,8 @@ publish = true
 
 
 [dependencies]
-apalis-core = { version = "1.0.0-rc.1", features = ["serde"] }
-apalis-board-types = { path = "../types", version = "1.0.0-rc.1" }
+apalis-core = { version = "1.0.0-rc.2", features = ["serde"] }
+apalis-board-types = { path = "../types", version = "1.0.0-rc.2" }
 serde = { version = "1", features = ["derive"] }
 futures = "0.3"
 tokio = { version = "1", default-features = false, features = ["sync"] }

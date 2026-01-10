@@ -53,7 +53,7 @@ Get a clear overview of what's happening in your queues and manage jobs efficien
 Each version of `apalis-board` includes a compatible version of the ui.
 
 ```toml
-apalis-board = { version = "1.0.0-rc.1", features = ["actix"] } #Or axum
+apalis-board = { version = "1.0.0-rc.2", features = ["actix"] } #Or axum
 ```
 
 Here are the basics of setting up the board:
@@ -94,7 +94,7 @@ If you visit `/api/v1/events` you will receive the task logs. This is also acces
 If you are working on a leptos UI and want to embed the web interface in part of in full, then you can import the `web` functionality:
 
 ```toml
-apalis-board = { version = "1.0.0-rc.1", features = ["web"] }
+apalis-board = { version = "1.0.0-rc.2", features = ["web"] }
 ```
 
 ## Support

@@ -1,6 +1,6 @@
 [package]
 name = "apalis-board-web"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 edition = "2024"
 description = "Frontend components for managing Apalis task queues."
 license = "MIT OR Apache-2.0"
@@ -17,10 +17,10 @@ publish = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-apalis-core = { version = "1.0.0-rc.1", features = [
+apalis-core = { version = "1.0.0-rc.2", features = [
     "serde",
 ], default-features = false }
-apalis-board-types = { path = "../types", version = "1.0.0-rc.1" }
+apalis-board-types = { path = "../types", version = "1.0.0-rc.2" }
 gloo-net = { version = "0.6" }
 serde_json = "1"
 serde = "1"
