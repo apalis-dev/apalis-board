@@ -78,7 +78,7 @@ impl TaskProvider {
     }
 }
 
-impl PaginatedTableDataProvider<Task> for TaskProvider {
+impl PaginatedTableDataProvider<Task, usize> for TaskProvider {
     const PAGE_ROW_COUNT: usize = 15;
 
     async fn get_page(&self, page_index: usize) -> Result<Vec<Task>, String> {

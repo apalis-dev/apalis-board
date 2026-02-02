@@ -854,7 +854,7 @@ version = "4.5.49"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2a0b5487afeab2deb2ff4e03a807ad1a03ac532ff5a2cee5d86884440c7f7671"
 dependencies = [
- "heck 0.5.0",
+ "heck",
  "proc-macro2",
  "quote",
  "syn",
@@ -1118,8 +1118,18 @@ version = "0.20.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc7f46116c46ff9ab3eb1597a45688b6715c6e628b5c133e288e709a29bcb4ee"
 dependencies = [
- "darling_core",
- "darling_macro",
+ "darling_core 0.20.11",
+ "darling_macro 0.20.11",
+]
+
+[[package]]
+name = "darling"
+version = "0.23.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "25ae13da2f202d56bd7f91c25fba009e7717a1e4a1cc98a76d844b65ae912e9d"
+dependencies = [
+ "darling_core 0.23.0",
+ "darling_macro 0.23.0",
 ]
 
 [[package]]
@@ -1137,12 +1147,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "darling_core"
+version = "0.23.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9865a50f7c335f53564bb694ef660825eb8610e0a53d3e11bf1b0d3df31e03b0"
+dependencies = [
+ "ident_case",
+ "proc-macro2",
+ "quote",
+ "strsim",
+ "syn",
+]
+
+[[package]]
 name = "darling_macro"
 version = "0.20.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc34b93ccb385b40dc71c6fceac4b2ad23662c7eeb248cf10d529b7e055b6ead"
 dependencies = [
- "darling_core",
+ "darling_core 0.20.11",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "darling_macro"
+version = "0.23.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ac3984ec7bd6cfa798e62b4a642426a5be0e68f9401cfc2a01e3fa9ea2fcdb8d"
+dependencies = [
+ "darling_core 0.23.0",
  "quote",
  "syn",
 ]
@@ -1167,7 +1201,7 @@ version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e0df63c21a4383f94bd5388564829423f35c316aed85dc4f8427aded372c7c0d"
 dependencies = [
- "darling",
+ "darling 0.20.11",
  "proc-macro2",
  "quote",
  "syn",
@@ -1708,12 +1742,6 @@ checksum = "7382cf6263419f2d8df38c55d7da83da5c18aef87fc7a7fc1fb1e344edfe14c1"
 dependencies = [
  "hashbrown 0.15.5",
 ]
-
-[[package]]
-name = "heck"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
 
 [[package]]
 name = "heck"
@@ -2469,13 +2497,13 @@ dependencies = [
 
 [[package]]
 name = "leptos-struct-table"
-version = "0.16.0"
+version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59b00285a1e8c8c28e95831a182625f235a4a0e8520f7937f6fbac6a59c322cc"
+checksum = "5c59458fbeedd7c685359d36d91a567a61864330690be40cf98ce232ba373820"
 dependencies = [
  "leptos",
  "leptos-struct-table-macro",
- "leptos-use",
+ "leptos-use 0.18.0",
  "send_wrapper",
  "serde",
  "wasm-bindgen",
@@ -2484,12 +2512,12 @@ dependencies = [
 
 [[package]]
 name = "leptos-struct-table-macro"
-version = "0.13.0"
+version = "0.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c32e02c79e8bf8eb6f9b8bbeab8e92e9a1695359afb85119fe7252449789579d"
+checksum = "69c4c635afdb5bd40eedea2bf2d383160f75c43fe56f50c63e6ab1ddf9eeb52d"
 dependencies = [
- "darling",
- "heck 0.4.1",
+ "darling 0.23.0",
+ "heck",
  "proc-macro2",
  "quote",
  "syn",
@@ -2504,6 +2532,25 @@ dependencies = [
  "cfg-if",
  "codee",
  "cookie 0.18.1",
+ "default-struct-builder",
+ "js-sys",
+ "lazy_static",
+ "leptos",
+ "paste",
+ "send_wrapper",
+ "thiserror 2.0.17",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use"
+version = "0.18.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e652389aa67f810bab687dd32566346a1d0dc4d25b44370d952ffc2ca4c627c0"
+dependencies = [
+ "cfg-if",
  "default-struct-builder",
  "js-sys",
  "lazy_static",
@@ -2578,7 +2625,7 @@ dependencies = [
  "icu_locale",
  "icu_plurals",
  "leptos",
- "leptos-use",
+ "leptos-use 0.17.0",
  "leptos_i18n_macro",
  "leptos_meta",
  "serde",
@@ -4202,7 +4249,7 @@ checksum = "19a9c1841124ac5a61741f96e1d9e2ec77424bf323962dd894bdb93f37d5219b"
 dependencies = [
  "dotenvy",
  "either",
- "heck 0.5.0",
+ "heck",
  "hex",
  "once_cell",
  "proc-macro2",
