@@ -10,11 +10,10 @@ license = "MIT OR Apache-2.0"
 apalis-core = { version = "1.0.0-rc.3", features = ["serde"] }
 apalis-sql = { version = "1.0.0-rc.3" }
 apalis = { version = "1.0.0-rc.3", features = ["limit", "retry"] }
-apalis-sqlite = { features = [
-    "migrate",
-    "tokio-comp",
-], version = "1.0.0-rc.3" }
-apalis-board = { path = "../../", features = ["actix"] }
+apalis-sqlite = { features = ["migrate", "tokio-comp"], version = "1.0.0-rc.3" }
+apalis-board = { path = "../../", features = [
+    "actix",
+] } # Replace path with version
 actix-web = "4.5.1"
 serde = "1"
 futures = "0.3"

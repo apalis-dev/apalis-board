@@ -14,10 +14,11 @@ categories = ["database"]
 [lib]
 
 [features]
-default = []
+default = ["events"]
 web = ["dep:apalis-board-web"]
 actix = ["apalis-board-api/actix"]
 axum = ["apalis-board-api/axum"]
+events = ["apalis-board-api/sse"]
 
 [dependencies]
 apalis-board-web = { path = "crates/web", version = "1.0.0-rc.3", optional = true }

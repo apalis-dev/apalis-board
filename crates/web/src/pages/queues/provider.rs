@@ -16,11 +16,11 @@ impl QueueProvider {
     }
 }
 
-impl PaginatedTableDataProvider<Queue> for QueueProvider {
+impl PaginatedTableDataProvider<Queue, usize> for QueueProvider {
     const PAGE_ROW_COUNT: usize = 100;
 
     async fn get_page(&self, _: usize) -> Result<Vec<Queue>, String> {
-        let resp: Vec<Queue> = ApiClient::get("/").await.map_err(|e| e.to_string())?;
+        let resp: Vec<Queue> = ApiClient::get("/queues").await.map_err(|e| e.to_string())?;
         Ok(resp)
     }
 

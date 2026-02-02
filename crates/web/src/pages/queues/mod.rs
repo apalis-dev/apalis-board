@@ -186,10 +186,12 @@ pub fn CustomTableRowRenderer(
     selected: Signal<bool>,
     // Event handler callback when this row is selected
     on_select: EventHandler<web_sys::MouseEvent>,
+    // Columns to show and their order.
+    columns: RwSignal<Vec<usize>>,
 ) -> impl IntoView {
     view! {
         <tr class=class on:click=move |mouse_event| on_select.run(mouse_event)>
-            {TableRow::render_row(row, index)}
+            {TableRow::render_row(row, index, columns)}
             <td class="px-3 py-2 text-right">
                 <a
                     href=move || format!("/queues/{}", row.get().name)
