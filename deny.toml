@@ -18,7 +18,8 @@ allow = [
     "Apache-2.0 WITH LLVM-exception",
     "CC0-1.0",
     "0BSD",
-    "BSL-1.0"
+    "BSL-1.0",
+    "OpenSSL"
 ]
 
 [bans]
@@ -53,6 +54,17 @@ skip-tree = [
     { name = "thiserror-impl" },
     { name = "typed-builder" },
     { name = "typed-builder-macro" },
+
+    # TODO: @geofmureithi Resolve these deps
+
+    { name = "core-foundation" }, # lettre vs reqwest
+    { name = "openssl-probe" }, # lettre vs reqwest
+    { name = "security-framework" }, # lettre vs reqwest
+    { name = "darling" }, # leptos-struct-table-macro vs default-struct-builder
+    { name = "darling_core" }, # leptos-struct-table-macro vs default-struct-builder
+    { name = "darling_macro" }, # leptos-struct-table-macro vs default-struct-builder
+    { name = "leptos-use" } # leptos-struct-table vs leptos_i18n
+
 ]
 
 [sources]
