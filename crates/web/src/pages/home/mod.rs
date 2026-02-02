@@ -19,7 +19,7 @@ pub fn resolve_json<V: Serialize>(val: V) -> String {
 const API_PATH: &str = "/api/v1";
 
 async fn queue_list() -> Result<Vec<QueueInfo>, String> {
-    let res = Request::get(&format!("{API_PATH}/"))
+    let res = Request::get(&format!("{API_PATH}/queues"))
         .send()
         .await
         .map_err(|e| e.to_string())?;

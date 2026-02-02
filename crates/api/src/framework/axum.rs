@@ -259,7 +259,7 @@ where
             #[allow(unused_mut)]
             let mut r = self
                 .router
-                .route("/", get(fetch_queues::<B>))
+                .route("/queues", get(fetch_queues::<B>))
                 .route("/tasks", get(get_all_tasks::<B>))
                 .route("/workers", get(get_all_workers::<B>))
                 .route("/overview", get(overview::<B>));
