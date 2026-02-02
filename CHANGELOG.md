@@ -2,6 +2,7 @@
 
 ### 💼 Other
 
+- _deps_: bump leptos-struct-table from 0.16.0 to 0.17.0 (#48) 
 - _chore_: bump to v1.0.0-rc.2 #45 
 - Update v1.0.0-rc.1 deps
 - Rewrite the board in rust
