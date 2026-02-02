@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### 💼 Other
+- _chore_: bump to v1.0.0-rc.3 #56
 - _chore_: refactor to remove path normalization (#55)
 - _deps_: bump leptos-struct-table from 0.16.0 to 0.17.0 (#48) 
 - _chore_: bump to v1.0.0-rc.2 #45 
