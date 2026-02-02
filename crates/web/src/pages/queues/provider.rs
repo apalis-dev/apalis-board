@@ -16,7 +16,7 @@ impl QueueProvider {
     }
 }
 
-impl PaginatedTableDataProvider<Queue> for QueueProvider {
+impl PaginatedTableDataProvider<Queue, usize> for QueueProvider {
     const PAGE_ROW_COUNT: usize = 100;
 
     async fn get_page(&self, _: usize) -> Result<Vec<Queue>, String> {

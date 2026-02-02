@@ -62,7 +62,7 @@ impl WorkerProvider {
     }
 }
 
-impl TableDataProvider<Worker> for WorkerProvider {
+impl TableDataProvider<Worker, usize> for WorkerProvider {
     async fn get_rows(&self, range: Range<usize>) -> Result<(Vec<Worker>, Range<usize>), String> {
         let url = self.get_url();
         let Range { start, .. } = range;
