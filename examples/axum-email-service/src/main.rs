@@ -12,7 +12,7 @@ use apalis_board::axum::{
     ui::ServeUI,
 };
 use apalis_postgres::PostgresStorage;
-use axum::{Extension, Router, ServiceExt};
+use axum::{Extension, Router};
 use clap::Parser;
 use futures::{FutureExt, TryFutureExt};
 use lettre::{
@@ -22,8 +22,6 @@ use lettre::{
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use sqlx::PgPool;
 use tokio::signal::ctrl_c;
-use tower::Layer;
-use tower_http::normalize_path::NormalizePathLayer;
 use tracing_subscriber::{
     EnvFilter, Layer as TraceLayer, layer::SubscriberExt, util::SubscriberInitExt,
 };
@@ -130,15 +128,14 @@ async fn main() {
         let api = ApiBuilder::new(Router::new())
             .register(email_store.clone())
             .build();
-        let layer = NormalizePathLayer::trim_trailing_slash();
         let router = Router::new()
             .nest("/api/v1", api)
             .fallback_service(ServeUI::new())
             .layer(Extension(broadcaster.clone()));
 
         let listener = tokio::net::TcpListener::bind(&args.api_host).await.unwrap();
-        let app = ServiceExt::<axum::extract::Request>::into_make_service(layer.layer(router));
-        axum::serve(listener, app)
+
+        axum::serve(listener, router)
             .with_graceful_shutdown(ctrl_c().map(|_| ()))
             .await
     };

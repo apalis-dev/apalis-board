@@ -225,7 +225,10 @@ where
             let mut router = self
                 .router
                 .app_data(backend.clone())
-                .route("/", web::get().to(Handler::<B, (), Compact>::fetch_queues))
+                .route(
+                    "/queues",
+                    web::get().to(Handler::<B, (), Compact>::fetch_queues),
+                )
                 .route(
                     "/tasks",
                     web::get().to(Handler::<B, (), Compact>::get_all_tasks),

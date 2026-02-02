@@ -88,7 +88,6 @@ pub struct Entry {
 
 /// Information about a tracing span.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct Span {
     /// The unique identifier for the span.
     pub attempt: i64,

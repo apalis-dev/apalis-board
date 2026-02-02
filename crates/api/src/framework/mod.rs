@@ -27,7 +27,7 @@ impl<R> ApiBuilder<R> {
         Self { router, root: true }
     }
     /// Create a new ApiBuilder with a custom scope
-    /// If `register_root` is true, the root routes (/, /tasks, /workers, /overview)
+    /// If `register_root` is true, the root routes (/queues, /tasks, /workers, /overview)
     /// will be registered on the provided scope.
     pub fn new_with_router(router: R, register_root: bool) -> Self {
         Self {
