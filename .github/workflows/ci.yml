@@ -49,22 +49,30 @@ jobs:
       - name: Install npm dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build project
-        run: trunk build --release
-        working-directory: crates/web
-
-      - name: Cache cargo registry and trunk assets
+      - name: Cache cargo
         uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-            crates/web/dist
           key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-${{ matrix.rust }}-
             ${{ runner.os }}-cargo-
+            
+      - name: Cache dist
+        id: cache-dist
+        uses: actions/cache@v5
+        with:
+          path: crates/web/dist
+          key: ${{ runner.os }}-dist-${{ hashFiles('crates/web/Cargo.toml') }}-${{ hashFiles('crates/web/src/**') }}
+
+      - name: Build project
+        if: steps.cache-dist.outputs.cache-hit != 'true'
+        run: trunk build --release
+        working-directory: crates/web
+
   test:
     name: Test Suite
     needs: compile-web
