@@ -60,7 +60,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-${{ matrix.rust }}-
             ${{ runner.os }}-cargo-
-            
+
       - name: Cache dist
         id: cache-dist
         uses: actions/cache@v5
@@ -85,18 +85,29 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v6
 
-      - name: Cache cargo registry and trunk assets
+      - name: Cache cargo
         uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-            crates/web/dist
           key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-${{ matrix.rust }}-
             ${{ runner.os }}-cargo-
+
+      - name: Cache dist
+        id: cache-dist
+        uses: actions/cache@v5
+        with:
+          path: crates/web/dist
+          key: ${{ runner.os }}-dist-${{ hashFiles('crates/web/Cargo.toml') }}-${{ hashFiles('crates/web/src/**') }}
+
+      - name: Build project
+        if: steps.cache-dist.outputs.cache-hit != 'true'
+        run: trunk build --release
+        working-directory: crates/web
 
       - name: Run cargo test with all features
         run: cargo test --all-features --verbose
@@ -135,18 +146,29 @@ jobs:
         with:
           components: clippy
 
-      - name: Cache cargo registry and trunk assets
+      - name: Cache cargo
         uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-            crates/web/dist
           key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-${{ matrix.rust }}-
             ${{ runner.os }}-cargo-
+
+      - name: Cache dist
+        id: cache-dist
+        uses: actions/cache@v5
+        with:
+          path: crates/web/dist
+          key: ${{ runner.os }}-dist-${{ hashFiles('crates/web/Cargo.toml') }}-${{ hashFiles('crates/web/src/**') }}
+
+      - name: Build project
+        if: steps.cache-dist.outputs.cache-hit != 'true'
+        run: trunk build --release
+        working-directory: crates/web
 
       - name: Run cargo clippy
         run: cargo clippy --all-targets --all-features
@@ -162,18 +184,29 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@nightly
 
-      - name: Cache cargo registry and trunk assets
+      - name: Cache cargo
         uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-            crates/web/dist
           key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-${{ matrix.rust }}-
             ${{ runner.os }}-cargo-
+
+      - name: Cache dist
+        id: cache-dist
+        uses: actions/cache@v5
+        with:
+          path: crates/web/dist
+          key: ${{ runner.os }}-dist-${{ hashFiles('crates/web/Cargo.toml') }}-${{ hashFiles('crates/web/src/**') }}
+
+      - name: Build project
+        if: steps.cache-dist.outputs.cache-hit != 'true'
+        run: trunk build --release
+        working-directory: crates/web
 
       - name: Build documentation
         run: cargo doc --all-features --no-deps --document-private-items
@@ -191,18 +224,29 @@ jobs:
       - name: Install Rust nightly toolchain
         uses: dtolnay/rust-toolchain@nightly
 
-      - name: Cache cargo registry and trunk assets
+      - name: Cache cargo
         uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-            crates/web/dist
           key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-${{ matrix.rust }}-
             ${{ runner.os }}-cargo-
+
+      - name: Cache dist
+        id: cache-dist
+        uses: actions/cache@v5
+        with:
+          path: crates/web/dist
+          key: ${{ runner.os }}-dist-${{ hashFiles('crates/web/Cargo.toml') }}-${{ hashFiles('crates/web/src/**') }}
+
+      - name: Build project
+        if: steps.cache-dist.outputs.cache-hit != 'true'
+        run: trunk build --release
+        working-directory: crates/web
 
       - name: Install cargo-udeps
         uses: taiki-e/install-action@cargo-udeps
