@@ -10,7 +10,7 @@ use leptos_meta::Title;
 use leptos_router::components::A;
 use serde::Serialize;
 
-use crate::{locales::i18n::*, translate::KnownStatistic};
+use crate::{locales::i18n::*, relative_timestamp, translate::KnownStatistic};
 
 pub fn resolve_json<V: Serialize>(val: V) -> String {
     serde_json::to_string_pretty(&val).unwrap()
@@ -96,9 +96,13 @@ pub fn Home() -> impl IntoView {
                                                     "Success rate" => Some("text-green-500".to_owned()),
                                                     _ => None,
                                                 };
+                                                let value = match stat.stat_type {
+                                                    apalis_core::backend::StatType::Timestamp => relative_timestamp(stat.value.parse::<u64>().unwrap_or(0)),
+                                                    _ => stat.value.clone(),
+                                                };
                                                 stats_card(
                                                     stat.title.clone(),
-                                                    stat.value.clone(),
+                                                    value,
                                                     last_10_stats
                                                         .get()
                                                         .get(&stat.title)
