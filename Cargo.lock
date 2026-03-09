@@ -959,7 +959,7 @@ dependencies = [
  "convert_case 0.6.0",
  "pathdiff",
  "serde_core",
- "toml",
+ "toml 0.9.12+spec-1.1.0",
  "winnow",
 ]
 
@@ -2617,7 +2617,7 @@ checksum = "5c59458fbeedd7c685359d36d91a567a61864330690be40cf98ce232ba373820"
 dependencies = [
  "leptos",
  "leptos-struct-table-macro",
- "leptos-use 0.18.0",
+ "leptos-use",
  "send_wrapper",
  "serde",
  "wasm-bindgen",
@@ -2639,32 +2639,13 @@ dependencies = [
 
 [[package]]
 name = "leptos-use"
-version = "0.17.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a59caa13dbc0f4d71bf3d610884953273c52a0bbe995b35d36cdb1c8f91142f"
-dependencies = [
- "cfg-if",
- "codee",
- "cookie 0.18.1",
- "default-struct-builder",
- "js-sys",
- "lazy_static",
- "leptos",
- "paste",
- "send_wrapper",
- "thiserror 2.0.18",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
-]
-
-[[package]]
-name = "leptos-use"
 version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e652389aa67f810bab687dd32566346a1d0dc4d25b44370d952ffc2ca4c627c0"
 dependencies = [
  "cfg-if",
+ "codee",
+ "cookie 0.18.1",
  "default-struct-builder",
  "js-sys",
  "lazy_static",
@@ -2725,9 +2706,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_i18n"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b684f755c59519727f332adbede7479e1e7e0e2d0c386f2246f52bb822ce52a1"
+checksum = "a5b45da8116738d79dc37931ebcdb3de38138f48eb75a301e34dda760be96306"
 dependencies = [
  "codee",
  "default-struct-builder",
@@ -2739,7 +2720,7 @@ dependencies = [
  "icu_locale",
  "icu_plurals",
  "leptos",
- "leptos-use 0.17.0",
+ "leptos-use",
  "leptos_i18n_macro",
  "leptos_meta",
  "serde",
@@ -2750,9 +2731,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_i18n_codegen"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "882404164bbcc3a01150eb7aa2d7b78353faf1803917cee081d9bff2dff849de"
+checksum = "bc9715bc49b7f7fd7e94da4e5f061529b27245a4dfc0e58f1d59323cd881bc92"
 dependencies = [
  "icu_locale",
  "leptos_i18n_parser",
@@ -2764,9 +2745,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_i18n_macro"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f5ad882bbe0510800dea813ea63c223056ea8f16f26dc1ede36cfb831466908a"
+checksum = "20422aff22003a77f2341aa5cfc53545e9017add2df812fce7529eb474584c1c"
 dependencies = [
  "fixed_decimal",
  "icu_locale",
@@ -2778,14 +2759,14 @@ dependencies = [
  "serde_json",
  "syn",
  "tinystr",
- "toml",
+ "toml 1.0.6+spec-1.1.0",
 ]
 
 [[package]]
 name = "leptos_i18n_parser"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "938cb6c7ab8ed61ce47f6a397a846bbbe65fc909de35acc89d748426a7d58970"
+checksum = "582c0d5d254a0b4569d967f7113662ea8cf6c2ebfd401f7f308c841675b03926"
 dependencies = [
  "fixed_decimal",
  "icu_locale",
@@ -2799,7 +2780,7 @@ dependencies = [
  "serde_yaml",
  "syn",
  "tinystr",
- "toml",
+ "toml 1.0.6+spec-1.1.0",
 ]
 
 [[package]]
@@ -4909,10 +4890,23 @@ version = "0.9.12+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf92845e79fc2e2def6a5d828f0801e29a2f8acc037becc5ab08595c7d5e9863"
 dependencies = [
+ "serde_core",
+ "serde_spanned",
+ "toml_datetime 0.7.5+spec-1.1.0",
+ "toml_parser",
+ "winnow",
+]
+
+[[package]]
+name = "toml"
+version = "1.0.6+spec-1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "399b1124a3c9e16766831c6bba21e50192572cdd98706ea114f9502509686ffc"
+dependencies = [
  "indexmap",
  "serde_core",
  "serde_spanned",
- "toml_datetime",
+ "toml_datetime 1.0.0+spec-1.1.0",
  "toml_parser",
  "toml_writer",
  "winnow",
@@ -4923,6 +4917,15 @@ name = "toml_datetime"
 version = "0.7.5+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "92e1cfed4a3038bc5a127e35a2d360f145e1f4b971b551a2ba5fd7aedf7e1347"
+dependencies = [
+ "serde_core",
+]
+
+[[package]]
+name = "toml_datetime"
+version = "1.0.0+spec-1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "32c2555c699578a4f59f0cc68e5116c8d7cabbd45e1409b989d4be085b53f13e"
 dependencies = [
  "serde_core",
 ]
