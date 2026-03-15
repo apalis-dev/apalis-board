@@ -110,10 +110,19 @@ impl PaginatedTableDataProvider<Task, usize> for TaskProvider {
     }
 
     async fn row_count(&self) -> Option<usize> {
-        let queue = self.queue.as_deref().unwrap_or("");
+        let queue = self.queue.as_deref()?;
         let url = format!("/queues/{queue}/stats");
         let resp: Vec<Statistic> = ApiClient::get(&url).await.ok()?;
-        let total = resp.iter().find(|s| s.title == "Pending")?;
+        let stat_title = match &self.status {
+            Some(Status::Pending) => "PENDING_JOBS",
+            Some(Status::Running) => "RUNNING_JOBS",
+            Some(Status::Failed) => "FAILED_JOBS",
+            Some(Status::Done) => "DONE_JOBS",
+            Some(Status::Killed) => "KILLED_JOBS",
+            None => "TOTAL_JOBS",
+            _ => return None,
+        };
+        let total = resp.iter().find(|s| s.title == stat_title)?;
         total.value.parse().ok()
     }
 
