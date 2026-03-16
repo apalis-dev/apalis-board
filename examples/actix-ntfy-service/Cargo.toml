@@ -10,7 +10,7 @@ license = "MIT OR Apache-2.0"
 apalis-core = { version = "1.0.0-rc.4", features = ["serde"] }
 apalis-sql = { version = "1.0.0-rc.4" }
 apalis = { version = "1.0.0-rc.4", features = ["limit", "retry"] }
-apalis-sqlite = { features = ["migrate", "tokio-comp"], version = "1.0.0-rc.4" }
+apalis-sqlite = { features = ["migrate", "tokio-comp"], version = "1.0.0-rc.6" }
 apalis-board = { path = "../../", features = [
     "actix",
 ] } # Replace path with version
