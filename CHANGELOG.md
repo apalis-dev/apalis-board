@@ -1,9 +1,10 @@
 ## [Unreleased]
 
 ### 💼 Other
+- _chore_: bump to v1.0.0-rc.6 #77
 - fix: home stats: humanize the timestamp #67 
-- fix: correct task pagination row count for status-filtered views
-- _chore_: bump to v1.0.0-rc.6 #66
+- fix: correct task pagination row count for status-filtered views #76
+- _chore_: bump to v1.0.0-rc.4 #66
 - _chore_: bump to v1.0.0-rc.3 #56
 - _chore_: refactor to remove path normalization (#55)
 - _deps_: bump leptos-struct-table from 0.16.0 to 0.17.0 (#48) 
