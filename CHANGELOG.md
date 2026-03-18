@@ -2,6 +2,7 @@
 
 ### 💼 Other
 - fix: home stats: humanize the timestamp #67 
+- fix: correct task pagination row count for status-filtered views
 - _chore_: bump to v1.0.0-rc.6 #66
 - _chore_: bump to v1.0.0-rc.3 #56
 - _chore_: refactor to remove path normalization (#55)
