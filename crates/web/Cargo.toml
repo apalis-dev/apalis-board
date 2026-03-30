@@ -25,7 +25,7 @@ gloo-net = { version = "0.6" }
 serde_json = "1"
 serde = "1"
 leptos = { version = "0.8.9", features = ["csr"], default-features = false }
-leptos_router = "0.8.7"
+leptos_router = "0.8.13"
 gloo-timers = { version = "0.3.0", features = ["futures"] }
 leptos-struct-table = { version = "0.17.0" }
 web-sys = "0.3"
