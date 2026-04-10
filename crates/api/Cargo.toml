@@ -40,7 +40,7 @@ axum = { version = "0.8", optional = true, features = [
 ], default-features = false }
 
 [features]
-default = ["sse", "ui"]
+default = ["sse"]
 actix = ["dep:actix-web", "dep:actix-web-lab"]
 axum = ["dep:axum", "dep:thiserror"]
 sse = ["dep:tracing-core", "dep:tracing-subscriber"]

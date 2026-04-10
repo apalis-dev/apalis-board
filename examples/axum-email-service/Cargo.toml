@@ -15,11 +15,12 @@ apalis-postgres = { version = "1.0.0-rc.7", features = [
 ] }
 apalis-board = { path = "../../", features = [
     "axum",
+    "ui",
 ] } # Replace path with version
 serde = "1"
 futures = "0.3"
 tower = "0.5"
-tokio = { version = "1", features = ["full"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal"] }
 log = "0.4"
 serde_json = "1"
 tracing-subscriber = { version = "0.3.11", features = ["json", "env-filter"] }

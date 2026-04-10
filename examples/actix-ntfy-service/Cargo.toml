@@ -13,12 +13,13 @@ apalis = { version = "1.0.0-rc.7", features = ["limit", "retry"] }
 apalis-sqlite = { features = ["migrate", "tokio-comp"], version = "1.0.0-rc.7" }
 apalis-board = { path = "../../", features = [
     "actix",
+    "ui",
 ] } # Replace path with version
 actix-web = "4.5.1"
 serde = "1"
 futures = "0.3"
 tower = "0.5"
-tokio = { version = "1", features = ["full"] }
+tokio = { version = "1", features = ["rt-multi-thread"] }
 log = "0.4"
 serde_json = "1"
 tracing-subscriber = { version = "0.3.11", features = ["json", "env-filter"] }
