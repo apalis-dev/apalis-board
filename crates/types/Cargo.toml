@@ -17,8 +17,8 @@ publish = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-serde = { version = "1", features = ["derive"] }
-thiserror = "2"
+serde = { workspace = true, features = ["derive"] }
+thiserror.workspace = true
 
 [package.metadata.docs.rs]
 # defines the configuration attribute `docsrs`

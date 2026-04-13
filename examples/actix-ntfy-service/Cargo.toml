@@ -8,19 +8,19 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 apalis-core = { version = "1.0.0-rc.7", features = ["serde"] }
-apalis-sql = { version = "1.0.0-rc.7" }
-apalis = { version = "1.0.0-rc.7", features = ["limit", "retry"] }
-apalis-sqlite = { features = ["migrate", "tokio-comp"], version = "1.0.0-rc.7" }
+apalis-sql.workspace = true
+apalis = { workspace = true, features = ["limit", "retry"] }
+apalis-sqlite = { workspace = true, features = ["migrate", "tokio-comp"] }
 apalis-board = { path = "../../", features = [
     "actix",
 ] } # Replace path with version
-actix-web = "4.5.1"
-serde = "1"
-futures = "0.3"
-tower = "0.5"
+actix-web.workspace = true
+serde.workspace = true
+futures.workspace = true
+tower.workspace = true
 tokio = { version = "1", features = ["full"] }
-log = "0.4"
-serde_json = "1"
-tracing-subscriber = { version = "0.3.11", features = ["json", "env-filter"] }
+log.workspace = true
+serde_json.workspace = true
+tracing-subscriber = { workspace = true, features = ["json", "env-filter"] }
 reqwest = { version = "0.13", features = ["json"] }
-clap = { version = "4.5.56", features = ["derive"] }
+clap.workspace = true
