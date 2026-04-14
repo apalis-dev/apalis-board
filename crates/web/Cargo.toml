@@ -21,7 +21,7 @@ apalis-core = { version = "1.0.0-rc.7", features = [
     "serde",
 ], default-features = false }
 apalis-board-types.workspace = true
-gloo-net = "0.6"
+gloo-net = "0.7"
 serde_json.workspace = true
 serde.workspace = true
 leptos = { version = "0.8.9", features = ["csr"], default-features = false }
