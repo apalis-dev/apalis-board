@@ -20,18 +20,18 @@ publish = true
 apalis-core = { version = "1.0.0-rc.7", features = [
     "serde",
 ], default-features = false }
-apalis-board-types = { path = "../types", version = "1.0.0-rc.7" }
-gloo-net = { version = "0.6" }
-serde_json = "1"
-serde = "1"
+apalis-board-types.workspace = true
+gloo-net = "0.6"
+serde_json.workspace = true
+serde.workspace = true
 leptos = { version = "0.8.9", features = ["csr"], default-features = false }
 leptos_router = "0.8.7"
 gloo-timers = { version = "0.3.0", features = ["futures"] }
-leptos-struct-table = { version = "0.17.0" }
+leptos-struct-table = "0.17.0"
 web-sys = "0.3"
 console_error_panic_hook = "0.1.7"
 chrono = { version = "0.4", features = ["serde"] }
-futures = "0.3"
+futures.workspace = true
 leptos_i18n = "0.6.0"
 leptos_meta = "0.8.5"
 

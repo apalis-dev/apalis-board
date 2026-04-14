@@ -1,7 +1,9 @@
 ## [Unreleased]
 
 ### 💼 Other
+
 - _perf_: make `ui` feature opt-in and reduce default compile footprint #95
+- _refactor_: centralize shared dependencies in `[workspace.dependencies]` #96
 - _chore_: bump to v1.0.0-rc.7 #97
 - _chore_: bump to v1.0.0-rc.6 #77
 - fix: home stats: humanize the timestamp #67 
