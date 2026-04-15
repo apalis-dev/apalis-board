@@ -19,6 +19,7 @@ web = ["dep:apalis-board-web"]
 actix = ["apalis-board-api/actix"]
 axum = ["apalis-board-api/axum"]
 events = ["apalis-board-api/sse"]
+ui = ["apalis-board-api/ui"]
 
 [dependencies]
 apalis-board-web = { workspace = true, optional = true }
@@ -31,7 +32,7 @@ all-features = true
 
 [workspace]
 members = ["crates/*", "examples/*"]
-default-members = [".", "crates/*"]
+default-members = [".", "crates/types", "crates/api"]
 resolver = "2"
 
 [workspace.package]

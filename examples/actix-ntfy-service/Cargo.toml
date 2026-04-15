@@ -13,6 +13,7 @@ apalis = { workspace = true, features = ["limit", "retry"] }
 apalis-sqlite = { workspace = true, features = ["migrate", "tokio-comp"] }
 apalis-board = { path = "../../", features = [
     "actix",
+    "ui",
 ] } # Replace path with version
 actix-web.workspace = true
 serde.workspace = true

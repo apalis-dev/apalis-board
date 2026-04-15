@@ -15,6 +15,7 @@ apalis-postgres = { workspace = true, features = [
 ] }
 apalis-board = { path = "../../", features = [
     "axum",
+    "ui",
 ] } # Replace path with version
 serde.workspace = true
 futures.workspace = true
