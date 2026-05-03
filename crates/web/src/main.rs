@@ -1,6 +1,6 @@
-use apalis_board_web::config::{router_base, API_PATH};
 use apalis_board_web::components::layout::Layout;
 use apalis_board_web::components::not_found::NotFound;
+use apalis_board_web::config::{API_PATH, router_base};
 use apalis_board_web::create_sse_resource;
 use apalis_board_web::pages::home::Home;
 use apalis_board_web::pages::logs::LogsPage;
