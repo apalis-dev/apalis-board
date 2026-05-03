@@ -1,7 +1,6 @@
+use crate::config::API_PATH;
 use gloo_net::http::Request;
 use serde::de::DeserializeOwned;
-
-const API_PATH: &str = "/api/v1";
 pub struct ApiClient;
 
 impl ApiClient {

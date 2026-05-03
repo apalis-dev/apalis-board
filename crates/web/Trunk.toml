@@ -1,6 +1,8 @@
 [build]
 target = "index.html"
 dist = "dist"
+# Default asset prefix; override with `TRUNK_BUILD_PUBLIC_URL` or `--public-url` (see src/config.rs).
+public_url = "/"
 
 [[proxy]]
 rewrite = "/api/v1/"
