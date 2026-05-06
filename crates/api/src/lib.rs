@@ -23,7 +23,6 @@ pub mod ui;
 
 /// Push a new task to the specified queue.
 pub async fn push_task<Args, B, Compact>(
-    _queue: String,
     task: Args,
     storage: Arc<RwLock<B>>,
 ) -> Result<(), ApiError>
@@ -42,15 +41,14 @@ where
     }
 }
 /// Get statistics for a specific queue.
-pub async fn stats_by_queue<S>(
-    storage: Arc<RwLock<S>>,
-    queue: String,
-) -> Result<Vec<Statistic>, ApiError>
+pub async fn stats_by_queue<S>(storage: Arc<RwLock<S>>) -> Result<Vec<Statistic>, ApiError>
 where
     S::Error: std::error::Error,
-    S: Metrics,
+    S: Metrics + BackendExt,
 {
-    let stats = storage.read().await.fetch_by_queue(queue.as_ref()).await;
+    let storage = storage.read().await;
+    let queue = storage.get_queue().to_string();
+    let stats = storage.fetch_by_queue(queue.as_ref()).await;
     match stats {
         Ok(stats) => Ok(stats),
         Err(e) => Err(ApiError::BackendError(e.to_string())),
@@ -59,7 +57,6 @@ where
 
 /// Get a list of tasks from the specified queue with filtering options.
 pub async fn get_tasks<S, T, Compact>(
-    queue: String,
     storage: Arc<RwLock<S>>,
     filter: Filter,
 ) -> Result<Vec<Task<T, S::Context, S::IdType>>, ApiError>
@@ -71,26 +68,24 @@ where
     <S as Backend>::Error: std::error::Error,
     S::Codec: Codec<T, Compact = Compact>,
 {
+    let storage = storage.read().await;
+    let queue = storage.get_queue().to_string();
     storage
-        .read()
-        .await
-        .list_tasks(queue.as_ref(), &filter)
+        .list_tasks(&queue, &filter)
         .await
         .map_err(|e| ApiError::BackendError(e.to_string()))
 }
 
 /// Get workers for a specific queue.
-pub async fn get_workers<S>(
-    storage: Arc<RwLock<S>>,
-    queue: String,
-) -> Result<Vec<RunningWorker>, ApiError>
+pub async fn get_workers<S>(storage: Arc<RwLock<S>>) -> Result<Vec<RunningWorker>, ApiError>
 where
-    S: ListWorkers,
+    S: ListWorkers + BackendExt,
     S::Error: std::error::Error,
 {
+    let storage = storage.read().await;
+
+    let queue = storage.get_queue().to_string();
     storage
-        .read()
-        .await
         .list_workers(queue.as_ref())
         .await
         .map_err(|e| ApiError::BackendError(e.to_string()))
