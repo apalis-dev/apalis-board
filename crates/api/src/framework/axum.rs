@@ -66,7 +66,6 @@ pub type State<B> = Extension<Arc<RwLock<B>>>;
 /// Fetch all tasks from the backend storage.
 pub async fn get_tasks<S, T, Compact>(
     query: Query<Filter>,
-    queue: Extension<String>,
     storage: State<S>,
 ) -> Result<Json<Vec<Task<T, S::Context, S::IdType>>>, AppError>
 where
@@ -78,11 +77,10 @@ where
     S::Codec: Codec<T, Compact = Compact> + 'static,
     Compact: 'static,
 {
-    let queue = queue.0.clone();
     let storage = storage.0;
     let filter = query.0;
 
-    crate::get_tasks::<S, T, Compact>(queue, storage, filter)
+    crate::get_tasks::<S, T, Compact>(storage, filter)
         .await
         .map(Json)
         .map_err(AppError::ApiError)
@@ -90,17 +88,15 @@ where
 
 /// Fetch statistics for a specific queue from the backend storage.
 pub async fn stats_by_queue<S>(
-    queue: Extension<String>,
     storage: State<S>,
 ) -> Result<Json<Vec<Statistic>>, AppError>
 where
     S::Error: std::error::Error,
-    S: Metrics,
+    S: Metrics + BackendExt,
 {
-    let queue = queue.0;
     let storage = storage.0;
 
-    match crate::stats_by_queue::<S>(storage, queue.clone()).await {
+    match crate::stats_by_queue::<S>(storage).await {
         Ok(stats) => Ok(Json(stats)),
         Err(e) => Err(AppError::ApiError(e)),
     }
@@ -108,17 +104,15 @@ where
 
 /// Fetch all workers from the backend storage.
 pub async fn get_workers<S>(
-    queue: Extension<String>,
     storage: State<S>,
 ) -> Result<Json<Vec<RunningWorker>>, AppError>
 where
-    S: ListWorkers,
+    S: ListWorkers + BackendExt,
     S::Error: std::error::Error,
 {
-    let queue = queue.0.clone();
     let storage = storage.0;
 
-    match crate::get_workers::<S>(storage, queue).await {
+    match crate::get_workers::<S>(storage).await {
         Ok(workers) => Ok(Json(workers)),
         Err(e) => Err(AppError::ApiError(e)),
     }
@@ -126,7 +120,6 @@ where
 
 /// Push a new task to the backend storage.
 pub async fn push_task<S, T, Compact>(
-    queue: Extension<String>,
     storage: State<S>,
     task: Json<T>,
 ) -> Result<Json<()>, AppError>
@@ -137,8 +130,7 @@ where
     S::Codec: Codec<T, Compact = Compact>,
     <<S as BackendExt>::Codec as Codec<T>>::Error: std::error::Error,
 {
-    let queue = queue.to_string();
-    match crate::push_task(queue, task.0, storage.0).await {
+    match crate::push_task(task.0, storage.0).await {
         Ok(_) => Ok(Json(())),
         Err(e) => Err(AppError::ApiError(e)),
     }
@@ -279,7 +271,7 @@ where
                 .route("/workers", get(get_workers::<B>))
                 .route("/tasks", put(push_task::<B, T, Compact>))
                 .route("/tasks/{task_id}", get(get_task_by_id::<B, T>))
-                .layer(Extension(queue.to_string()))
+                .layer(Extension(queue))
                 .layer(Extension(backend)),
         );
 

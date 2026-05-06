@@ -30,7 +30,6 @@ pub struct Handler<S, T, Compact> {
 impl<S, T, Compact> Handler<S, T, Compact> {
     /// Get tasks for a specific queue.
     pub async fn get_tasks(
-        queue: web::Data<String>,
         storage: web::Data<RwLock<S>>,
         query: web::Query<Filter>,
     ) -> impl Responder
@@ -43,11 +42,10 @@ impl<S, T, Compact> Handler<S, T, Compact> {
         S::Codec: Codec<T, Compact = Compact> + 'static,
         Compact: 'static,
     {
-        let queue = queue.into_inner().to_string();
         let storage = storage.into_inner();
         let filter = query.into_inner();
 
-        match get_tasks::<S, T, Compact>(queue, storage, filter).await {
+        match get_tasks::<S, T, Compact>(storage, filter).await {
             Ok(tasks) => HttpResponse::Ok().json(tasks),
             Err(e) => HttpResponse::InternalServerError().json(e),
         }
@@ -55,17 +53,15 @@ impl<S, T, Compact> Handler<S, T, Compact> {
 
     /// Get statistics for a specific queue.
     pub async fn stats_by_queue(
-        queue: web::Data<String>,
         storage: web::Data<RwLock<S>>,
     ) -> impl Responder
     where
         S::Error: std::error::Error,
-        S: Metrics,
+        S: Metrics + BackendExt,
     {
-        let queue = queue.into_inner();
         let storage = storage.into_inner();
 
-        match stats_by_queue::<S>(storage, queue.to_string()).await {
+        match stats_by_queue::<S>(storage).await {
             Ok(stats) => HttpResponse::Ok().json(stats),
             Err(e) => HttpResponse::InternalServerError().json(e),
         }
@@ -73,28 +69,22 @@ impl<S, T, Compact> Handler<S, T, Compact> {
 
     /// Get workers for a specific queue.
     pub async fn get_workers(
-        queue: web::Data<String>,
         storage: web::Data<RwLock<S>>,
     ) -> impl Responder
     where
-        S: ListWorkers,
+        S: ListWorkers + BackendExt,
         S::Error: std::error::Error,
     {
-        let queue = queue.into_inner().to_string();
         let storage = storage.into_inner();
 
-        match get_workers::<S>(storage, queue).await {
+        match get_workers::<S>(storage).await {
             Ok(workers) => HttpResponse::Ok().json(workers),
             Err(e) => HttpResponse::InternalServerError().json(e),
         }
     }
 
     /// Push a new task to the specified queue.
-    pub async fn push_task(
-        queue: web::Data<String>,
-        task: Json<T>,
-        storage: Data<RwLock<S>>,
-    ) -> impl Responder
+    pub async fn push_task(task: Json<T>, storage: Data<RwLock<S>>) -> impl Responder
     where
         T: Serialize + DeserializeOwned + 'static,
         S: TaskSink<T> + Send + BackendExt,
@@ -102,8 +92,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
         S::Codec: Codec<T, Compact = Compact>,
         <<S as BackendExt>::Codec as Codec<T>>::Error: std::error::Error,
     {
-        let queue = queue.into_inner().to_string();
-        match push_task(queue, task.into_inner(), storage.into_inner()).await {
+        match push_task(task.into_inner(), storage.into_inner()).await {
             Ok(_) => HttpResponse::Ok().finish(),
             Err(e) => HttpResponse::InternalServerError().json(e),
         }
@@ -251,7 +240,7 @@ where
         }
         let scope = self.router.service(
             Scope::new(&format!("/queues/{queue}"))
-                .app_data(web::Data::new(queue.to_string()))
+                .app_data(web::Data::new(queue))
                 .app_data(backend)
                 .route("/tasks", web::get().to(Handler::<B, T, Compact>::get_tasks))
                 .route(
