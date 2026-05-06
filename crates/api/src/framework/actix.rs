@@ -52,9 +52,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
     }
 
     /// Get statistics for a specific queue.
-    pub async fn stats_by_queue(
-        storage: web::Data<RwLock<S>>,
-    ) -> impl Responder
+    pub async fn stats_by_queue(storage: web::Data<RwLock<S>>) -> impl Responder
     where
         S::Error: std::error::Error,
         S: Metrics + BackendExt,
@@ -68,9 +66,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
     }
 
     /// Get workers for a specific queue.
-    pub async fn get_workers(
-        storage: web::Data<RwLock<S>>,
-    ) -> impl Responder
+    pub async fn get_workers(storage: web::Data<RwLock<S>>) -> impl Responder
     where
         S: ListWorkers + BackendExt,
         S::Error: std::error::Error,

@@ -87,9 +87,7 @@ where
 }
 
 /// Fetch statistics for a specific queue from the backend storage.
-pub async fn stats_by_queue<S>(
-    storage: State<S>,
-) -> Result<Json<Vec<Statistic>>, AppError>
+pub async fn stats_by_queue<S>(storage: State<S>) -> Result<Json<Vec<Statistic>>, AppError>
 where
     S::Error: std::error::Error,
     S: Metrics + BackendExt,
@@ -103,9 +101,7 @@ where
 }
 
 /// Fetch all workers from the backend storage.
-pub async fn get_workers<S>(
-    storage: State<S>,
-) -> Result<Json<Vec<RunningWorker>>, AppError>
+pub async fn get_workers<S>(storage: State<S>) -> Result<Json<Vec<RunningWorker>>, AppError>
 where
     S: ListWorkers + BackendExt,
     S::Error: std::error::Error,
