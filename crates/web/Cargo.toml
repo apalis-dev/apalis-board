@@ -1,6 +1,6 @@
 [package]
 name = "apalis-board-web"
-version = "1.0.0-rc.7"
+version = "1.0.0-rc.8"
 edition = "2024"
 description = "Frontend components for managing Apalis task queues."
 license = "MIT OR Apache-2.0"
@@ -17,17 +17,17 @@ publish = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-apalis-core = { version = "1.0.0-rc.7", features = [
+apalis-core = { workspace = true, features = [
     "serde",
 ], default-features = false }
 apalis-board-types.workspace = true
-gloo-net = "0.6"
+gloo-net = "0.7.0"
 serde_json.workspace = true
 serde.workspace = true
 leptos = { version = "0.8.9", features = ["csr"], default-features = false }
 leptos_router = "0.8.7"
-gloo-timers = { version = "0.3.0", features = ["futures"] }
-leptos-struct-table = "0.17.0"
+gloo-timers = { version = "0.4.0", features = ["futures"] }
+leptos-struct-table = "0.18.0"
 web-sys = "0.3"
 console_error_panic_hook = "0.1.7"
 chrono = { version = "0.4", features = ["serde"] }
