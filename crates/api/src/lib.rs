@@ -47,8 +47,7 @@ where
     S: Metrics + BackendExt,
 {
     let storage = storage.read().await;
-    let queue = storage.get_queue().to_string();
-    let stats = storage.fetch_by_queue(queue.as_ref()).await;
+    let stats = storage.fetch_by_queue().await;
     match stats {
         Ok(stats) => Ok(stats),
         Err(e) => Err(ApiError::BackendError(e.to_string())),
@@ -69,9 +68,8 @@ where
     S::Codec: Codec<T, Compact = Compact>,
 {
     let storage = storage.read().await;
-    let queue = storage.get_queue().to_string();
     storage
-        .list_tasks(&queue, &filter)
+        .list_tasks(&filter)
         .await
         .map_err(|e| ApiError::BackendError(e.to_string()))
 }
@@ -83,10 +81,8 @@ where
     S::Error: std::error::Error,
 {
     let storage = storage.read().await;
-
-    let queue = storage.get_queue().to_string();
     storage
-        .list_workers(queue.as_ref())
+        .list_workers()
         .await
         .map_err(|e| ApiError::BackendError(e.to_string()))
 }

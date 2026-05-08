@@ -63,7 +63,9 @@ skip-tree = [
     { name = "darling" }, # leptos-struct-table-macro vs default-struct-builder
     { name = "darling_core" }, # leptos-struct-table-macro vs default-struct-builder
     { name = "darling_macro" }, # leptos-struct-table-macro vs default-struct-builder
-    { name = "leptos-use" } # leptos-struct-table vs leptos_i18n
+    { name = "leptos-use" }, # leptos-struct-table vs leptos_i18n
+    { name = "impl-more" } # actix-web vs actix-web-lab
+
 
 ]
 
