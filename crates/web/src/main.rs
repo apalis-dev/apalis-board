@@ -1,5 +1,6 @@
 use apalis_board_web::components::layout::Layout;
 use apalis_board_web::components::not_found::NotFound;
+use apalis_board_web::config::{API_PATH, router_base};
 use apalis_board_web::create_sse_resource;
 use apalis_board_web::pages::home::Home;
 use apalis_board_web::pages::logs::LogsPage;
@@ -19,12 +20,13 @@ use apalis_board_web::locales::i18n::I18nContextProvider;
 #[component]
 pub fn AppRoutes() -> impl IntoView {
     leptos_meta::provide_meta_context();
-    let sse_provider = create_sse_resource("/api/v1/events");
+    let events_url = format!("{API_PATH}/events");
+    let sse_provider = create_sse_resource(&events_url);
     provide_context(sse_provider);
 
     view! {
         <I18nContextProvider>
-            <Router>
+            <Router base=router_base()>
                 <Routes fallback=NotFound>
                     <ParentRoute path=path!("") view=Layout>
                         <Route path=path!("/") view=Home />

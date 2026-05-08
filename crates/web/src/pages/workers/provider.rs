@@ -1,4 +1,4 @@
-use crate::pages::workers::Worker;
+use crate::{config::API_PATH, pages::workers::Worker};
 use gloo_net::http::Request;
 use leptos::prelude::{GetUntracked, Signal, Track};
 use leptos_struct_table::{ColumnSort, TableDataProvider};
@@ -46,7 +46,6 @@ impl WorkerProvider {
     }
 
     fn get_url(&self) -> String {
-        const API_PATH: &str = "/api/v1";
         let mut sort = String::new();
         for pair in &self.sorting {
             sort.push_str(&self.url_sort_param_for_sort_pair(pair));
