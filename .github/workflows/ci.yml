@@ -50,7 +50,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Cache cargo
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -63,7 +63,7 @@ jobs:
 
       - name: Cache dist
         id: cache-dist
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: crates/web/dist
           key: ${{ runner.os }}-dist-${{ hashFiles('crates/web/Cargo.toml') }}-${{ hashFiles('crates/web/src/**') }}
@@ -86,7 +86,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cache cargo
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -99,7 +99,7 @@ jobs:
 
       - name: Cache dist
         id: cache-dist
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: crates/web/dist
           key: ${{ runner.os }}-dist-${{ hashFiles('crates/web/Cargo.toml') }}-${{ hashFiles('crates/web/src/**') }}
@@ -147,7 +147,7 @@ jobs:
           components: clippy
 
       - name: Cache cargo
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -160,7 +160,7 @@ jobs:
 
       - name: Cache dist
         id: cache-dist
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: crates/web/dist
           key: ${{ runner.os }}-dist-${{ hashFiles('crates/web/Cargo.toml') }}-${{ hashFiles('crates/web/src/**') }}
@@ -185,7 +185,7 @@ jobs:
         uses: dtolnay/rust-toolchain@nightly
 
       - name: Cache cargo
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -198,7 +198,7 @@ jobs:
 
       - name: Cache dist
         id: cache-dist
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: crates/web/dist
           key: ${{ runner.os }}-dist-${{ hashFiles('crates/web/Cargo.toml') }}-${{ hashFiles('crates/web/src/**') }}
@@ -225,7 +225,7 @@ jobs:
         uses: dtolnay/rust-toolchain@nightly
 
       - name: Cache cargo
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -238,7 +238,7 @@ jobs:
 
       - name: Cache dist
         id: cache-dist
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: crates/web/dist
           key: ${{ runner.os }}-dist-${{ hashFiles('crates/web/Cargo.toml') }}-${{ hashFiles('crates/web/src/**') }}
