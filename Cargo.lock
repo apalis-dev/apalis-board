@@ -2694,13 +2694,13 @@ dependencies = [
 
 [[package]]
 name = "leptos-struct-table"
-version = "0.18.0"
+version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8512aac7ab65b0e8f4c963abd4a0501fe49eac2ab18b99a046001e7ea73a07df"
+checksum = "c07fea88b3965e9cb15aba0f3adbb4c72639ab8050a56bf2991482bdc947f40a"
 dependencies = [
  "leptos",
  "leptos-struct-table-macro",
- "leptos-use",
+ "leptos-use 0.19.0",
  "send_wrapper",
  "serde",
  "wasm-bindgen",
@@ -2729,6 +2729,25 @@ dependencies = [
  "cfg-if",
  "codee",
  "cookie 0.18.1",
+ "default-struct-builder",
+ "js-sys",
+ "lazy_static",
+ "leptos",
+ "paste",
+ "send_wrapper",
+ "thiserror 2.0.18",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use"
+version = "0.19.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cc07f2657dcc366ef2d80045354143f6e0a86919763a1a5753cd3871f8f95e2d"
+dependencies = [
+ "cfg-if",
  "default-struct-builder",
  "js-sys",
  "lazy_static",
@@ -2803,7 +2822,7 @@ dependencies = [
  "icu_locale",
  "icu_plurals",
  "leptos",
- "leptos-use",
+ "leptos-use 0.18.3",
  "leptos_i18n_macro",
  "leptos_meta",
  "serde",
