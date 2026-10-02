@@ -37,10 +37,13 @@ axum = { version = "0.8", optional = true, features = [
     "query",
 ], default-features = false }
 
+salvo = { workspace=true, features = ["sse", "affix-state"], optional = true }
+
 [features]
 default = ["sse"]
 actix = ["dep:actix-web", "dep:actix-web-lab"]
 axum = ["dep:axum", "dep:thiserror"]
+salvo = ["dep:salvo"]
 sse = ["dep:tracing-core", "dep:tracing-subscriber"]
 ui = ["dep:include_dir"]
 

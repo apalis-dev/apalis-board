@@ -1,9 +1,14 @@
 /// Exposes Actix framework routes.
 #[cfg(feature = "actix")]
 pub mod actix;
+
 /// Exposes Axum framework routes.
 #[cfg(feature = "axum")]
 pub mod axum;
+
+/// Exposes Salvo framework routes.
+#[cfg(feature = "salvo")]
+pub mod salvo;
 
 /// Trait for registering routes with a backend
 pub trait RegisterRoute<B, T> {

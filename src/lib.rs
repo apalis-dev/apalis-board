@@ -6,5 +6,8 @@ pub mod actix;
 #[cfg(all(feature = "axum", not(target_arch = "wasm32")))]
 pub mod axum;
 
+#[cfg(all(feature = "salvo", not(target_arch = "wasm32")))]
+pub mod salvo;
+
 #[cfg(all(feature = "web", target_arch = "wasm32"))]
 pub mod web;

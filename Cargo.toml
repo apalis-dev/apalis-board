@@ -18,6 +18,7 @@ default = ["events"]
 web = ["dep:apalis-board-web"]
 actix = ["apalis-board-api/actix"]
 axum = ["apalis-board-api/axum"]
+salvo = ["apalis-board-api/salvo"]
 events = ["apalis-board-api/sse"]
 ui = ["apalis-board-api/ui"]
 
@@ -66,6 +67,7 @@ thiserror = "2"
 
 # Web frameworks
 actix-web = "4.5.1"
+salvo = "0.92"
 
 # Observability
 log = "0.4"

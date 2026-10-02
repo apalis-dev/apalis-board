@@ -45,7 +45,7 @@ Get a clear overview of what's happening in your queues and manage jobs efficien
 ## Crates
 
 - [`apalis-board-types`](https://docs.rs/apalis-board-types): Default types used around
-- [`apalis-board-api`](https://docs.rs/apalis-board-api): Provides api utilities for `axum` and `actix`
+- [`apalis-board-api`](https://docs.rs/apalis-board-api): Provides api utilities for `axum` , `actix` and `salvo`
 - [`apalis-board-web`](https://docs.rs/apalis-board-web): Provides the UI interface written in `leptos`
 
 ## Usage

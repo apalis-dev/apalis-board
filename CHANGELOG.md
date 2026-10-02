@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Changed
+
+- Added support for the Salvo web framework, allowing apalis-board to expose its API using Salvo ([#130](https://github.com/apalis-dev/apalis-board/pull/130)).
+
 ## [1.0.0-rc.8] - 2026-05-08
 
 ### Changed
