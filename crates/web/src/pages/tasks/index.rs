@@ -4,12 +4,9 @@ use apalis_core::task::status::Status;
 use leptos::prelude::*;
 use leptos_meta::Title;
 use leptos_router::{components::A, hooks::use_params_map};
-use leptos_struct_table::{DisplayStrategy, PaginationController, SortingMode, TableContent};
+use leptos_struct_table::{DisplayStrategy, SortingMode, TableContent};
 
-use crate::{
-    components::{pagination::Paginator, sidebar::tasks_icon},
-    pages::tasks::provider::TaskProvider,
-};
+use crate::{components::sidebar::tasks_icon, pages::tasks::provider::TaskProvider};
 
 #[component]
 pub fn AllTasksPage() -> impl IntoView {
@@ -22,7 +19,8 @@ pub fn AllTasksPage() -> impl IntoView {
         })
     };
     let rows = move || TaskProvider::all(status());
-    let pagination_controller = PaginationController::default();
+    let container = NodeRef::new();
+
     view! {
         <Title text=move || format!("Tasks - {}", status()) />
         <div class="flex flex-col h-full w-full">
@@ -33,25 +31,23 @@ pub fn AllTasksPage() -> impl IntoView {
                 <h3 class="text-base font-bold m-2 flex-grow">Tasks</h3>
                 <TaskNav />
             </div>
-            <div class="flex items-center gap-1 p-2 border-b border-gray-700"></div>
-            <div class="flex-1 overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-charcoal-600 hover:scrollbar-thumb-charcoal-500 w-full">
+            <div
+                node_ref=container
+                class="flex-1 overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-charcoal-600 hover:scrollbar-thumb-charcoal-500"
+            >
                 <table class="whitespace-nowrap transition-all duration-200 w-full">
                     {move || {
                         view! {
                             <TableContent
                                 rows=rows()
-                                scroll_container="html"
+                                scroll_container=container
                                 sorting_mode=SortingMode::SingleColumn
-                                display_strategy=DisplayStrategy::Pagination {
-                                    controller: pagination_controller,
-                                    row_count: 20,
-                                }
+                                display_strategy=DisplayStrategy::Virtualization
                             />
                         }
                     }}
                 </table>
             </div>
-            <Paginator pagination_controller />
         </div>
     }
 }

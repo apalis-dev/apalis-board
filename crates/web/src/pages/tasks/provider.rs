@@ -88,30 +88,22 @@ impl PaginatedTableDataProvider<Task, usize> for TaskProvider {
             .into_iter()
             .map(|t| Task {
                 args: t.args,
-                task_id: t.parts.task_id.unwrap().to_string(),
-                attempt: t.parts.attempt.current(),
-                status: t.parts.status.load(),
-                run_at: t.parts.run_at,
-                queue: t
-                    .parts
-                    .ctx
-                    .as_object()
-                    .and_then(|obj| {
-                        obj.get("queue")
-                            .or_else(|| obj.get("job_type"))
-                            .and_then(|v| v.as_str())
-                    })
-                    .unwrap_or("")
-                    .to_string(),
-                meta: t.parts.ctx,
+                task_id: t.ctx.task_id().unwrap().to_string(),
+                attempt: t.ctx.attempt(),
+                status: t.ctx.status(),
+                run_at: t.ctx.run_at().unwrap_or_default(),
+                queue: t.ctx.queue().unwrap().to_string(),
+                ctx: t.ctx.clone(),
             })
             .collect();
         Ok(tasks)
     }
 
     async fn row_count(&self) -> Option<usize> {
-        let queue = self.queue.as_deref()?;
-        let url = format!("/queues/{queue}/stats");
+        let url = match self.queue.as_ref() {
+            Some(queue) => format!("/queues/{queue}/stats"),
+            None => "/overview".to_string(),
+        };
         let resp: Vec<Statistic> = ApiClient::get(&url).await.ok()?;
         let stat_title = match &self.status {
             Some(Status::Pending) => "PENDING_JOBS",

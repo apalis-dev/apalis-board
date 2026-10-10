@@ -44,10 +44,10 @@ pub fn NotFound() -> impl IntoView {
                                 fill="none"
                             />
                         </svg>
-                        <h1 class="text-base font-bold text-primary mb-2 text-shadow-custom">
+                        <h1 class="text-base font-bold text-primary mb-2">
                             404
                         </h1>
-                        <h2 class="text-sm mb-4 text-text-bright text-shadow-custom">
+                        <h2 class="text-sm mb-4 text-text-bright">
                             Page Not Found
                         </h2>
                         <p class="text-sm text-text-dimmed mb-8 max-w-md text-center">

@@ -8,7 +8,6 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 apalis = { workspace = true, features = ["limit", "retry", "tracing"] }
-apalis-sql.workspace = true
 apalis-sqlite = { workspace = true, features = ["migrate", "tokio-comp"] }
 apalis-board = { path = "../../", features = [
     "actix",

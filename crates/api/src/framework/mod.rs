@@ -1,3 +1,5 @@
+use apalis_core::error::BoxDynError;
+
 /// Exposes Actix framework routes.
 #[cfg(feature = "actix")]
 pub mod actix;
@@ -14,7 +16,7 @@ pub mod salvo;
 pub trait RegisterRoute<B, T> {
     /// Register routes with the given backend
     #[must_use]
-    fn register(self, backend: B) -> Self;
+    fn register(self, queue: &str, backend: B) -> Self;
 }
 
 /// Builder for API routes
@@ -45,4 +47,20 @@ impl<R> ApiBuilder<R> {
     pub fn build(self) -> R {
         self.router
     }
+}
+
+/// Error type for Task push operations
+#[derive(Debug, thiserror::Error)]
+pub enum TaskRejection {
+    /// A context header was present but could not be parsed
+    #[error("Invalid context header: {name} - {reason}")]
+    BadHeader {
+        /// The name of the header that was invalid
+        name: String,
+        /// The reason the header was invalid
+        reason: String,
+    },
+    /// The body (args) failed to deserialize
+    #[error("Failed to deserialize body: {0}")]
+    Body(BoxDynError),
 }

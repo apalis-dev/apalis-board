@@ -1,6 +1,6 @@
 [package]
 name = "apalis-board"
-version = "1.0.0-rc.8"
+version = "1.0.0-rc.9"
 authors = ["Njuguna Mureithi <mureithinjuguna@gmail.com>"]
 description = "Apalis board contains a number of crates useful for building UIs and apis for managing Apalis task queues."
 edition.workspace = true
@@ -43,16 +43,15 @@ repository = "https://github.com/apalis-dev/apalis-board"
 
 [workspace.dependencies]
 # Internal workspace crates
-apalis-board-types = { path = "crates/types", version = "1.0.0-rc.8" }
-apalis-board-api = { path = "crates/api", version = "1.0.0-rc.8" }
-apalis-board-web = { path = "crates/web", version = "1.0.0-rc.8" }
+apalis-board-types = { path = "crates/types", version = "1.0.0-rc.9" }
+apalis-board-api = { path = "crates/api", version = "1.0.0-rc.9" }
+apalis-board-web = { path = "crates/web", version = "1.0.0-rc.9" }
 
 # Apalis ecosystem
-apalis = { version = "1.0.0-rc.9", default-features = false }
-apalis-core = { version = "1.0.0-rc.9", default-features = false }
-apalis-sql = "1.0.0-rc.9"
-apalis-sqlite = "1.0.0-rc.8"
-apalis-postgres = "1.0.0-rc.8"
+apalis = { version = "1.0.0-rc.12", default-features = false }
+apalis-core = { version = "1.0.0-rc.12", default-features = false }
+apalis-sqlite = "1.0.0-rc.11"
+apalis-postgres = "1.0.0-rc.10"
 
 # Serialization
 serde = "1"
@@ -66,15 +65,15 @@ tower = "0.5"
 thiserror = "2"
 
 # Web frameworks
-actix-web = "4.5.1"
-salvo = "0.92"
+salvo = "1.0"
+actix-web = "4.15.0"
 
 # Observability
 log = "0.4"
-tracing-subscriber = "0.3.20"
+tracing-subscriber = "0.3.23"
 
 # CLI
-clap = { version = "4.5.56", features = ["derive"] }
+clap = { version = "4.6.7", features = ["derive"] }
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
@@ -89,7 +88,7 @@ type_complexity = "allow"
 
 await_holding_lock = "warn"
 dbg_macro = "warn"
-empty_enum = "warn"
+empty_enums = "warn"
 enum_glob_use = "warn"
 equatable_if_let = "warn"
 exit = "warn"

@@ -59,7 +59,7 @@ pub fn Home() -> impl IntoView {
 
     spawn_local(async move {
         loop {
-            gloo_timers::future::sleep(std::time::Duration::from_secs(5)).await;
+            gloo_timers::future::sleep(std::time::Duration::from_secs(30)).await;
             queues.refetch();
             stats.refetch();
         }
@@ -95,7 +95,9 @@ pub fn Home() -> impl IntoView {
                                                     _ => None,
                                                 };
                                                 let value = match stat.stat_type {
-                                                    apalis_core::backend::StatType::Timestamp => relative_timestamp(stat.value.parse::<u64>().unwrap_or(0)),
+                                                    apalis_core::backend::StatType::Timestamp => {
+                                                        relative_timestamp(stat.value.parse::<u64>().unwrap_or(0))
+                                                    }
                                                     _ => stat.value.clone(),
                                                 };
                                                 stats_card(
@@ -231,6 +233,7 @@ pub fn queue_card(queue: QueueInfo) -> impl IntoView {
                         queue
                             .activity
                             .iter()
+                            .take(7)
                             .map(|v| {
                                 let percent = if max > 0 {
                                     (*v as f32 / max as f32) * 80.0 + 20.0

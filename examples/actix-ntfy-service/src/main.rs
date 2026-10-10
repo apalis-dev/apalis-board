@@ -6,11 +6,11 @@ use apalis_board::actix::framework::{ApiBuilder, RegisterRoute};
 use apalis_board::actix::sse::TracingBroadcaster;
 use apalis_board::actix::sse::TracingSubscriber;
 use apalis_board::actix::ui::ServeUI;
-use apalis_sqlite::{SharedSqliteStorage, SqlitePool, SqliteStorage};
+use apalis_sqlite::shared::SqliteStorageFactory;
+use apalis_sqlite::{Config, SqlitePool, SqliteStorage};
 use clap::Parser;
 use futures::{future, TryFutureExt};
 use reqwest::Client;
-use std::time::Duration;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{EnvFilter, Layer};
@@ -44,24 +44,17 @@ async fn main() -> Result<(), BoxDynError> {
 
     SqliteStorage::setup(&pool).await.unwrap();
 
-    let config = apalis_sqlite::Config::new(&args.queue).with_poll_interval(
-        StrategyBuilder::new()
-            .apply(
-                IntervalStrategy::new(Duration::from_millis(10000))
-                    .with_backoff(BackoffConfig::default()),
-            )
-            .build(),
-    );
+    let config = Config::default().queue(&args.queue);
 
-    let mut store = SharedSqliteStorage::new(&args.database_url);
+    let mut store = SqliteStorageFactory::new(&args.database_url);
 
-    let notification_store = store.make_shared_with_config(config).unwrap();
+    let notification_store = store.create_with_config(config).unwrap();
 
     let worker = WorkerBuilder::new("ntfy-banana")
         .backend(notification_store.clone())
-        .enable_tracing()
         .retry(RetryPolicy::retries(args.retries))
         .concurrency(args.worker_concurrency)
+        .enable_tracing()
         .data(Client::new())
         .data(args.clone())
         .build(send_notification)
@@ -74,7 +67,7 @@ async fn main() -> Result<(), BoxDynError> {
                 .app_data(web::Data::new(broadcaster.clone())) // Add the broadcaster to the app data
                 .service(
                     ApiBuilder::new(Scope::new("/api/v1"))
-                        .register(notification_store.clone())
+                        .register(&args.queue, notification_store.clone())
                         .build(),
                 )
                 .service(ServeUI::new())

@@ -1,6 +1,7 @@
 #![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
 
 use apalis_board_types::LogEntry;
+use apalis_core::task::ExecutionContext;
 use chrono::{DateTime, Local, Utc};
 use leptos::{prelude::*, reactive::spawn_local};
 use serde::{Deserialize, Serialize};
@@ -122,4 +123,8 @@ pub fn relative_timestamp(timestamp: u64) -> String {
     }
 }
 
-pub type RawTask = apalis_core::task::Task<serde_json::Value, serde_json::Value, String>;
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RawTask<Args = serde_json::Value> {
+    pub args: Args,
+    pub ctx: ExecutionContext,
+}

@@ -201,7 +201,6 @@ module.exports = {
     require("tailwindcss-animate"),
     require("tailwind-scrollbar"),
     require("tailwind-scrollbar-hide"),
-    require("tailwindcss-textshadow"),
     function ({ addUtilities, theme }) {
       const focusStyles = theme("focusStyles", {});
       addUtilities({

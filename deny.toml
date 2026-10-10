@@ -3,7 +3,9 @@ exclude-unpublished = true
 
 [advisories]
 unmaintained = "none"
-ignore = []
+ignore = [
+    "RUSTSEC-2026-0258" # h2 from actix
+]
 
 [licenses]
 confidence-threshold = 0.8
@@ -19,12 +21,9 @@ allow = [
     "CC0-1.0",
     "0BSD",
     "BSL-1.0",
-    "OpenSSL"
 ]
 
 [bans]
-multiple-versions = "deny"
-highlight = "all"
 skip-tree = [
     { name = "windows_x86_64_msvc" },
     { name = "windows_x86_64_gnullvm" },
@@ -54,17 +53,21 @@ skip-tree = [
     { name = "thiserror-impl" },
     { name = "typed-builder" },
     { name = "typed-builder-macro" },
+    { name = "toml_edit" },
+    { name = "sha1" },
+    { name = "brotli-decompressor" },
+    { name = "zstd-safe" },
 
     # TODO: @geofmureithi Resolve these deps
 
-    { name = "core-foundation" }, # lettre vs reqwest
-    { name = "openssl-probe" }, # lettre vs reqwest
+    { name = "core-foundation" },    # lettre vs reqwest
+    { name = "openssl-probe" },      # lettre vs reqwest
     { name = "security-framework" }, # lettre vs reqwest
-    { name = "darling" }, # leptos-struct-table-macro vs default-struct-builder
-    { name = "darling_core" }, # leptos-struct-table-macro vs default-struct-builder
-    { name = "darling_macro" }, # leptos-struct-table-macro vs default-struct-builder
-    { name = "leptos-use" }, # leptos-struct-table vs leptos_i18n
-    { name = "impl-more" } # actix-web vs actix-web-lab
+    { name = "darling" },            # leptos-struct-table-macro vs default-struct-builder
+    { name = "darling_core" },       # leptos-struct-table-macro vs default-struct-builder
+    { name = "darling_macro" },      # leptos-struct-table-macro vs default-struct-builder
+    { name = "leptos-use" },         # leptos-struct-table vs leptos_i18n
+    { name = "impl-more" },          # actix-web vs actix-web-lab
 
 
 ]

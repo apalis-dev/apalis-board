@@ -11,7 +11,7 @@ use crate::pages::workers::provider::WorkerProvider;
 pub fn SingleQueuePage() -> impl IntoView {
     let params = use_params_map();
     let queue = Signal::derive(move || params.with(|p| p.get("queue")).unwrap_or_default());
-
+    let container = NodeRef::new();
     // Make rows reactive by using a closure
     let rows = WorkerProvider::new(queue);
     // let pagination_controller = PaginationController::default();
@@ -27,23 +27,18 @@ pub fn SingleQueuePage() -> impl IntoView {
             <div class="flex items-center gap-1 p-2 border-b border-gray-700">
                 <QueueNav />
             </div>
-            <div class="flex-1 overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-charcoal-600 hover:scrollbar-thumb-charcoal-500 w-full">
+            <div
+                node_ref=container
+                class="flex-1 overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-charcoal-600 hover:scrollbar-thumb-charcoal-500"
+            >
                 <table class="whitespace-nowrap transition-all duration-200 w-full">
-
                     <TableContent
                         rows=rows
-                        scroll_container="html"
+                        scroll_container=container
                         sorting_mode=SortingMode::SingleColumn
                     />
-                // display_strategy=DisplayStrategy::Pagination {
-                // controller: pagination_controller,
-                // row_count: 10,
-                // }
-
-                // row_renderer=CustomTableRowRenderer
                 </table>
             </div>
-        // <Paginator pagination_controller />
         </div>
     }
 }
