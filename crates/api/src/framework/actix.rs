@@ -1,19 +1,31 @@
-use std::{marker::PhantomData, str::FromStr};
+use std::{
+    fmt::Display,
+    marker::PhantomData,
+    str::FromStr,
+    time::{SystemTime, UNIX_EPOCH},
+};
 
 use actix_web::{
-    HttpResponse, Responder, Scope,
-    web::{self, Data, Json},
+    Error, FromRequest, HttpRequest, HttpResponse, Responder, Scope,
+    dev::Payload,
+    error::ErrorBadRequest,
+    http::header::HeaderMap,
+    web::{self, Data},
 };
-use apalis_core::backend::{
-    Backend, BackendExt, FetchById, Filter, ListAllTasks, ListQueues, ListTasks, ListWorkers,
-    Metrics, TaskSink, codec::Codec,
+use apalis_core::{
+    backend::{
+        Backend, BackendConfig, FetchById, Filter, ListAllTasks, ListQueues, ListTasks,
+        ListWorkers, Metrics, TaskSink, WireFormatBackend, codec::Codec,
+    },
+    task::{Task, builder::TaskBuilder, metadata::MetadataStore},
 };
+use futures::future::LocalBoxFuture;
 use serde::{Serialize, de::DeserializeOwned};
 use tokio::sync::RwLock;
 
 use crate::{
-    fetch_queues,
-    framework::{ApiBuilder, RegisterRoute},
+    META_PREFIX, RawTask, fetch_queues,
+    framework::{ApiBuilder, RegisterRoute, TaskRejection},
     get_all_tasks, get_all_workers, get_task_by_id, get_tasks, get_workers, overview, push_task,
     stats_by_queue,
 };
@@ -35,18 +47,20 @@ impl<S, T, Compact> Handler<S, T, Compact> {
     ) -> impl Responder
     where
         T: Serialize + DeserializeOwned + 'static,
-        S: ListTasks<T> + Send + 'static + BackendExt,
-        S::Context: Serialize + 'static,
-        S::IdType: Serialize + 'static,
-        <S as Backend>::Error: std::error::Error + 'static,
-        S::Codec: Codec<T, Compact = Compact> + 'static,
-        Compact: 'static,
+        S: ListTasks + Send + 'static,
+        S::Codec: Codec<T, Compact = S::Compact>,
+        <S::Codec as Codec<T>>::Error: std::error::Error,
     {
         let storage = storage.into_inner();
         let filter = query.into_inner();
 
-        match get_tasks::<S, T, Compact>(storage, filter).await {
-            Ok(tasks) => HttpResponse::Ok().json(tasks),
+        match get_tasks::<S, T>(storage, filter).await {
+            Ok(tasks) => HttpResponse::Ok().json(
+                tasks
+                    .into_iter()
+                    .map(|task| RawTask(task))
+                    .collect::<Vec<RawTask<T>>>(),
+            ),
             Err(e) => HttpResponse::InternalServerError().json(e),
         }
     }
@@ -55,7 +69,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
     pub async fn stats_by_queue(storage: web::Data<RwLock<S>>) -> impl Responder
     where
         S::Error: std::error::Error,
-        S: Metrics + BackendExt,
+        S: Metrics,
     {
         let storage = storage.into_inner();
 
@@ -68,7 +82,7 @@ impl<S, T, Compact> Handler<S, T, Compact> {
     /// Get workers for a specific queue.
     pub async fn get_workers(storage: web::Data<RwLock<S>>) -> impl Responder
     where
-        S: ListWorkers + BackendExt,
+        S: ListWorkers,
         S::Error: std::error::Error,
     {
         let storage = storage.into_inner();
@@ -80,16 +94,14 @@ impl<S, T, Compact> Handler<S, T, Compact> {
     }
 
     /// Push a new task to the specified queue.
-    pub async fn push_task(task: Json<T>, storage: Data<RwLock<S>>) -> impl Responder
+    pub async fn push_task(task: RawTask<T>, storage: Data<RwLock<S>>) -> impl Responder
     where
+        S: BackendConfig,
         T: Serialize + DeserializeOwned + 'static,
-        S: TaskSink<T> + Send + BackendExt,
-        S::Error: std::error::Error,
-        S::Codec: Codec<T, Compact = Compact>,
-        <<S as BackendExt>::Codec as Codec<T>>::Error: std::error::Error,
+        S: TaskSink<T, S::Kind> + Send + Sync + 'static,
     {
-        match push_task(task.into_inner(), storage.into_inner()).await {
-            Ok(_) => HttpResponse::Ok().finish(),
+        match push_task(task, storage.into_inner()).await {
+            Ok(_) => HttpResponse::Created().finish(),
             Err(e) => HttpResponse::InternalServerError().json(e),
         }
     }
@@ -100,20 +112,18 @@ impl<S, T, Compact> Handler<S, T, Compact> {
         storage: web::Data<RwLock<S>>,
     ) -> impl Responder
     where
-        T: Serialize + DeserializeOwned + 'static,
-        S: FetchById<T> + 'static,
-        S::Context: Serialize,
-        S::IdType: Serialize,
-        S::Context: Serialize,
+        S: FetchById + 'static,
         S::Error: std::error::Error,
-        S::IdType: FromStr,
-        <<S as Backend>::IdType as FromStr>::Err: std::error::Error,
+        S: WireFormatBackend<Compact = Compact> + Backend<Task = Task<Compact>>,
+        S::Codec: Codec<T, Compact = Compact>,
+        <S::Codec as Codec<T>>::Error: std::error::Error,
+        T: Serialize + DeserializeOwned + 'static,
     {
         let task_id = task_id.into_inner();
         let storage = storage.into_inner();
 
         match get_task_by_id::<S, T>(task_id, storage).await {
-            Ok(Some(task)) => HttpResponse::Ok().json(task),
+            Ok(Some(task)) => HttpResponse::Ok().json(RawTask(task)),
             Ok(None) => HttpResponse::NotFound().finish(),
             Err(e) => HttpResponse::InternalServerError().json(e),
         }
@@ -126,17 +136,18 @@ impl<S, T, Compact> Handler<S, T, Compact> {
     ) -> impl Responder
     where
         S: ListAllTasks + Send,
-        S::Context: Serialize,
-        S::IdType: Serialize,
         S::Compact: Serialize,
-        <S as Backend>::Error: std::error::Error,
-        <<S as BackendExt>::Codec as Codec<<S as Backend>::Args>>::Error: std::error::Error,
     {
         let storage = storage.into_inner();
         let filter = query.into_inner();
 
         match get_all_tasks::<S>(storage, filter).await {
-            Ok(tasks) => HttpResponse::Ok().json(tasks),
+            Ok(tasks) => HttpResponse::Ok().json(
+                tasks
+                    .into_iter()
+                    .map(RawTask)
+                    .collect::<Vec<RawTask<S::Compact>>>(),
+            ),
             Err(e) => HttpResponse::InternalServerError().json(e),
         }
     }
@@ -186,24 +197,19 @@ impl<S, T, Compact> Handler<S, T, Compact> {
 
 impl<B, T, Compact> RegisterRoute<B, T> for ApiBuilder<Scope>
 where
-    B: Metrics + ListWorkers + ListAllTasks + ListQueues + Send + 'static,
-    B::Context: Serialize,
-    B::IdType: Serialize,
+    B: Metrics + ListWorkers + ListAllTasks + ListQueues + BackendConfig + Send + 'static,
     <B as Backend>::Error: std::error::Error,
-    B::IdType: FromStr,
-    <<B as Backend>::IdType as FromStr>::Err: std::error::Error,
     Compact: Serialize + 'static,
     B::Compact: Serialize,
     <B as Backend>::Error: std::error::Error,
-    <<B as BackendExt>::Codec as Codec<<B as Backend>::Args>>::Error: std::error::Error,
     T: Serialize + DeserializeOwned + 'static,
-    B: ListTasks<T> + FetchById<T>,
+    B: ListTasks + FetchById,
     B::Codec: Codec<T, Compact = Compact>,
-    <<B as BackendExt>::Codec as Codec<T>>::Error: std::error::Error,
-    B: TaskSink<T>,
+    B: TaskSink<T, B::Kind> + Send + Sync + 'static,
+    B: WireFormatBackend<Compact = Compact> + Backend<Task = Task<Compact>>,
+    <B::Codec as Codec<T>>::Error: std::error::Error,
 {
-    fn register(mut self, backend: B) -> Self {
-        let queue = backend.get_queue();
+    fn register(mut self, queue: &str, backend: B) -> Self {
         let backend = web::Data::new(RwLock::new(backend));
         if self.root {
             #[allow(unused_mut)]
@@ -236,7 +242,6 @@ where
         }
         let scope = self.router.service(
             Scope::new(&format!("/queues/{queue}"))
-                .app_data(web::Data::new(queue))
                 .app_data(backend)
                 .route("/tasks", web::get().to(Handler::<B, T, Compact>::get_tasks))
                 .route(
@@ -250,7 +255,7 @@ where
                 .route("/tasks", web::put().to(Handler::<B, T, Compact>::push_task)) // Allow add jobs via api
                 .route(
                     "/tasks/{id}",
-                    web::get().to(Handler::<B, T, Compact>::get_task_by_id),
+                    web::get().to(Handler::<B, T, B::Compact>::get_task_by_id),
                 ),
         );
 
@@ -338,4 +343,103 @@ pub mod sse {
         )
         .with_keep_alive(Duration::from_secs(60 * 5))
     }
+}
+
+impl<T> FromRequest for RawTask<T>
+where
+    T: DeserializeOwned + 'static,
+{
+    type Error = Error;
+    type Future = LocalBoxFuture<'static, Result<Self, Self::Error>>;
+
+    fn from_request(req: &HttpRequest, payload: &mut Payload) -> Self::Future {
+        let task = match extract_task(req) {
+            Ok(ctx) => ctx,
+            Err(err) => return Box::pin(async move { Err(ErrorBadRequest(err)) }),
+        };
+
+        let body = web::Json::<T>::from_request(req, payload);
+
+        Box::pin(async move {
+            let args = body.await?.into_inner();
+            let task = task.map_args(|_| args);
+            Ok(Self(task))
+        })
+    }
+}
+
+fn extract_task(req: &HttpRequest) -> Result<Task<()>, TaskRejection> {
+    let headers = req.headers();
+    let mut task = TaskBuilder::new(());
+
+    if let Some(id) = parse_header(headers, "x-task-id")? {
+        task = task.task_id(id);
+    }
+
+    if let Some(attempt) = parse_header::<usize>(headers, "x-task-attempt")? {
+        task = task.attempt(attempt);
+    }
+
+    if let Some(status) = parse_header(headers, "x-task-status")? {
+        task = task.status(status);
+    }
+
+    if let Some(run_at) = parse_header(headers, "x-task-run-at")? {
+        task = task.run_at_timestamp(run_at);
+    } else {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("Time went backwards");
+        task = task.run_at_timestamp(now.as_secs())
+    }
+
+    task = task.done_at(parse_header(headers, "x-task-done-at")?);
+
+    task = task.lock_at(parse_header(headers, "x-task-lock-at")?);
+
+    task = task.lock_by(parse_header(headers, "x-task-lock-by")?);
+
+    if let Some(idempotency_key) = parse_header::<String>(headers, "x-task-idempotency-key")? {
+        task = task.idempotency_key(idempotency_key);
+    }
+
+    if let Some(max_attempts) = parse_header(headers, "x-task-max-attempts")? {
+        task = task.max_attempts(max_attempts);
+    }
+
+    if let Some(priority) = parse_header(headers, "x-task-priority")? {
+        task = task.priority(priority);
+    }
+
+    let mut metadata = MetadataStore::default();
+    for (name, value) in headers.iter() {
+        if let Some(key) = name.as_str().strip_prefix(META_PREFIX) {
+            let value = value.to_str().map_err(|e| TaskRejection::BadHeader {
+                name: name.to_string(),
+                reason: e.to_string(),
+            })?;
+
+            metadata.insert(key.to_owned(), value.to_owned()).unwrap();
+        }
+    }
+
+    task = task.with_metadata(metadata);
+
+    Ok(task.build())
+}
+
+fn parse_header<T>(headers: &HeaderMap, name: &str) -> Result<Option<T>, TaskRejection>
+where
+    T: FromStr,
+    T::Err: Display,
+{
+    let Some(raw) = headers.get(name) else {
+        return Ok(None);
+    };
+    let bad = |reason: String| TaskRejection::BadHeader {
+        name: name.into(),
+        reason,
+    };
+    let s = raw.to_str().map_err(|e| bad(e.to_string()))?;
+    s.parse::<T>().map(Some).map_err(|e| bad(e.to_string()))
 }

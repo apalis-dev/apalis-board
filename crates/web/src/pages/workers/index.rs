@@ -9,6 +9,8 @@ use crate::pages::workers::provider::WorkerProvider;
 pub fn WorkersPage() -> impl IntoView {
     let rows = WorkerProvider::all();
 
+    let container = NodeRef::new();
+
     view! {
         <Title text="Workers" />
         <div class="flex flex-col h-full w-full">
@@ -18,12 +20,15 @@ pub fn WorkersPage() -> impl IntoView {
                 </span>
                 <h3 class="text-base font-bold m-2">Workers</h3>
             </div>
-            <div class="flex-1 overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-charcoal-600 hover:scrollbar-thumb-charcoal-500 w-full">
+            <div
+                node_ref=container
+                class="flex-1 overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-charcoal-600 hover:scrollbar-thumb-charcoal-500"
+            >
                 <table class="whitespace-nowrap transition-all duration-200 w-full">
 
                     <TableContent
                         rows=rows
-                        scroll_container="html"
+                        scroll_container=container
                         sorting_mode=SortingMode::SingleColumn
                     />
 

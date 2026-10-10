@@ -23,35 +23,24 @@ use std::time::Duration;
 use tracing::info;
 use tracing_subscriber::{EnvFilter, Layer, layer::SubscriberExt, util::SubscriberInitExt};
 
-// ─── Job type ─────────────────────────────────────────────────────────────────
-
-/// A simple "send email" background job.
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Email {
     to: String,
     subject: String,
 }
 
-/// Handler — would actually send an email here.
 async fn send_email(email: Email) {
     info!(
         to = %email.to,
         subject = %email.subject,
         "📧 processing email job"
     );
-    // Simulate I/O work.
+
     tokio::time::sleep(Duration::from_millis(150)).await;
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
-
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    // ── 1. TracingBroadcaster ─────────────────────────────────────────────────
-    //
-    // This broadcasts every tracing span/event emitted by apalis workers to all
-    // SSE subscribers connected at GET /api/v1/events.
-
     let broadcaster = TracingBroadcaster::create();
     let tracing_subscriber_inner = TracingSubscriber::new(&broadcaster);
 
@@ -64,21 +53,19 @@ async fn main() -> anyhow::Result<()> {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    // ── 2. SQLite storage ─────────────────────────────────────────────────────
     let pool = SqlitePool::connect("sqlite:example.db?mode=rwc").await?;
     SqliteStorage::setup(&pool).await?;
 
     let email_storage = SqliteStorage::new(&pool);
 
-    // ── 3. Background job producer ────────────────────────────────────────────
     let mut producer = email_storage.clone();
     tokio::spawn(async move {
         let mut n = 0u32;
         loop {
             n += 1;
             let job = Email {
-                to: format!("user{}@example.com", n),
-                subject: format!("Newsletter #{}", n),
+                to: format!("user{n}@example.com"),
+                subject: format!("Newsletter #{n}"),
             };
             if let Err(e) = producer.push(job).await {
                 tracing::error!("push failed: {e}");
@@ -87,22 +74,15 @@ async fn main() -> anyhow::Result<()> {
         }
     });
 
-    // ── 5. apalis-board API router (Salvo) ────────────────────────────────────
     let api_router = ApiBuilder::new(Router::new())
-        .register(email_storage.clone())
+        .register(std::any::type_name::<Email>(), email_storage.clone())
         .build();
 
-    // ── 6. Full Salvo router ──────────────────────────────────────────────────
-    //
-    // Route layout:
-    //   /api/v1/**   → board REST API
-    //   /**          → embedded board UI (SPA)
     let app = Router::new()
         .hoop(affix_state::inject(broadcaster))
         .push(Router::with_path("api/v1").push(api_router))
         .push(ServeApp::router());
 
-    // ── 7. Run both the Salvo server and the apalis monitor concurrently ───────
     let monitor = Monitor::new().register(move |index| {
         WorkerBuilder::new(format!("email-worker-{index}"))
             .backend(email_storage.clone())

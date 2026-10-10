@@ -1,10 +1,11 @@
 [package]
-name        = "salvo-example"
-version     = "0.1.0"
+name = "salvo-example"
+version = "0.1.0"
 edition.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 description = "apalis-board + Salvo example (mirrors axum-email-service)"
+license = "MIT OR Apache-2.0"
 
 [[bin]]
 name = "salvo-example"
@@ -18,18 +19,18 @@ apalis-sqlite.workspace = true
 
 apalis-board = { path = "../../", features = ["salvo", "ui", "events"] }
 
-salvo = { version = "0.92", features = ["sse", "tower-compat"] }
+salvo = { workspace = true, features = ["sse", "tower-compat"] }
 
 
 tokio = { version = "1", features = ["full"] }
 
 
-tracing             = "0.1"
-tracing-subscriber  = { workspace = true , features = ["env-filter"] }
+tracing = "0.1"
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
 
-serde       = { version = "1", features = ["derive"] }
-serde_json  = "1"
-anyhow      = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+anyhow = "1"
 
 [lints]
 workspace = true

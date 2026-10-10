@@ -1,6 +1,8 @@
 use crate::components::RelativeTimeRenderer;
 use crate::components::tailwind::TailwindClassesPreset;
 use crate::relative_timestamp;
+use apalis_core::task::ExecutionContext;
+use apalis_core::task::runs::Run;
 use apalis_core::task::status::Status;
 use leptos::component;
 use leptos::prelude::*;
@@ -36,7 +38,7 @@ pub struct Task {
 
     /// The task specific data provided by the backend
     #[table(renderer = "ContextCellRenderer")]
-    pub meta: Value,
+    pub ctx: ExecutionContext,
 
     #[table(skip)]
     pub queue: String,
@@ -96,7 +98,7 @@ fn StatusCellRenderer(
 #[allow(unused_variables)]
 fn ContextCellRenderer(
     class: String,
-    value: Signal<Value>,
+    value: Signal<ExecutionContext>,
     row: RwSignal<Task>,
     index: usize,
 ) -> impl IntoView {
@@ -109,30 +111,7 @@ fn ContextCellRenderer(
         "done_at",
         "last_result",
     ];
-    let items = move || {
-        value
-            .get()
-            .as_object()
-            .map(|obj| {
-                let mut res = {
-                    obj.iter()
-                        .filter_map(|(k, v)| {
-                            if !keys.contains(&k.as_str()) {
-                                return None;
-                            }
-                            MetaKey::from_key_value(k, v)
-                        })
-                        .collect::<Vec<_>>()
-                };
-                res.sort_by(|a, b| {
-                    keys.iter()
-                        .position(|&k| k == a.key())
-                        .cmp(&keys.iter().position(|&k| k == b.key()))
-                });
-                res
-            })
-            .unwrap_or_default()
-    };
+    let items = move || to_meta_keys(&value.get());
 
     view! {
         <td class=class>
@@ -144,46 +123,16 @@ fn ContextCellRenderer(
 }
 
 enum MetaKey {
-    Queue(String),
-    Priority(usize),
-    LockBy(String),
-    LockAt(u64),
-    MaxAttempts(usize),
     DoneAt(u64),
-    LastResult(Value),
+    LockAt(u64),
+    LockBy(String),
+    MaxAttempts(usize),
+    Priority(usize),
+    Queue(String),
+    LastRun(Run),
 }
 
 impl MetaKey {
-    fn from_key_value(key: &str, value: &Value) -> Option<Self> {
-        match key {
-            "queue" => value.as_str().map(|s| MetaKey::Queue(s.to_string())),
-            "priority" => value.as_u64().map(|n| MetaKey::Priority(n as usize)),
-            "lock_by" => value.as_str().map(|s| MetaKey::LockBy(s.to_string())),
-            "lock_at" => value.as_u64().map(MetaKey::LockAt),
-            "max_attempts" => value.as_u64().map(|n| MetaKey::MaxAttempts(n as usize)),
-            "done_at" => value.as_u64().map(MetaKey::DoneAt),
-            "last_result" => {
-                if value.is_null() {
-                    None
-                } else {
-                    Some(MetaKey::LastResult(value.clone()))
-                }
-            }
-            _ => None,
-        }
-    }
-    fn key(&self) -> &str {
-        match self {
-            MetaKey::Queue(_) => "queue",
-            MetaKey::Priority(_) => "priority",
-            MetaKey::LockBy(_) => "lock_by",
-            MetaKey::LockAt(_) => "lock_at",
-            MetaKey::MaxAttempts(_) => "max_attempts",
-            MetaKey::DoneAt(_) => "done_at",
-            MetaKey::LastResult(_) => "last_result",
-        }
-    }
-
     fn render_key(&self) -> &str {
         match self {
             MetaKey::Queue(_) => "Queue",
@@ -192,7 +141,7 @@ impl MetaKey {
             MetaKey::LockAt(_) => "Lock At",
             MetaKey::MaxAttempts(_) => "Max Attempts",
             MetaKey::DoneAt(_) => "Done At",
-            MetaKey::LastResult(_) => "",
+            MetaKey::LastRun(_) => "",
         }
     }
     fn render(self) -> impl IntoView {
@@ -235,7 +184,7 @@ impl MetaKey {
                 <div class="flex items-center gap-1 px-1 py-0.5 rounded-sm border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 relative">
                     <div class="has-tooltip">
                         <span class="tooltip rounded shadow-sm p-1 bg-charcoal-100 text-charcoal-700 -mt-8">
-                            Done at: {ts}
+                            Done at: {relative_timestamp(ts)}
                         </span>
                         <span class="flex-shrink-0" style:color="white">
                             <svg
@@ -255,33 +204,6 @@ impl MetaKey {
                                 <path d="M6.38 18.7 4 21" />
                                 <path d="M17.64 18.67 20 21" />
                                 <path d="m9 13 2 2 4-4" />
-                            </svg>
-                        </span>
-                    </div>
-                </div>
-            }.into_any(),
-            MetaKey::LastResult(res) => view! {
-                <div class="flex items-center gap-1 px-1 py-0.5 rounded-sm border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 relative">
-                    <div class="has-tooltip">
-                        <span class="tooltip rounded shadow-sm p-1 bg-charcoal-100 text-charcoal-700 -mt-8">
-                            Last result:
-                            <pre>{serde_json::to_string_pretty(&res).unwrap_or_default()}</pre>
-                        </span>
-                        <span class="flex-shrink-0" style:color="white">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-4 h-4"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="lucide lucide-shapes-icon lucide-shapes"
-                            >
-                                <path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z" />
-                                <rect x="3" y="14" width="7" height="7" rx="1" />
-                                <circle cx="17.5" cy="17.5" r="3.5" />
                             </svg>
                         </span>
                     </div>
@@ -320,6 +242,35 @@ impl MetaKey {
                     </div>
                 </div>
             }.into_any(),
+            MetaKey::LastRun(last) => {
+                view! {
+                    <div class="flex items-center gap-1 px-1 py-0.5 rounded-sm border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 relative">
+                    <div class="has-tooltip">
+                        <span class="tooltip rounded shadow-sm p-1 bg-charcoal-100 text-charcoal-700 -mt-8">
+                            Last result:
+                            <pre>{serde_json::to_string_pretty(&last).unwrap_or_default()}</pre>
+                        </span>
+                        <span class="flex-shrink-0" style:color="white">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-4 h-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-shapes-icon lucide-shapes"
+                            >
+                                <path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z" />
+                                <rect x="3" y="14" width="7" height="7" rx="1" />
+                                <circle cx="17.5" cy="17.5" r="3.5" />
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                }.into_any()
+            }
             _ => {
                 view! { <></> };
                 ().into_any()
@@ -391,12 +342,12 @@ impl MetaKey {
                     </span>
                 </div>
             }.into_any(),
-            MetaKey::LastResult(res) => view! {
+            MetaKey::LastRun(res) => view! {
                 <>
                     <span class="text-sm text-charcoal-400 dark:text-charcoal-300">Result</span>
                     <div class="flex w-full gap-1 px-1 py-0.5 rounded-sm border border-charcoal-700 bg-charcoal-800 relative w-full mt-2">
                         <span class="inline-flex items-center gap-2 font-mono text-xs px-2 rounded-md bg-charcoal-800 overflow-auto">
-                            <pre>{serde_json::to_string_pretty(&res).unwrap_or_default()}</pre>
+                            <pre>{serde_json::to_string_pretty(&res.result.map(|a| a.result)).unwrap_or_default()}</pre>
                         </span>
                     </div>
                 </>
@@ -442,4 +393,37 @@ impl MetaKey {
             },
         }
     }
+}
+
+fn to_meta_keys(ctx: &ExecutionContext) -> Vec<MetaKey> {
+    let mut keys = Vec::new();
+    if let Some(done_at) = ctx.done_at() {
+        keys.push(MetaKey::DoneAt(done_at));
+    }
+
+    if let Some(lock_at) = ctx.lock_at() {
+        keys.push(MetaKey::LockAt(lock_at));
+    }
+
+    if let Some(lock_by) = &ctx.lock_by() {
+        keys.push(MetaKey::LockBy(lock_by.to_string()));
+    }
+
+    if let Some(run) = ctx.runs().last() {
+        keys.push(MetaKey::LastRun(run.clone()));
+    }
+
+    if let Some(max_attempts) = ctx.max_attempts() {
+        keys.push(MetaKey::MaxAttempts(max_attempts));
+    }
+
+    if let Some(priority) = ctx.priority() {
+        keys.push(MetaKey::Priority(priority));
+    }
+
+    if let Some(queue) = &ctx.queue() {
+        keys.push(MetaKey::Queue(queue.to_string()));
+    }
+
+    keys
 }

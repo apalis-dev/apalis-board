@@ -1,17 +1,13 @@
-use std::time::Duration;
-
 use apalis::{
     layers::{WorkerBuilderExt, retry::RetryPolicy},
-    prelude::{
-        BackoffConfig, BoxDynError, Codec, Data, IntervalStrategy, StrategyBuilder, WorkerBuilder,
-    },
+    prelude::*,
 };
 use apalis_board::axum::{
     framework::{ApiBuilder, RegisterRoute},
     sse::{TracingBroadcaster, TracingSubscriber},
     ui::ServeUI,
 };
-use apalis_postgres::PostgresStorage;
+use apalis_postgres::{Config, PostgresStorage};
 use axum::{Extension, Router};
 use clap::Parser;
 use futures::{FutureExt, TryFutureExt};
@@ -38,11 +34,11 @@ struct MessagePack;
 impl<T: Serialize + DeserializeOwned> Codec<T> for MessagePack {
     type Compact = Vec<u8>;
     type Error = MessagePackError;
-    fn encode(input: &T) -> Result<Vec<u8>, Self::Error> {
+    fn encode(&self, input: &T) -> Result<Vec<u8>, Self::Error> {
         rmp_serde::to_vec(input).map_err(|e| e.into())
     }
 
-    fn decode(compact: &Vec<u8>) -> Result<T, Self::Error> {
+    fn decode(&self, compact: &Vec<u8>) -> Result<T, Self::Error> {
         rmp_serde::from_slice(compact).map_err(|e| e.into())
     }
 }
@@ -104,15 +100,10 @@ async fn main() {
     let pool = PgPool::connect(&args.database_url).await.unwrap();
     PostgresStorage::setup(&pool).await.unwrap();
 
-    let config = apalis_sql::config::Config::new(&args.queue).with_poll_interval(
-        StrategyBuilder::new()
-            .apply(
-                IntervalStrategy::new(Duration::from_secs(1))
-                    .with_backoff(BackoffConfig::default()),
-            )
-            .build(),
-    );
-    let email_store = PostgresStorage::new_with_notify(&pool, &config).with_codec::<MessagePack>();
+    let config = Config::default().queue(&args.queue);
+    let email_store = PostgresStorage::new(&pool)
+        .with_config(config)
+        .with_codec(MessagePack);
 
     let email_worker = WorkerBuilder::new("lettre-email-worker")
         .backend(email_store.clone())
@@ -126,7 +117,7 @@ async fn main() {
 
     let http = async move {
         let api = ApiBuilder::new(Router::new())
-            .register(email_store.clone())
+            .register(&args.queue, email_store.clone())
             .build();
         let router = Router::new()
             .nest("/api/v1", api)

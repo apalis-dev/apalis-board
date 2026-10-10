@@ -2,7 +2,7 @@ use crate::{
     RawTask,
     api::ApiClient,
     components::sidebar::{logs_icon, tasks_icon},
-    pages::tasks::MetaKey,
+    pages::tasks::to_meta_keys,
     use_sse_provider,
 };
 use apalis_board_types::{LogEntry, LogLevel};
@@ -19,41 +19,10 @@ pub fn SingleTaskView(
     queue: String,
 ) -> impl IntoView {
     let args_json = serde_json::to_string_pretty(&task.args).unwrap_or_default();
+    let ctx = &task.ctx;
+    let items = move || to_meta_keys(ctx);
 
-    let keys = [
-        "queue",
-        "priority",
-        "lock_by",
-        "lock_at",
-        "max_attempts",
-        "done_at",
-        "last_result",
-    ];
-    let ctx = task.parts.ctx.clone();
-    let items = move || {
-        ctx.as_object()
-            .map(|obj| {
-                let mut res = {
-                    obj.iter()
-                        .filter_map(|(k, v)| {
-                            if !keys.contains(&k.as_str()) {
-                                return None;
-                            }
-                            MetaKey::from_key_value(k, v)
-                        })
-                        .collect::<Vec<_>>()
-                };
-                res.sort_by(|a, b| {
-                    keys.iter()
-                        .position(|&k| k == a.key())
-                        .cmp(&keys.iter().position(|&k| k == b.key()))
-                });
-                res
-            })
-            .unwrap_or_default()
-    };
-
-    let status_class = match &task.parts.status.load() {
+    let status_class = match &task.ctx.status() {
         Status::Done => "bg-success text-charcoal-100 dark:bg-success dark:text-charcoal-100",
         Status::Failed => "bg-error text-charcoal-100 dark:bg-error dark:text-charcoal-100",
         Status::Pending => "bg-warning text-charcoal-100 dark:bg-warning dark:text-charcoal-100",
@@ -61,7 +30,7 @@ pub fn SingleTaskView(
         _ => "bg-charcoal-700 text-charcoal-100 dark:bg-charcoal-800 dark:text-charcoal-100",
     };
 
-    let task_id = task.parts.task_id.unwrap().to_string();
+    let task_id = task.ctx.task_id().unwrap().to_string();
 
     view! {
         <>
@@ -76,9 +45,9 @@ pub fn SingleTaskView(
                     <span class=format!(
                         "inline-flex items-center px-3 py-1 rounded-sm text-xs font-medium border border-charcoal-700 {}",
                         status_class,
-                    )>{task.parts.status.load().to_string()}</span>
+                    )>{task.ctx.status().to_string()}</span>
                     <span class="py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium rounded-sm border border-charcoal-700">
-                        "Attempt: " {task.parts.attempt.current()}
+                        "Attempt: " {task.ctx.attempt()}
                     </span>
                 </div>
             </div>
