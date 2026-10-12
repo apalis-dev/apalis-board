@@ -1,6 +1,6 @@
 [package]
 name = "apalis-board-web"
-version = "1.0.0-rc.9"
+version = "1.0.0"
 edition = "2024"
 description = "Frontend components for managing Apalis task queues."
 license = "MIT OR Apache-2.0"

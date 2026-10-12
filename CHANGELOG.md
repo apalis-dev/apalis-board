@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-12
+
+- Release `v1.0.0`
+
 ## [1.0.0-rc.9] - 2026-10-10
 
 ## Changed
@@ -22,13 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.0-rc.7] - 2026-04-11
+## [1.0.0] - 2026-04-11
 
 ### Changed
 
 - Make `ui` feature opt-in and reduce default compile footprint ([#95](https://github.com/apalis-dev/apalis-board/pull/95))
 - Centralize shared dependencies in `[workspace.dependencies]` ([#96](https://github.com/apalis-dev/apalis-board/pull/96))
-- Release `v1.0.0-rc.7` ([#97](https://github.com/apalis-dev/apalis-board/pull/97))
+- Release `v1.0.0` ([#97](https://github.com/apalis-dev/apalis-board/pull/97))
 
 ---
 

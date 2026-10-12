@@ -9,7 +9,7 @@ version = "0.5.4"
 criteria = "safe-to-deploy"
 
 [[exemptions.actix-http]]
-version = "3.18.12"
+version = "3.18.13"
 criteria = "safe-to-deploy"
 
 [[exemptions.actix-macros]]
@@ -45,7 +45,7 @@ version = "4.4.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.actix-web-lab]]
-version = "0.29.4"
+version = "0.29.5"
 criteria = "safe-to-deploy"
 
 [[exemptions.actix-web-lab-derive]]
@@ -129,23 +129,23 @@ version = "1.0.104"
 criteria = "safe-to-deploy"
 
 [[exemptions.apalis]]
-version = "1.0.0-rc.12"
+version = "1.0.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.apalis-codec]]
-version = "0.1.0-rc.12"
+version = "1.0.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.apalis-core]]
-version = "1.0.0-rc.12"
+version = "1.0.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.apalis-postgres]]
-version = "1.0.0-rc.10"
+version = "1.0.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.apalis-sqlite]]
-version = "1.0.0-rc.11"
+version = "1.0.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.arc-swap]]
@@ -265,7 +265,7 @@ version = "1.2.6"
 criteria = "safe-to-deploy"
 
 [[exemptions.cc]]
-version = "1.7.0"
+version = "1.8.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.cfg-if]]
@@ -941,7 +941,7 @@ version = "1.2.2"
 criteria = "safe-to-deploy"
 
 [[exemptions.impl-more]]
-version = "0.3.8"
+version = "0.3.10"
 criteria = "safe-to-deploy"
 
 [[exemptions.include_dir]]
@@ -1589,7 +1589,7 @@ version = "0.4.1"
 criteria = "safe-to-deploy"
 
 [[exemptions.serde_json]]
-version = "1.0.151"
+version = "1.0.154"
 criteria = "safe-to-deploy"
 
 [[exemptions.serde_path_to_error]]
@@ -1745,7 +1745,7 @@ version = "2.0.119"
 criteria = "safe-to-deploy"
 
 [[exemptions.syn]]
-version = "3.0.7"
+version = "3.0.8"
 criteria = "safe-to-deploy"
 
 [[exemptions.sync_wrapper]]
@@ -1957,7 +1957,7 @@ version = "0.3.18"
 criteria = "safe-to-deploy"
 
 [[exemptions.unicode-ident]]
-version = "1.0.26"
+version = "1.0.27"
 criteria = "safe-to-deploy"
 
 [[exemptions.unicode-normalization]]
@@ -2237,7 +2237,7 @@ version = "0.13.3"
 criteria = "safe-to-deploy"
 
 [[exemptions.zstd]]
-version = "0.14.1"
+version = "0.14.2"
 criteria = "safe-to-deploy"
 
 [[exemptions.zstd-safe]]
