@@ -1,6 +1,6 @@
 [package]
 name = "apalis-board"
-version = "1.0.0-rc.9"
+version = "1.0.0"
 authors = ["Njuguna Mureithi <mureithinjuguna@gmail.com>"]
 description = "Apalis board contains a number of crates useful for building UIs and apis for managing Apalis task queues."
 edition.workspace = true
@@ -43,15 +43,15 @@ repository = "https://github.com/apalis-dev/apalis-board"
 
 [workspace.dependencies]
 # Internal workspace crates
-apalis-board-types = { path = "crates/types", version = "1.0.0-rc.9" }
-apalis-board-api = { path = "crates/api", version = "1.0.0-rc.9" }
-apalis-board-web = { path = "crates/web", version = "1.0.0-rc.9" }
+apalis-board-types = { path = "crates/types", version = "1.0.0" }
+apalis-board-api = { path = "crates/api", version = "1.0.0" }
+apalis-board-web = { path = "crates/web", version = "1.0.0" }
 
 # Apalis ecosystem
-apalis = { version = "1.0.0-rc.12", default-features = false }
-apalis-core = { version = "1.0.0-rc.12", default-features = false }
-apalis-sqlite = "1.0.0-rc.11"
-apalis-postgres = "1.0.0-rc.10"
+apalis = { version = "1.0.0", default-features = false }
+apalis-core = { version = "1.0.0", default-features = false }
+apalis-sqlite = "1.0.0"
+apalis-postgres = "1.0.0"
 
 # Serialization
 serde = "1"
