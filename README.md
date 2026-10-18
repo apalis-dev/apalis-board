@@ -140,6 +140,8 @@ trunk build
 
 - [`axum-email-service`](https://github.com/apalis-dev/apalis-board/tree/main/examples/axum-email-service) : Basic example that shows how to send emails via smtp using `lettre` and `axum`
 - [`actix-ntfy-service`](https://github.com/apalis-dev/apalis-board/tree/main/examples/actix-ntfy-service) : Basic example that shows how to publish notifications using `ntfy.sh` and `actix`
+- [`salvo-example`](https://github.com/apalis-dev/apalis-board/tree/main/examples/salvo-example) : Basic example that shows how to integrate apalis-board with `salvo`, including the dashboard and SSE events
+
 
 ## Acknowledgments
 
