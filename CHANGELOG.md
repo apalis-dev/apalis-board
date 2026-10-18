@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Document the Salvo integration example in the README ([#157](https://github.com/apalis-dev/apalis-board/pull/157))
+
 ## [1.0.0] - 2026-10-12
 
 - Release `v1.0.0`
