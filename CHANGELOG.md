@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- *deps(deps-dev)*: bump @tailwindcss/typography from 0.5.19 to 0.5.20 ([#174](https://github.com/apalis-dev/apalis-board/pull/174))
 - *deps(deps-dev)*: bump tailwindcss and tailwind-scrollbar ([#172](https://github.com/apalis-dev/apalis-board/pull/172))
 - *deps(deps-dev)*: bump tailwind-scrollbar-hide from 1.3.1 to 4.0.0 ([#173](https://github.com/apalis-dev/apalis-board/pull/173))
 - *ci(deps)*: bump cargo-bins/cargo-binstall from 1.19.1 to 1.26.2 ([#166](https://github.com/apalis-dev/apalis-board/pull/166))
