@@ -5,7 +5,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
+      day: "sunday"
       time: "06:00"
     open-pull-requests-limit: 10
     reviewers:
@@ -24,7 +24,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
+      day: "sunday"
       time: "06:00"
     open-pull-requests-limit: 5
     reviewers:
@@ -37,3 +37,21 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "06:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "geofmureithi"
+    assignees:
+      - "geofmureithi"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "node"
