@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- *ci(deps)*: bump cargo-bins/cargo-binstall from 1.19.1 to 1.26.2 ([#166](https://github.com/apalis-dev/apalis-board/pull/166))
 - chore: add auto-release and auto-changelog scripts ([#171](https://github.com/apalis-dev/apalis-board/pull/171))
 
 ### Changed
