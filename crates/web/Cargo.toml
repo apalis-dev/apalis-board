@@ -24,7 +24,7 @@ apalis-board-types.workspace = true
 gloo-net = "0.7.0"
 serde_json.workspace = true
 serde.workspace = true
-leptos = { version = "0.8.22", features = ["csr"], default-features = false }
+leptos = { version = "0.8.23", features = ["csr"], default-features = false }
 leptos_router = "0.8.17"
 gloo-timers = { version = "0.4.0", features = ["futures"] }
 leptos-struct-table = "0.19.1"
@@ -32,7 +32,7 @@ web-sys = "0.3"
 console_error_panic_hook = "0.1.7"
 chrono = { version = "0.4", features = ["serde"] }
 futures.workspace = true
-leptos_i18n = "0.6.2"
+leptos_i18n = "0.6.3"
 leptos_meta = "0.8.7"
 getrandom = { version = "0.4.3", features = ["wasm_js"] }
 

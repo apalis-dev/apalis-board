@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- chore: add auto-release and auto-changelog scripts ([#171](https://github.com/apalis-dev/apalis-board/pull/171))
+
 ### Changed
 
 - Document the Salvo integration example in the README ([#157](https://github.com/apalis-dev/apalis-board/pull/157))

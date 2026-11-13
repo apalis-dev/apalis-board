@@ -48,10 +48,10 @@ apalis-board-api = { path = "crates/api", version = "1.0.0" }
 apalis-board-web = { path = "crates/web", version = "1.0.0" }
 
 # Apalis ecosystem
-apalis = { version = "1.0.0", default-features = false }
-apalis-core = { version = "1.0.0", default-features = false }
-apalis-sqlite = "1.0.0"
-apalis-postgres = "1.0.0"
+apalis = { version = "1.1.1", default-features = false }
+apalis-core = { version = "1.1.1", default-features = false }
+apalis-sqlite = "1.1.0"
+apalis-postgres = "1.1.0"
 
 # Serialization
 serde = "1"
@@ -65,8 +65,8 @@ tower = "0.5"
 thiserror = "2"
 
 # Web frameworks
-salvo = "1.0"
-actix-web = "4.15.0"
+salvo = "1.1"
+actix-web = "4.19.0"
 
 # Observability
 log = "0.4"
