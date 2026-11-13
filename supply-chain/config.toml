@@ -249,7 +249,7 @@ version = "1.2.6"
 criteria = "safe-to-deploy"
 
 [[exemptions.cc]]
-version = "1.11.1"
+version = "1.11.2"
 criteria = "safe-to-deploy"
 
 [[exemptions.cfg-if]]
@@ -421,7 +421,7 @@ version = "0.8.23"
 criteria = "safe-to-deploy"
 
 [[exemptions.crypto-common]]
-version = "0.1.6"
+version = "0.1.7"
 criteria = "safe-to-deploy"
 
 [[exemptions.crypto-common]]
@@ -653,7 +653,7 @@ version = "0.3.34"
 criteria = "safe-to-deploy"
 
 [[exemptions.generic-array]]
-version = "0.14.9"
+version = "0.14.7"
 criteria = "safe-to-deploy"
 
 [[exemptions.getrandom]]

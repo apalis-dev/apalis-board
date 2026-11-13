@@ -245,7 +245,7 @@ version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d122413f284cf2d62fb1b7db97e02edb8cda96d769b16e443a4f6195e35662b0"
 dependencies = [
- "crypto-common 0.1.6",
+ "crypto-common 0.1.7",
  "generic-array",
 ]
 
@@ -408,7 +408,7 @@ dependencies = [
 
 [[package]]
 name = "apalis-board"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "apalis-board-api",
  "apalis-board-web",
@@ -416,7 +416,7 @@ dependencies = [
 
 [[package]]
 name = "apalis-board-api"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "actix-web",
  "actix-web-lab",
@@ -437,7 +437,7 @@ dependencies = [
 
 [[package]]
 name = "apalis-board-types"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "serde",
  "thiserror 2.0.21",
@@ -445,7 +445,7 @@ dependencies = [
 
 [[package]]
 name = "apalis-board-web"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "apalis-board-types",
  "apalis-core",
@@ -700,7 +700,7 @@ dependencies = [
 
 [[package]]
 name = "axum-email-service"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "apalis",
  "apalis-board",
@@ -832,9 +832,9 @@ checksum = "bbbad30e4b4c14a39e3cc8aed085a12a327257c316619c93581e017bc52be591"
 
 [[package]]
 name = "cc"
-version = "1.11.1"
+version = "1.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
+checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
 dependencies = [
  "find-msvc-tools",
  "jobserver",
@@ -896,7 +896,7 @@ version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "773f3b9af64447d2ce9850330c473515014aa235e6a783b02db81ff39e4a3dad"
 dependencies = [
- "crypto-common 0.1.6",
+ "crypto-common 0.1.7",
  "inout",
 ]
 
@@ -1223,9 +1223,9 @@ checksum = "a31eee39dddec8330830986fcd7625edb5a24ec90ea038215273bbc3adb08ac6"
 
 [[package]]
 name = "crypto-common"
-version = "0.1.6"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1bfb12502f3fc46cca1bb51ac28df9d618d813cdc3d2f25b9fe775a34af26bb3"
+checksum = "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a"
 dependencies = [
  "generic-array",
  "rand_core 0.6.4",
@@ -1408,7 +1408,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
 dependencies = [
  "block-buffer 0.10.4",
- "crypto-common 0.1.6",
+ "crypto-common 0.1.7",
  "subtle",
 ]
 
@@ -1769,9 +1769,9 @@ dependencies = [
 
 [[package]]
 name = "generic-array"
-version = "0.14.9"
+version = "0.14.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4bb6743198531e02858aeaea5398fcc883e71851fcbcb5a2f773e2fb6cb1edf2"
+checksum = "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
 dependencies = [
  "typenum",
  "version_check",
@@ -3359,7 +3359,7 @@ dependencies = [
 
 [[package]]
 name = "ntfy-sh-actix-example"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "actix-web",
  "apalis",
@@ -4235,7 +4235,7 @@ dependencies = [
 
 [[package]]
 name = "salvo-example"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "apalis",
@@ -5075,7 +5075,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
 dependencies = [
  "fastrand",
- "getrandom 0.3.4",
+ "getrandom 0.4.3",
  "once_cell",
  "rustix",
  "windows-sys 0.61.2",
@@ -5574,7 +5574,7 @@ version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc1de2c688dc15305988b563c3854064043356019f97a4b46276fe734c4f07ea"
 dependencies = [
- "crypto-common 0.1.6",
+ "crypto-common 0.1.7",
  "subtle",
 ]
 
