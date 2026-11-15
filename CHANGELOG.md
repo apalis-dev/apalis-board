@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- *ci(deps)*: bump cargo-bins/cargo-binstall from 1.26.2 to 1.27.0 ([#176](https://github.com/apalis-dev/apalis-board/pull/176))
 ## [1.1.0](https://github.com/apalis-dev/apalis-board/releases/tag/v1.1.0)
 
 - *deps(deps-dev)*: bump @tailwindcss/typography from 0.5.19 to 0.5.20 ([#174](https://github.com/apalis-dev/apalis-board/pull/174))
