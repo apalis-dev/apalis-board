@@ -453,7 +453,7 @@ dependencies = [
  "console_error_panic_hook",
  "futures",
  "getrandom 0.4.3",
- "gloo-net 0.7.0",
+ "gloo-net 0.8.0",
  "gloo-timers",
  "leptos",
  "leptos-struct-table",
@@ -1849,9 +1849,9 @@ dependencies = [
 
 [[package]]
 name = "gloo-net"
-version = "0.7.0"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a6420f887c48417e9e86c6cf61274eb231830cccc100e49613f7952e269a1fe1"
+checksum = "ca0d014b3eb3645bf8e44000afb0ed0faf33b42bec5f463fa9d233b7da45feac"
 dependencies = [
  "futures-channel",
  "futures-core",
