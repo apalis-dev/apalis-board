@@ -519,9 +519,9 @@ dependencies = [
 
 [[package]]
 name = "apalis-sqlite"
-version = "1.1.0"
+version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0cc6b31bf3e2189c816f220f210af93fe6dc9fa54e8dba3f81144f491a36df1a"
+checksum = "167ccf6031e764641011d29073d831ff1f682693d679caddef4d206892e00f64"
 dependencies = [
  "apalis-codec",
  "apalis-core",
@@ -5075,7 +5075,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
 dependencies = [
  "fastrand",
- "getrandom 0.4.3",
+ "getrandom 0.3.4",
  "once_cell",
  "rustix",
  "windows-sys 0.61.2",
