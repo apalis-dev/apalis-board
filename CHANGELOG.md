@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- *deps(deps)*: bump lettre from 0.11.23 to 0.11.24 ([#184](https://github.com/apalis-dev/apalis-board/pull/184))
 ## [1.2.0](https://github.com/apalis-dev/apalis-board/releases/tag/v1.2.0)
 
 - *ci(deps)*: bump cargo-bins/cargo-binstall from 1.26.2 to 1.27.0 ([#176](https://github.com/apalis-dev/apalis-board/pull/176))
