@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0](https://github.com/apalis-dev/apalis-board/releases/tag/v1.3.0)
+
 - *deps(deps)*: bump salvo from 1.1.2 to 1.2.1 ([#178](https://github.com/apalis-dev/apalis-board/pull/178))
 ## [1.2.0](https://github.com/apalis-dev/apalis-board/releases/tag/v1.2.0)
 
