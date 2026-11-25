@@ -8,6 +8,7 @@ use leptos_struct_table::*;
 
 use crate::{
     components::sidebar::queues_icon,
+    config::PUBLIC_URL,
     pages::queues::{CustomTableRowRenderer, provider::QueueProvider},
 };
 
@@ -122,9 +123,9 @@ pub fn QueueNav() -> impl IntoView {
     let params = use_params_map();
     let queue = move || params.with(|p| p.get("queue").unwrap());
 
-    let queue_home = move || format!("/queues/{}", queue());
+    let queue_home = move || format!("{PUBLIC_URL}queues/{}", queue());
 
-    let worker_home = move |status: &Status| format!("/queues/{}/{}", queue(), status);
+    let worker_home = move |status: &Status| format!("{PUBLIC_URL}queues/{}/{}", queue(), status);
 
     let calculate_active = move |status: &Status| {
         let current_status =

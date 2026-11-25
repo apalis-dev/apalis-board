@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 
 use crate::components::sidebar::Sidebar;
+use crate::config::PUBLIC_URL;
 
 #[component]
 pub fn NotFound() -> impl IntoView {
@@ -55,7 +56,7 @@ pub fn NotFound() -> impl IntoView {
                             But you found our secret neon smiley instead.
                         </p>
                         <a
-                            href="/"
+                            href=PUBLIC_URL
                             class="inline-block px-6 py-3 rounded-none bg-primary text-background-bright  shadow-glow-primary hover:bg-apple-400 focus-custom transition"
                         >
                             Go Home

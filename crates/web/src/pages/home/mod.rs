@@ -10,7 +10,12 @@ use leptos_meta::Title;
 use leptos_router::components::A;
 use serde::Serialize;
 
-use crate::{config::API_PATH, locales::i18n::*, relative_timestamp, translate::KnownStatistic};
+use crate::{
+    config::{API_PATH, PUBLIC_URL},
+    locales::i18n::*,
+    relative_timestamp,
+    translate::KnownStatistic,
+};
 
 pub fn resolve_json<V: Serialize>(val: V) -> String {
     serde_json::to_string_pretty(&val).unwrap()
@@ -138,7 +143,7 @@ pub fn Home() -> impl IntoView {
                                         .map(|queue| {
                                             view! {
                                                 <A href=format!(
-                                                    "/queues/{}",
+                                                    "{PUBLIC_URL}queues/{}",
                                                     queue.name,
                                                 )>{queue_card(queue)}</A>
                                             }

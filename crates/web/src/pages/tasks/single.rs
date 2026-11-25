@@ -2,6 +2,7 @@ use crate::{
     RawTask,
     api::ApiClient,
     components::sidebar::{logs_icon, tasks_icon},
+    config::PUBLIC_URL,
     pages::tasks::to_meta_keys,
     use_sse_provider,
 };
@@ -106,7 +107,7 @@ pub fn TaskPage() -> impl IntoView {
     let params = use_params_map();
     let task_id = move || params.get().get("task_id").unwrap();
     let queue = move || params.get().get("queue").unwrap();
-    let url = move || format!("/queues/{}/tasks/{}", queue(), task_id());
+    let url = move || format!("{PUBLIC_URL}queues/{}/tasks/{}", queue(), task_id());
     let task = LocalResource::new(move || {
         let url = url;
         async move {

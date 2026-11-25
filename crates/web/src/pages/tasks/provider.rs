@@ -2,7 +2,7 @@ use apalis_core::{backend::Statistic, task::status::Status};
 use leptos_struct_table::{ColumnSort, PaginatedTableDataProvider};
 use std::collections::VecDeque;
 
-use crate::{RawTask, api::ApiClient, pages::tasks::Task};
+use crate::{RawTask, api::ApiClient, config::PUBLIC_URL, pages::tasks::Task};
 
 pub struct TaskProvider {
     sorting: VecDeque<(usize, ColumnSort)>,
@@ -62,8 +62,8 @@ impl TaskProvider {
             sort.push_str(&self.url_sort_param_for_sort_pair(pair));
         }
         let prefix = match &self.queue {
-            None => "".to_string(),
-            Some(queue) => format!("/queues/{queue}"),
+            None => PUBLIC_URL.to_string(),
+            Some(queue) => format!("{PUBLIC_URL}queues/{queue}"),
         };
         format!(
             "{prefix}/tasks?{sort}&page={}&page_size={}&queue={}&status={}",
@@ -101,8 +101,8 @@ impl PaginatedTableDataProvider<Task, usize> for TaskProvider {
 
     async fn row_count(&self) -> Option<usize> {
         let url = match self.queue.as_ref() {
-            Some(queue) => format!("/queues/{queue}/stats"),
-            None => "/overview".to_string(),
+            Some(queue) => format!("{PUBLIC_URL}queues/{queue}/stats"),
+            None => format!("{PUBLIC_URL}overview"),
         };
         let resp: Vec<Statistic> = ApiClient::get(&url).await.ok()?;
         let stat_title = match &self.status {

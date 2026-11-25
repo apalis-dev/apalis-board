@@ -6,7 +6,9 @@ use leptos_meta::Title;
 use leptos_router::{components::A, hooks::use_params_map};
 use leptos_struct_table::{DisplayStrategy, SortingMode, TableContent};
 
-use crate::{components::sidebar::tasks_icon, pages::tasks::provider::TaskProvider};
+use crate::{
+    components::sidebar::tasks_icon, config::PUBLIC_URL, pages::tasks::provider::TaskProvider,
+};
 
 #[component]
 pub fn AllTasksPage() -> impl IntoView {
@@ -56,7 +58,7 @@ pub fn AllTasksPage() -> impl IntoView {
 pub fn TaskNav() -> impl IntoView {
     let params = use_params_map();
 
-    let tasks_page = move |status: &Status| format!("/tasks/{status}");
+    let tasks_page = move |status: &Status| format!("{PUBLIC_URL}tasks/{status}");
 
     let calculate_active = move |status: &Status| {
         let current_status =

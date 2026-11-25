@@ -1,5 +1,6 @@
 use crate::components::RelativeTimeRenderer;
 use crate::components::tailwind::TailwindClassesPreset;
+use crate::config::PUBLIC_URL;
 use crate::relative_timestamp;
 use apalis_core::task::ExecutionContext;
 use apalis_core::task::runs::Run;
@@ -58,7 +59,7 @@ fn IdCellRenderer(
         <td class=class>
             <A
                 href=move || {
-                    format!("/queues/{}/tasks/{}", queue().unwrap_or(row.get().queue), value.get())
+                    format!("{PUBLIC_URL}queues/{}/tasks/{}", queue().unwrap_or(row.get().queue), value.get())
                 }
                 attr:title=value
                 attr:class="max-w-40 truncate whitespace-nowrap inline-block py-1.5 px-3 rounded-lg hover:font-bold bg-charcoal-100 text-charcoal-800 dark:bg-charcoal-700 dark:text-charcoal-200"
