@@ -62,8 +62,8 @@ impl TaskProvider {
             sort.push_str(&self.url_sort_param_for_sort_pair(pair));
         }
         let prefix = match &self.queue {
-            None => PUBLIC_URL.to_string(),
-            Some(queue) => format!("{PUBLIC_URL}queues/{queue}"),
+            None => "".to_string(),
+            Some(queue) => format!("/queues/{queue}"),
         };
         format!(
             "{prefix}/tasks?{sort}&page={}&page_size={}&queue={}&status={}",
@@ -101,8 +101,8 @@ impl PaginatedTableDataProvider<Task, usize> for TaskProvider {
 
     async fn row_count(&self) -> Option<usize> {
         let url = match self.queue.as_ref() {
-            Some(queue) => format!("{PUBLIC_URL}queues/{queue}/stats"),
-            None => format!("{PUBLIC_URL}overview"),
+            Some(queue) => format!("/queues/{queue}/stats"),
+            None => "/overview".to_string(),
         };
         let resp: Vec<Statistic> = ApiClient::get(&url).await.ok()?;
         let stat_title = match &self.status {
