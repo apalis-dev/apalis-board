@@ -1,5 +1,6 @@
 use crate::components::sidebar::queues_icon;
 use crate::components::tailwind::TailwindClassesPreset;
+use crate::config::PUBLIC_URL;
 use apalis_core::backend::{StatType, Statistic};
 use leptos::component;
 use leptos::prelude::*;
@@ -80,7 +81,7 @@ pub fn TitleRenderer(
 ) -> impl IntoView {
     view! {
         <td class=class>
-            <A href=move || format!("/queues/{}", value.get()) attr:class="flex items-center gap-2">
+            <A href=move || format!("{PUBLIC_URL}queues/{}", value.get()) attr:class="flex items-center gap-2">
                 <div class="text-white flex items-center gap-1 m-1">
                     <div class="border border-gray-600 rounded-sm p-1 flex items-center justify-center">
                         {queues_icon()}
@@ -194,7 +195,7 @@ pub fn CustomTableRowRenderer(
             {TableRow::render_row(row, index, columns)}
             <td class="px-3 py-2 text-right">
                 <a
-                    href=move || format!("/queues/{}", row.get().name)
+                    href=move || format!("{PUBLIC_URL}queues/{}", row.get().name)
                     class="inline-block px-3 py-1 text-sm font-medium text-white bg-gray-600 rounded hover:bg-gray-700 transition-colors"
                 >
                     "View"

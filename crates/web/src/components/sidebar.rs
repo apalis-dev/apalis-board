@@ -1,7 +1,7 @@
 use leptos::{ev::MouseEvent, prelude::*};
 use leptos_router::{components::A, hooks::use_location};
 
-use crate::use_sse_provider;
+use crate::{config::PUBLIC_URL, use_sse_provider};
 
 #[component]
 pub fn Sidebar() -> impl IntoView {
@@ -68,28 +68,28 @@ pub fn Sidebar() -> impl IntoView {
                         view! {
                             <div>
                                 <NavItem
-                                    href="/"
+                                    href="./"
                                     icon=overview_icon()
                                     text="Overview"
-                                    is_active=location.pathname.get() == "/"
+                                    is_active=location.pathname.get().trim_start_matches(PUBLIC_URL).is_empty()
                                 />
                                 <NavItem
-                                    href="/queues"
+                                    href="queues"
                                     icon=queues_icon()
                                     text="Queues"
-                                    is_active=location.pathname.get().starts_with("/queues")
+                                    is_active=location.pathname.get().trim_start_matches(PUBLIC_URL).starts_with("queues")
                                 />
                                 <NavItem
-                                    href="/tasks"
+                                    href="tasks"
                                     icon=tasks_icon()
                                     text="Tasks"
-                                    is_active=location.pathname.get().starts_with("/tasks")
+                                    is_active=location.pathname.get().trim_start_matches(PUBLIC_URL).starts_with("tasks")
                                 />
                                 <NavItem
-                                    href="/workers"
+                                    href="workers"
                                     icon=workers_icon()
                                     text="Workers"
-                                    is_active=location.pathname.get().starts_with("/workers")
+                                    is_active=location.pathname.get().trim_start_matches(PUBLIC_URL).starts_with("workers")
                                 />
                             </div>
                         }
@@ -132,16 +132,16 @@ pub fn Sidebar() -> impl IntoView {
                         <Show when=move || manage_expanded.get()>
                             <div class="opacity-100">
                                 <NavItem
-                                    href="/logs"
+                                    href="logs"
                                     icon=logs_icon()
                                     text="Logs"
-                                    is_active=location.pathname.get().starts_with("/logs")
+                                    is_active=location.pathname.get().trim_start_matches(PUBLIC_URL).starts_with("logs")
                                 />
                                 <NavItem
-                                    href="/settings"
+                                    href="settings"
                                     icon=settings_icon()
                                     text="Settings"
-                                    is_active=location.pathname.get().starts_with("/settings")
+                                    is_active=location.pathname.get().trim_start_matches(PUBLIC_URL).starts_with("settings")
                                 />
                             </div>
                         </Show>

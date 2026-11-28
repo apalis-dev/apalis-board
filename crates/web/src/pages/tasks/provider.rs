@@ -2,7 +2,7 @@ use apalis_core::{backend::Statistic, task::status::Status};
 use leptos_struct_table::{ColumnSort, PaginatedTableDataProvider};
 use std::collections::VecDeque;
 
-use crate::{RawTask, api::ApiClient, pages::tasks::Task};
+use crate::{RawTask, api::ApiClient, config::PUBLIC_URL, pages::tasks::Task};
 
 pub struct TaskProvider {
     sorting: VecDeque<(usize, ColumnSort)>,
